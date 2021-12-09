@@ -8,6 +8,7 @@ export const UnreadWrapper = styled.div`
   border-radius: 3px;
   font-size: 12px;
   background-color: var(--menu_item_unread_bg);
+  user-select: none;
 
   &::after {
     content: '';

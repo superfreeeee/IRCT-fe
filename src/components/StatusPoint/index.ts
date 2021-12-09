@@ -1,10 +1,5 @@
 import styled from 'styled-components';
-
-export enum UserState {
-  Idle = 'idle',
-  Work = 'work',
-  Busy = 'busy',
-}
+import { UserState } from './type';
 
 const stateToColor = (state: UserState) => `var(--state_${state})`;
 

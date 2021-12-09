@@ -1,13 +1,15 @@
-import classNames from 'classnames';
-import React, { MouseEventHandler, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 import BoxIcon, { BoxIconType } from '@components/BoxIcon';
-import StatusPoint, { UserState } from '@components/StatusPoint';
+import StatusPoint from '@components/StatusPoint';
+import { UserState } from '@components/StatusPoint/type';
 import Menu from './Menu';
 import { MenuData } from './Menu/type';
 import { Container, SearchBar, UserInfo } from './styles';
 import FooterNav from './FooterNav';
 import Tabs, { TabOption } from './Tabs';
+import { AppState } from '@store/reducers';
 
 const useTab = (): [TabOption, (option: TabOption) => void] => {
   const [tab, setTab] = useState(TabOption.Team);
@@ -43,6 +45,12 @@ const fakeList: MenuData[] = [
 ];
 
 const IM = () => {
+  const userInfo = useSelector((state: AppState) => state.user);
+  useEffect(() => {
+    console.log('[IM] userInfo', userInfo);
+  }, [userInfo]);
+  const { org, state: userState } = userInfo;
+
   const [tab, onTabClick] = useTab();
   const [list, setList] = useState(fakeList);
 
@@ -51,10 +59,10 @@ const IM = () => {
       <UserInfo>
         <div className="selection">
           <BoxIcon type={BoxIconType.ExpandVertical} />
-          <span>Alibaba Dingtalk</span>
+          <span>{org}</span>
         </div>
         <div className="avatar">
-          <StatusPoint style={{ right: 2, bottom: 2 }} state={UserState.Idle} />
+          <StatusPoint style={{ right: 2, bottom: 2 }} state={userState} />
         </div>
       </UserInfo>
       <SearchBar>
@@ -62,7 +70,7 @@ const IM = () => {
           <BoxIcon type={BoxIconType.Search} />
           <input placeholder="Search for people or room" type="text" />
         </div>
-        <BoxIcon type={BoxIconType.Setting} size={'sm'} />
+        <BoxIcon type={BoxIconType.Setting} size={'sm'} clickable />
       </SearchBar>
       <Tabs current={tab} onTabClick={onTabClick} />
       <Menu list={list}></Menu>

@@ -1,4 +1,4 @@
-import { UserState } from '@components/StatusPoint';
+import { UserState } from "@components/UserState";
 
 export interface MenuData {
   // public attr

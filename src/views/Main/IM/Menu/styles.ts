@@ -97,11 +97,13 @@ export const ItemTooltip = styled.div`
 `;
 
 // ========== Menu ==========
+// 分块
 export const MenuSepContainer = styled.ul`
   width: 100%;
   color: #fff;
 `;
 
+// 置顶 / 其他
 export const MenuSepTag = styled.div`
   margin-bottom: 8px;
   font-size: 12px;
@@ -112,10 +114,15 @@ export const MenuSepTag = styled.div`
   }
 `;
 
+// 总容器
 export const Container = styled.div`
   width: calc(100% + 14px);
   height: 100%;
   padding: 0 4px 77px 14px;
   overflow-y: auto;
   transform: translateX(-14px);
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;

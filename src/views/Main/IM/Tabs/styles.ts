@@ -17,6 +17,7 @@ export const Tab = styled.button`
   color: var(--menu_tab_text);
   background-color: var(--menu_tab_bg);
   cursor: pointer;
+  user-select: none;
 
   &.active {
     color: #fff;

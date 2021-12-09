@@ -1,7 +1,9 @@
 import React, { FC } from 'react';
+import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import styled, { createGlobalStyle } from 'styled-components';
 
+import store from './store';
 import Layout from './views/Layout';
 
 const AppRoot = styled.div``;
@@ -24,8 +26,8 @@ const GlobalStyle = createGlobalStyle`
     --menu_item_unread_bg: #FF8989;
     /* 状态颜色 */
     --state_idle: #5DD45A;
-    --state_work: rgba(11, 177, 214, 0.6);
-    --state_busy: rgba(255, 210, 49, 0.6);
+    --state_work: #5ABED4;
+    --state_busy: #FFD231;
   }
 
   * {
@@ -44,12 +46,14 @@ const GlobalStyle = createGlobalStyle`
 
 const App: FC = () => {
   return (
-    <BrowserRouter>
-      <AppRoot>
-        <GlobalStyle />
-        <Layout />
-      </AppRoot>
-    </BrowserRouter>
+    <Provider store={store}>
+      <BrowserRouter>
+        <AppRoot>
+          <GlobalStyle />
+          <Layout />
+        </AppRoot>
+      </BrowserRouter>
+    </Provider>
   );
 };
 
