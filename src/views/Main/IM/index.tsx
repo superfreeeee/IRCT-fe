@@ -1,15 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import BoxIcon, { BoxIconType } from '@components/BoxIcon';
 import StatusPoint from '@components/StatusPoint';
-import { UserState } from '@components/StatusPoint/type';
+import { AppState } from '@store/reducers';
+
 import Menu from './Menu';
-import { MenuData } from './Menu/type';
-import { Container, SearchBar, UserInfo } from './styles';
 import FooterNav from './FooterNav';
 import Tabs, { TabOption } from './Tabs';
-import { AppState } from '@store/reducers';
+import { Container, SearchBar, UserInfo } from './styles';
 
 const useTab = (): [TabOption, (option: TabOption) => void] => {
   const [tab, setTab] = useState(TabOption.Team);
@@ -18,7 +17,7 @@ const useTab = (): [TabOption, (option: TabOption) => void] => {
     setTab(option);
   };
 
-  // TODO console
+  // TODO clear console
   useEffect(() => {
     console.log(`[IM] tab = ${tab}`);
   }, [tab]);
@@ -26,33 +25,38 @@ const useTab = (): [TabOption, (option: TabOption) => void] => {
   return [tab, onTabClick];
 };
 
-const fakeList: MenuData[] = [
-  { title: 'Joe Zhao', state: UserState.Idle, pinned: true },
-  {
-    title: 'Tingting',
-    state: UserState.Work,
-    usingApp: 'Notion',
-    pinned: true,
-  },
-  { title: 'Doc PM Group', pinned: true, unread: 31 },
-  { title: 'CC 0', state: UserState.Busy, usingApp: 'figma' },
-  { title: 'Project Beta Group' },
-  { title: 'Project Alpha Group' },
-  { title: 'Project Alpha Group LongLongLongLongNmae' },
-  { title: 'Naiquan Gu', state: UserState.Busy, unread: 3 },
-  { title: 'Hang Yu', state: UserState.Busy, usingApp: 'Pycharm' },
-  { title: 'Shuting Tang', state: UserState.Work, usingApp: 'Notion' },
-];
-
 const IM = () => {
   const userInfo = useSelector((state: AppState) => state.user);
+  const team = useSelector((state: AppState) => state.team);
+  const room = useSelector((state: AppState) => state.room);
+
+  const [tab, onTabClick] = useTab();
+
+  const menuList = useMemo(() => {
+    switch (tab) {
+      case TabOption.Room:
+        return room.list;
+      case TabOption.Team:
+        return team.list;
+    }
+  }, [tab, team.list, room.list]);
+
+  const { org, state: userState } = userInfo;
+
+  // TODO clear console
   useEffect(() => {
     console.log('[IM] userInfo', userInfo);
   }, [userInfo]);
-  const { org, state: userState } = userInfo;
-
-  const [tab, onTabClick] = useTab();
-  const [list, setList] = useState(fakeList);
+  // TODO clear console
+  useEffect(() => {
+    console.log('[IM] team', team);
+    console.log('[IM] team.list', team.list);
+  }, [team]);
+  // TODO clear console
+  useEffect(() => {
+    console.log('[IM] room', room);
+    console.log('[IM] room.list', room.list);
+  }, [room]);
 
   return (
     <Container>
@@ -73,7 +77,7 @@ const IM = () => {
         <BoxIcon type={BoxIconType.Setting} size={'sm'} clickable />
       </SearchBar>
       <Tabs current={tab} onTabClick={onTabClick} />
-      <Menu list={list}></Menu>
+      <Menu list={menuList}></Menu>
       <FooterNav />
     </Container>
   );

@@ -1,7 +1,8 @@
-# Web 前端应用
+# IRCT = Innovation Remote collaboration tools
 
-- 使用技术/框架：React + TS
-- 三方库使用：react-router-dom、redux
-- 工程化：babel、webpack
+## 开发疑问
 
-<!-- create by @youxian/cli -->
+- 高优先级
+  - 
+- 低优先级
+  - Menu item app 与 title 间距

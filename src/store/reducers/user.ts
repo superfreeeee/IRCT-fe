@@ -12,7 +12,7 @@ const initUserState: User = {
   state: UserState.Idle,
 };
 
-const userReducer: Reducer = (prevState = initUserState, action) => {
+const userReducer: Reducer<User> = (prevState = initUserState, action) => {
   return prevState;
 };
 

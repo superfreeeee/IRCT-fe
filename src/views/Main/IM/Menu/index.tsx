@@ -19,7 +19,7 @@ const MenuSep: FC<MenuSepProps> = ({ list, showTooltip, closeTooltip }) => {
       {list.map((data) => {
         return (
           <Item
-            key={data.title}
+            key={`${data.title}-${data.pinned}`}
             data={data}
             showTooltip={showTooltip}
             closeTooltip={closeTooltip}
