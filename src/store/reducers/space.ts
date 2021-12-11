@@ -29,7 +29,7 @@ export interface Space {
 
 // =============== state ===============
 const initSpaceState: Space = {
-  visible: false,
+  visible: true,
   currentSpace: TabOption.Team,
 };
 

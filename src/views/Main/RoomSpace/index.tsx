@@ -45,7 +45,6 @@ const RoomSpace: FC<RoomSpaceProps> = ({}) => {
         {/* --------------- */}
         {/* body */}
         {BodyEl}
-        {/* input */}
       </RoomSpaceWrapper>
     </RoomSpaceContainer>
   );

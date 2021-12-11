@@ -10,3 +10,12 @@ export const wrapFn = (fn: () => void): EventHandler<SyntheticEvent> => {
 
   return wrapper;
 };
+
+/**
+ * 打开新页面
+ *   使用 window.open(_blank)
+ * @param outerLink
+ */
+export const openNewPage = (outerLink: string) => {
+  window.open(outerLink, '_blank');
+};

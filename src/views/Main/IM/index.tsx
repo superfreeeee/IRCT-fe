@@ -19,7 +19,7 @@ import { TabOption } from './type';
 import { IMContainer, SearchBar, UserInfo } from './styles';
 
 const useTab = (): [TabOption, (option: TabOption) => void] => {
-  const [tab, setTab] = useState(TabOption.Room);
+  const [tab, setTab] = useState(TabOption.Team);
 
   const dispatch = useDispatch();
   const switchSpace = useMemo(

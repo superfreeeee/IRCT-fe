@@ -13,18 +13,29 @@ export enum BoxIconType {
   ListCheck = 'bx-list-check',
   LastPage = 'bxs-chevrons-left',
   NextPage = 'bxs-chevrons-right',
+  Send = 'bx-send',
 }
 
 interface BoxIconProps {
   type: BoxIconType;
   size?: 'xs' | 'sm' | 'md' | 'lg';
   clickable?: boolean;
+  onClick?: () => void;
 }
 
-const BoxIcon: FC<BoxIconProps> = ({ type, size, clickable = false }) => {
+const BoxIcon: FC<BoxIconProps> = ({
+  type,
+  size,
+  clickable = false,
+  onClick,
+}) => {
   const sizeStyle = { [`bx-${size}`]: !!size };
   return (
-    <I className={classNames('bx', type, sizeStyle)} clickable={clickable}></I>
+    <I
+      className={classNames('bx', type, sizeStyle)}
+      clickable={clickable}
+      onClick={onClick}
+    />
   );
 };
 

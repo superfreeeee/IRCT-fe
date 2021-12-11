@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 
 import BoxIcon, { BoxIconType } from '@components/BoxIcon';
 import { NavAppContainer } from './styles';
-import { noop } from '@utils';
+import { noop, openNewPage } from '@utils';
 
 interface NavAppProps {
   icon: BoxIconType;
@@ -12,13 +12,13 @@ interface NavAppProps {
 }
 
 const NavApp: FC<NavAppProps> = ({ icon, title, onClick, outerLink }) => {
-  onClick =
-    onClick ||
-    (outerLink
-      ? () => {
-          window.open(outerLink, '_blank');
-        }
-      : noop);
+  if (!onClick) {
+    if (outerLink) {
+      onClick = () => openNewPage(outerLink);
+    } else {
+      onClick = noop;
+    }
+  }
 
   return (
     <NavAppContainer onClick={onClick}>
