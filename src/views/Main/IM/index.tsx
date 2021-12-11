@@ -1,6 +1,5 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { bindActionCreators } from 'redux';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useEffect, useMemo } from 'react';
+import { useSelector } from 'react-redux';
 
 import BoxIcon, { BoxIconType } from '@components/BoxIcon';
 import StatusPoint from '@components/StatusPoint';
@@ -8,57 +7,12 @@ import { AppState } from '@store/reducers';
 import HidePage from '@components/HidePage';
 import Avatar from '@components/Avatar';
 import { AvatarUsage } from '@components/Avatar/type';
-import {
-  switchSpaceAction,
-  toggleSpaceVisibleAction,
-} from '@store/reducers/space';
 import Menu from './Menu';
 import FooterNav from './FooterNav';
 import Tabs from './Tabs';
 import { TabOption } from './type';
 import { IMContainer, SearchBar, UserInfo } from './styles';
-
-const useTab = (): [TabOption, (option: TabOption) => void] => {
-  const [tab, setTab] = useState(TabOption.Team);
-
-  const dispatch = useDispatch();
-  const switchSpace = useMemo(
-    () => bindActionCreators(switchSpaceAction, dispatch),
-    [dispatch]
-  );
-
-  // 初始化
-  useEffect(() => {
-    switchSpace(tab);
-  }, []);
-
-  const onTabClick = useCallback(
-    (option: TabOption) => {
-      setTab(option);
-      switchSpace(option);
-    },
-    [switchSpace]
-  );
-
-  // TODO clear console
-  useEffect(() => {
-    console.log(`[IM] tab = ${tab}`);
-  }, [tab]);
-
-  return [tab, onTabClick];
-};
-
-const useHidePage = (): [boolean, () => void] => {
-  const { visible } = useSelector((state: AppState) => state.space);
-
-  const dispatch = useDispatch();
-  const toggleSpaceVisible = bindActionCreators(
-    toggleSpaceVisibleAction,
-    dispatch
-  );
-
-  return [visible, toggleSpaceVisible];
-};
+import { useTab, useHidePage } from './hooks';
 
 const IM = () => {
   const userInfo = useSelector((state: AppState) => state.user);

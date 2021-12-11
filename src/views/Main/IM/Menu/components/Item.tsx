@@ -4,8 +4,8 @@ import StatusPoint from '@components/StatusPoint';
 import UnreadPin from '@components/UnreadPin';
 import React, { FC, useCallback, useRef } from 'react';
 
-import { ItemContainer } from './styles';
-import { MenuData } from './type';
+import { ItemContainer } from '../styles';
+import { MenuData } from '../type';
 
 export interface ItemProps {
   data: MenuData;

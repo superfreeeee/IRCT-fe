@@ -1,12 +1,14 @@
-import StatusPoint from '@components/StatusPoint';
-import classNames from 'classnames';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC } from 'react';
 
-import Item, { ItemProps } from './Item';
-import { Container, ItemTooltip, MenuSepContainer, MenuSepTag } from './styles';
-import Tooltip from './Tooltip';
+import Item, { ItemProps } from './components/Item';
+import Tooltip from './components/Tooltip';
+import { Container, MenuSepContainer, MenuSepTag } from './styles';
+import { useTooltip } from './hooks';
 import { MenuData } from './type';
 
+/**
+ * 列表分区（置顶/其他）
+ */
 interface MenuSepProps {
   list: MenuData[];
   showTooltip: (content: string, position) => void;
@@ -30,6 +32,13 @@ const MenuSep: FC<MenuSepProps> = ({ list, showTooltip, closeTooltip }) => {
   );
 };
 
+/**
+ * IM - Menu 列表
+ *   Team 联络人列表
+ *   Room 仿真空间列表
+ * @param param0
+ * @returns
+ */
 interface MenuProps {
   list: MenuData[];
 }
@@ -40,28 +49,7 @@ const Menu: FC<MenuProps> & { Item: FC<ItemProps> } = ({ list }) => {
 
   const noPinned = !pinnedList.length;
 
-  const [tooltipVisible, setTooltipVisible] = useState(false);
-  const [tooltipContent, setTooltipContent] = useState('');
-  const [tooltipPosition, setTooltipPosition] = useState({
-    bottom: 0,
-    left: 0,
-  });
-
-  const showTooltip = (content: string, position) => {
-    setTooltipVisible(true);
-    setTooltipContent(content);
-    setTooltipPosition(position);
-  };
-
-  const closeTooltip = () => {
-    setTooltipVisible(false);
-  };
-
-  useEffect(() => {
-    if (tooltipVisible) {
-      console.log(`[Menu] tooltipContent = ${tooltipContent}`);
-    }
-  }, [tooltipVisible]);
+  const [tooltipState, { showTooltip, closeTooltip }] = useTooltip();
 
   return (
     <Container>
@@ -84,14 +72,7 @@ const Menu: FC<MenuProps> & { Item: FC<ItemProps> } = ({ list }) => {
         closeTooltip={closeTooltip}
       />
       {/* hover 文字 */}
-      <Tooltip>
-        <ItemTooltip
-          style={{ ...tooltipPosition }}
-          className={classNames({ active: tooltipVisible })}
-        >
-          {tooltipContent}
-        </ItemTooltip>
-      </Tooltip>
+      <Tooltip state={tooltipState} />
     </Container>
   );
 };
