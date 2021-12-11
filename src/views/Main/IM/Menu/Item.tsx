@@ -1,3 +1,5 @@
+import Avatar from '@components/Avatar';
+import { AvatarUsage } from '@components/Avatar/type';
 import StatusPoint from '@components/StatusPoint';
 import UnreadPin from '@components/UnreadPin';
 import React, { FC, useCallback, useRef } from 'react';
@@ -35,7 +37,7 @@ const Item: FC<ItemProps> = ({
       onMouseLeave={closeTooltip}
     >
       <div className="left">
-        <div className="avatar"></div>
+        <Avatar usage={AvatarUsage.IMMenuItem} />
         <span className="title">{title}</span>
       </div>
       {(usingApp || state) && (

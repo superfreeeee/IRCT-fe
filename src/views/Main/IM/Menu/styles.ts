@@ -1,3 +1,4 @@
+import Avatar from '@components/Avatar';
 import styled from 'styled-components';
 
 // ========== Menu Item ==========
@@ -35,12 +36,8 @@ export const ItemContainer = styled.li`
     overflow: hidden;
   }
 
-  .avatar {
-    min-width: 27px;
-    height: 27px;
+  ${Avatar} {
     margin-right: 10px;
-    border: 2px solid #fff;
-    border-radius: 50%;
   }
 
   .title {
@@ -72,6 +69,7 @@ export const ItemTooltip = styled.div`
   color: #fff;
   transform: translateX(-50%);
   transition: all 0.2s;
+  z-index: 1000;
 
   &::after {
     content: '';

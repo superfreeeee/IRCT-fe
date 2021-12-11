@@ -1,21 +1,36 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { bindActionCreators } from 'redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import BoxIcon, { BoxIconType } from '@components/BoxIcon';
 import StatusPoint from '@components/StatusPoint';
 import { AppState } from '@store/reducers';
-
+import HidePage from '@components/HidePage';
+import Avatar from '@components/Avatar';
+import { AvatarUsage } from '@components/Avatar/type';
+import { switchSpaceAction } from '@store/reducers/space';
 import Menu from './Menu';
 import FooterNav from './FooterNav';
-import Tabs, { TabOption } from './Tabs';
-import { Container, SearchBar, UserInfo } from './styles';
+import Tabs from './Tabs';
+import { TabOption } from './type';
+import { IMContainer, SearchBar, UserInfo } from './styles';
 
 const useTab = (): [TabOption, (option: TabOption) => void] => {
   const [tab, setTab] = useState(TabOption.Team);
 
-  const onTabClick = (option: TabOption) => {
-    setTab(option);
-  };
+  const dispatch = useDispatch();
+  const switchSpace = useMemo(
+    () => bindActionCreators(switchSpaceAction, dispatch),
+    [dispatch]
+  );
+
+  const onTabClick = useCallback(
+    (option: TabOption) => {
+      setTab(option);
+      switchSpace(option);
+    },
+    [switchSpace]
+  );
 
   // TODO clear console
   useEffect(() => {
@@ -59,27 +74,32 @@ const IM = () => {
   }, [room]);
 
   return (
-    <Container>
+    <IMContainer>
       <UserInfo>
         <div className="selection">
           <BoxIcon type={BoxIconType.ExpandVertical} />
           <span>{org}</span>
         </div>
-        <div className="avatar">
+        <Avatar usage={AvatarUsage.IMUserInfo}>
           <StatusPoint style={{ right: 2, bottom: 2 }} state={userState} />
-        </div>
+        </Avatar>
       </UserInfo>
       <SearchBar>
-        <div className="input">
+        <label className="input" htmlFor="search">
           <BoxIcon type={BoxIconType.Search} />
-          <input placeholder="Search for people or room" type="text" />
-        </div>
+          <input
+            id="search"
+            placeholder="Search for people or room"
+            type="text"
+          />
+        </label>
         <BoxIcon type={BoxIconType.Setting} size={'sm'} clickable />
       </SearchBar>
       <Tabs current={tab} onTabClick={onTabClick} />
       <Menu list={menuList}></Menu>
       <FooterNav />
-    </Container>
+      <HidePage position={{ left: 266, top: 60 }} />
+    </IMContainer>
   );
 };
 

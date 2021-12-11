@@ -13,6 +13,7 @@ const GlobalStyle = createGlobalStyle`
     /* 大区域背景 */
     --root_bg: #d9d9d9;
     --im_bg: #757575;
+    --room_space_bg: #C4C4C4;
     /* menu tag 相关 */
     --menu_tab_bg: #444444;
     --menu_tab_bg_active: #292929;
@@ -24,6 +25,8 @@ const GlobalStyle = createGlobalStyle`
     --menu_item_tip_bg: #2E2E2E;
     --menu_item_option_bg: #C4C4C4;
     --menu_item_unread_bg: #FF8989;
+    /* room space 相关 */
+    --room_space_area_bg: #EDEDED;
     /* 状态颜色 */
     --state_idle: #5DD45A;
     --state_work: #5ABED4;

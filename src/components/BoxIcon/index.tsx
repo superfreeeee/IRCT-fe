@@ -11,6 +11,8 @@ export enum BoxIconType {
   File = 'bx-file',
   Branch = 'bx-git-branch',
   ListCheck = 'bx-list-check',
+  LastPage = 'bxs-chevrons-left',
+  NextPage = 'bxs-chevrons-right',
 }
 
 interface BoxIconProps {

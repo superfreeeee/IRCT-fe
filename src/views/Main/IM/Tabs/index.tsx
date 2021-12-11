@@ -2,11 +2,7 @@ import classNames from 'classnames';
 import React, { FC } from 'react';
 
 import { Tab, TabsContainer } from './styles';
-
-export enum TabOption {
-  Room = 'Room',
-  Team = 'Team',
-}
+import { TabOption } from '../type';
 
 const options = [TabOption.Room, TabOption.Team];
 

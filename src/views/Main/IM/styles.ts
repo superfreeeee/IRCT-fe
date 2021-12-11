@@ -1,15 +1,18 @@
+import Avatar from '@components/Avatar';
 import styled from 'styled-components';
 
-export const Container = styled.div`
+import { IM_WIDTH } from '../styles';
+
+export const IMContainer = styled.div`
   position: relative;
-  max-width: 20%;
-  min-width: 266px;
+  width: ${IM_WIDTH}px;
   display: flex;
   flex-direction: column;
   height: 100%;
   padding: 20px 14px;
   border-radius: 30px;
   background-color: var(--im_bg);
+  z-index: 100;
 `;
 
 export const UserInfo = styled.div`
@@ -31,12 +34,8 @@ export const UserInfo = styled.div`
     }
   }
 
-  .avatar {
+  ${Avatar} {
     position: relative;
-    width: 55px;
-    height: 55px;
-    border-radius: 50%;
-    border: 2px solid #fff;
   }
 `;
 

@@ -8,5 +8,5 @@ export const I = styled.i<IProps>`
   display: flex;
   justify-content: center;
   align-items: center;
-  ${({ clickable }) => (clickable ? `cursor: pointer;` : '')}
+  cursor: ${({ clickable }) => (clickable ? 'pointer' : 'inherit')};
 `;
