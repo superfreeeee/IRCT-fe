@@ -1,22 +1,13 @@
-import Avatar from '@components/Avatar';
-import { AvatarUsage } from '@components/Avatar/type';
-import { AppState } from '@store/reducers';
-import classNames from 'classnames';
 import React, { FC, useMemo } from 'react';
 import { useSelector } from 'react-redux';
+import classNames from 'classnames';
+
+import { AppState } from '@store/reducers';
 import { TabOption } from '../IM/type';
 import Chat from './Chat';
-import HeaderActions from './HeaderActions';
+import Header from './Header';
 import Room from './Room';
-
-import {
-  Divider,
-  HeaderMain,
-  HeaderSide,
-  RoomSpaceContainer,
-  RoomSpaceHeader,
-  RoomSpaceWrapper,
-} from './styles';
+import { Divider, RoomSpaceContainer, RoomSpaceWrapper } from './styles';
 import { RoomSpaceType, TabOption2RoomSpaceTypeMapper } from './type';
 
 const option2TypeMapper: TabOption2RoomSpaceTypeMapper = {
@@ -31,36 +22,24 @@ const RoomSpace: FC<RoomSpaceProps> = ({}) => {
     (state: AppState) => state.space
   );
 
-  const isRoom = currentSpace === TabOption.Room;
-
   const roomSpaceType = useMemo(
     () => option2TypeMapper[currentSpace],
     [currentSpace]
   );
+
+  const isRoom = roomSpaceType === RoomSpaceType.Room;
 
   const BodyEl = useMemo(() => {
     return isRoom ? <Room /> : <Chat />;
   }, [isRoom]);
 
   return (
-    <RoomSpaceContainer className={classNames(roomSpaceType)}>
+    <RoomSpaceContainer
+      className={classNames(roomSpaceType, { hidden: !visible })}
+    >
       <RoomSpaceWrapper>
         {/* Header */}
-        <RoomSpaceHeader>
-          <HeaderMain>
-            {isRoom ? (
-              <span>Coffee Room</span>
-            ) : (
-              <>
-                <Avatar usage={AvatarUsage.RoomSpaceHeader} />
-                <span>Joe Zhao</span>
-              </>
-            )}
-          </HeaderMain>
-          <HeaderSide>
-            <HeaderActions />
-          </HeaderSide>
-        </RoomSpaceHeader>
+        <Header isRoom={isRoom} />
         {/* --------------- */}
         <Divider />
         {/* --------------- */}

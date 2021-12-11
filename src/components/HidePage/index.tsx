@@ -1,7 +1,8 @@
-import React, { FC } from 'react';
+import React, { FC, useMemo } from 'react';
 
 import BoxIcon, { BoxIconType } from '@components/BoxIcon';
 import { HidePageWrapper } from './styles';
+import { wrapFn } from '@utils';
 
 interface AbsolutePosition {
   top?: number;
@@ -13,11 +14,13 @@ interface AbsolutePosition {
 interface HidePageProps {
   position?: AbsolutePosition;
   revert?: boolean;
+  onClick?: () => void;
 }
 
-const HidePage: FC<HidePageProps> = ({ position, revert = false }) => {
+const HidePage: FC<HidePageProps> = ({ position, revert = false, onClick }) => {
+  const wrappedCb = useMemo(() => wrapFn(onClick), [onClick]);
   return (
-    <HidePageWrapper style={{ ...position }}>
+    <HidePageWrapper style={{ ...position }} onClick={wrappedCb}>
       <BoxIcon
         type={revert ? BoxIconType.NextPage : BoxIconType.LastPage}
         size={'sm'}

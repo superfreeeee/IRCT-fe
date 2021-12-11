@@ -1,5 +1,6 @@
-import Avatar from '@components/Avatar';
 import styled from 'styled-components';
+
+import Avatar from '@components/Avatar';
 
 // ========== Menu Item ==========
 export const ItemContainer = styled.li`

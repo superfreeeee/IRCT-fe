@@ -8,7 +8,10 @@ import { AppState } from '@store/reducers';
 import HidePage from '@components/HidePage';
 import Avatar from '@components/Avatar';
 import { AvatarUsage } from '@components/Avatar/type';
-import { switchSpaceAction } from '@store/reducers/space';
+import {
+  switchSpaceAction,
+  toggleSpaceVisibleAction,
+} from '@store/reducers/space';
 import Menu from './Menu';
 import FooterNav from './FooterNav';
 import Tabs from './Tabs';
@@ -16,13 +19,18 @@ import { TabOption } from './type';
 import { IMContainer, SearchBar, UserInfo } from './styles';
 
 const useTab = (): [TabOption, (option: TabOption) => void] => {
-  const [tab, setTab] = useState(TabOption.Team);
+  const [tab, setTab] = useState(TabOption.Room);
 
   const dispatch = useDispatch();
   const switchSpace = useMemo(
     () => bindActionCreators(switchSpaceAction, dispatch),
     [dispatch]
   );
+
+  // 初始化
+  useEffect(() => {
+    switchSpace(tab);
+  }, []);
 
   const onTabClick = useCallback(
     (option: TabOption) => {
@@ -38,6 +46,18 @@ const useTab = (): [TabOption, (option: TabOption) => void] => {
   }, [tab]);
 
   return [tab, onTabClick];
+};
+
+const useHidePage = (): [boolean, () => void] => {
+  const { visible } = useSelector((state: AppState) => state.space);
+
+  const dispatch = useDispatch();
+  const toggleSpaceVisible = bindActionCreators(
+    toggleSpaceVisibleAction,
+    dispatch
+  );
+
+  return [visible, toggleSpaceVisible];
 };
 
 const IM = () => {
@@ -73,6 +93,8 @@ const IM = () => {
     console.log('[IM] room.list', room.list);
   }, [room]);
 
+  const [spaceVisible, toggleSpaceVisible] = useHidePage();
+
   return (
     <IMContainer>
       <UserInfo>
@@ -98,7 +120,11 @@ const IM = () => {
       <Tabs current={tab} onTabClick={onTabClick} />
       <Menu list={menuList}></Menu>
       <FooterNav />
-      <HidePage position={{ left: 266, top: 60 }} />
+      <HidePage
+        position={{ left: 266, top: 60 }}
+        revert={!spaceVisible}
+        onClick={toggleSpaceVisible}
+      />
     </IMContainer>
   );
 };

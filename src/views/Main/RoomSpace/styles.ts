@@ -1,6 +1,5 @@
 import Avatar from '@components/Avatar';
 import styled from 'styled-components';
-import { TabOption } from '../IM/type';
 
 import { ROOM_SPACE_WIDTH_CHAT, ROOM_SPACE_WIDTH_ROOM } from '../styles';
 import { RoomSpaceType } from './type';
@@ -11,6 +10,10 @@ const ROOM_SPACE_HEADER_PADDING = 18;
 export const RoomSpaceContainer = styled.div`
   height: 100%;
   z-index: 10;
+
+  &.hidden {
+    display: none;
+  }
 
   &.${RoomSpaceType.Room} {
     width: ${ROOM_SPACE_WIDTH_ROOM}px;
