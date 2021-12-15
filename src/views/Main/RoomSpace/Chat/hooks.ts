@@ -37,7 +37,16 @@ export const useInput = (): [
 /**
  * Enter 输入监听
  */
-export const useEnterListener = ([input, { onSend, resetInput }]) => {
+interface UseEventListenerPrarms {
+  input: string;
+  onSend: (input: string) => void;
+  resetInput: () => void;
+}
+export const useEnterListener = ({
+  input,
+  onSend,
+  resetInput,
+}: UseEventListenerPrarms) => {
   // 用户输入 ref
   const inputRef = useClosestRef(input);
   // onSend 方法
@@ -50,13 +59,7 @@ export const useEnterListener = ([input, { onSend, resetInput }]) => {
    *   调用 onSend 并清空 input 输入
    */
   const send = useCallback(() => {
-    const input = inputRef.current;
-    const onSend = sendRef.current;
-
-    // TODO clear console
-    console.log(`[Chat] send = '${input}'`);
-
-    onSend && onSend(input);
+    sendRef.current(inputRef.current);
     resetInput();
   }, []);
 

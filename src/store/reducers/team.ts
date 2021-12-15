@@ -1,12 +1,28 @@
 import { UserState } from '@components/StatusPoint/type';
 import { Reducer } from 'redux';
 
-export interface Team {
-  list: TeamData[];
-  selected: number; // selectedIndex
+// =============== actions ===============
+export enum TeamActionType {
+  EnterTeam = 'Team#EnterTeam',
+  ExitTeam = 'Team#ExitTeam',
 }
 
-interface TeamData {
+export const enterTeamAction = (teamId: string) => {
+  return {
+    type: TeamActionType.EnterTeam,
+    payload: teamId,
+  };
+};
+
+export const exitTeamAction = () => {
+  return {
+    type: TeamActionType.ExitTeam,
+  };
+};
+
+// =============== type ===============
+export interface TeamData {
+  id: string;
   pinned?: boolean;
   title: string;
   state?: UserState;
@@ -14,29 +30,55 @@ interface TeamData {
   usingApp?: string;
 }
 
+export interface Team {
+  list: TeamData[];
+  selected: string;
+}
+
+// =============== state ===============
 const initTeamState: Team = {
   list: [
-    { title: 'Joe Zhao', state: UserState.Idle, pinned: true },
+    { id: 'user-0', title: 'Joe Zhao', state: UserState.Idle, pinned: true },
     {
+      id: 'user-1',
       title: 'Tingting',
       state: UserState.Work,
       usingApp: 'Notion',
       pinned: true,
     },
-    { title: 'Doc PM Group', pinned: true, unread: 31 },
-    { title: 'CC 0', state: UserState.Busy, usingApp: 'figma' },
-    { title: 'Project Beta Group' },
-    { title: 'Project Alpha Group' },
-    { title: 'Project Alpha Group LongLongLongLongNmae' },
-    { title: 'Naiquan Gu', state: UserState.Busy, unread: 3 },
-    { title: 'Hang Yu', state: UserState.Busy, usingApp: 'Pycharm' },
-    { title: 'Shuting Tang', state: UserState.Work, usingApp: 'Notion' },
+    { id: 'user-2', title: 'Doc PM Group', pinned: true, unread: 31 },
+    { id: 'user-3', title: 'CC 0', state: UserState.Busy, usingApp: 'figma' },
+    { id: 'user-4', title: 'Project Beta Group' },
+    { id: 'user-5', title: 'Project Alpha Group' },
+    { id: 'user-6', title: 'Project Alpha Group LongLongLongLongNmae' },
+    { id: 'user-7', title: 'Naiquan Gu', state: UserState.Busy, unread: 3 },
+    {
+      id: 'user-8',
+      title: 'Hang Yu',
+      state: UserState.Busy,
+      usingApp: 'Pycharm',
+    },
+    {
+      id: 'user-9',
+      title: 'Shuting Tang',
+      state: UserState.Work,
+      usingApp: 'Notion',
+    },
   ],
-  selected: -1,
+  // TODO recover mock
+  // selected: '',
+  selected: 'user-0',
 };
 
 const teamReducer: Reducer<Team> = (prevState = initTeamState, action) => {
-  return prevState;
+  switch (action.type) {
+    case TeamActionType.EnterTeam:
+      return { ...prevState, selected: action.payload };
+    case TeamActionType.ExitTeam:
+      return { ...prevState, selected: '' };
+    default:
+      return prevState;
+  }
 };
 
 export default teamReducer;

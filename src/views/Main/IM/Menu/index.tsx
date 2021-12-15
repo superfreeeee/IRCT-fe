@@ -10,21 +10,31 @@ import { MenuData } from './type';
  * 列表分区（置顶/其他）
  */
 interface MenuSepProps {
+  selected: string;
   list: MenuData[];
   showTooltip: (content: string, position) => void;
   closeTooltip: () => void;
+  onSelect: (id: string) => void;
 }
 
-const MenuSep: FC<MenuSepProps> = ({ list, showTooltip, closeTooltip }) => {
+const MenuSep: FC<MenuSepProps> = ({
+  selected,
+  list,
+  showTooltip,
+  closeTooltip,
+  onSelect,
+}) => {
   return (
     <MenuSepContainer>
       {list.map((data) => {
         return (
           <Item
-            key={`${data.title}-${data.pinned}`}
+            key={data.id}
+            selected={selected === data.id}
             data={data}
             showTooltip={showTooltip}
             closeTooltip={closeTooltip}
+            onSelect={onSelect}
           ></Item>
         );
       })}
@@ -41,9 +51,15 @@ const MenuSep: FC<MenuSepProps> = ({ list, showTooltip, closeTooltip }) => {
  */
 interface MenuProps {
   list: MenuData[];
+  selected: string;
+  onItemClick: (id: string) => void;
 }
 
-const Menu: FC<MenuProps> & { Item: FC<ItemProps> } = ({ list }) => {
+const Menu: FC<MenuProps> & { Item: FC<ItemProps> } = ({
+  list,
+  selected,
+  onItemClick,
+}) => {
   const pinnedList = list.filter((data) => data.pinned);
   const otherList = list.filter((data) => !data.pinned);
 
@@ -58,18 +74,22 @@ const Menu: FC<MenuProps> & { Item: FC<ItemProps> } = ({ list }) => {
           <MenuSepTag>置顶</MenuSepTag>
           {/* 置顶列表 */}
           <MenuSep
+            selected={selected}
             list={pinnedList}
             showTooltip={showTooltip}
             closeTooltip={closeTooltip}
+            onSelect={onItemClick}
           />
           <MenuSepTag>其他</MenuSepTag>
         </>
       )}
       {/* 其他列表 */}
       <MenuSep
+        selected={selected}
         list={otherList}
         showTooltip={showTooltip}
         closeTooltip={closeTooltip}
+        onSelect={onItemClick}
       />
       {/* hover 文字 */}
       <Tooltip state={tooltipState} />

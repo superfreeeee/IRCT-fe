@@ -27,6 +27,8 @@ const GlobalStyle = createGlobalStyle`
     --menu_item_unread_bg: #FF8989;
     /* room space 相关 */
     --room_space_area_bg: #EDEDED;
+    --room_space_chat_record_bg_other: #838383;
+    --room_space_chat_record_bg_self: #E9E9E9;
     /* 状态颜色 */
     --state_idle: #5DD45A;
     --state_work: #5ABED4;

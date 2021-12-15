@@ -17,7 +17,7 @@ const Tooltip: FC<TooltipProps> = ({
   // TODO clear console
   useEffect(() => {
     if (visible) {
-      console.log(`[Menu] tooltipContent = ${content}`);
+      // console.log(`[Menu] tooltipContent = ${content}`);
     }
   }, [visible]);
 

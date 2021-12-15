@@ -5,6 +5,7 @@ import { UserState } from '@components/StatusPoint/type';
  */
 export interface MenuData {
   // public attr
+  id: string;
   avatarUrl?: string;
   pinned?: boolean;
   title: string;

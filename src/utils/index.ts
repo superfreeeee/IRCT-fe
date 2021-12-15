@@ -19,3 +19,7 @@ export const wrapFn = (fn: () => void): EventHandler<SyntheticEvent> => {
 export const openNewPage = (outerLink: string) => {
   window.open(outerLink, '_blank');
 };
+
+export const scrollToBottom = (target: HTMLDivElement) => {
+  target.scrollTo({ top: target.scrollHeight });
+};

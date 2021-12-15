@@ -25,7 +25,7 @@ export const ItemContainer = styled.li`
     background-color: var(--menu_item_bg_hover);
   }
 
-  &.active {
+  &.selected {
     background-color: var(--menu_item_bg_active);
   }
 

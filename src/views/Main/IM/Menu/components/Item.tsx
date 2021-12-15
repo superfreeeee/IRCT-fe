@@ -2,21 +2,26 @@ import Avatar from '@components/Avatar';
 import { AvatarUsage } from '@components/Avatar/type';
 import StatusPoint from '@components/StatusPoint';
 import UnreadPin from '@components/UnreadPin';
+import classNames from 'classnames';
 import React, { FC, useCallback, useRef } from 'react';
 
 import { ItemContainer } from '../styles';
 import { MenuData } from '../type';
 
 export interface ItemProps {
+  selected: boolean;
   data: MenuData;
   showTooltip: (content: string, position) => void;
   closeTooltip: () => void;
+  onSelect: (id: string) => void;
 }
 
 const Item: FC<ItemProps> = ({
-  data: { title, state, unread, usingApp },
+  selected,
+  data: { id, title, state, unread, usingApp },
   showTooltip,
   closeTooltip,
+  onSelect,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -31,8 +36,10 @@ const Item: FC<ItemProps> = ({
 
   return (
     <ItemContainer
+      className={classNames({ selected })}
       // @ts-ignore
       ref={containerRef}
+      onClick={() => onSelect(id)}
       onMouseOver={onMouseOver}
       onMouseLeave={closeTooltip}
     >
