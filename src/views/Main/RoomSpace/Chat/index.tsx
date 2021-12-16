@@ -38,7 +38,7 @@ const Chat: FC<ChatProps> = ({ isInRoom = false, onSend }) => {
       `[Chat] space.${isInRoom ? 'room' : 'team'}Chat[${selected}] records =`,
       records
     );
-  }, [records]);
+  }, [chatHistory[selected]]);
 
   const [input, onInputChange, { resetInput }] = useInput();
 

@@ -1,9 +1,14 @@
 import Avatar from '@components/Avatar';
 import { AvatarUsage } from '@components/Avatar/type';
+import BoxIcon, { BoxIconType } from '@components/BoxIcon';
+import EmojiIcon, { EmojiIconType, EMOJI_PREFIX } from '@components/EmojiIcon';
 import StatusPoint from '@components/StatusPoint';
 import UnreadPin from '@components/UnreadPin';
+import { AppState } from '@store/reducers';
 import classNames from 'classnames';
-import React, { FC, useCallback, useRef } from 'react';
+import React, { FC, useCallback, useMemo, useRef } from 'react';
+import { useSelector } from 'react-redux';
+import { TabOption } from '../../type';
 
 import { ItemContainer } from '../styles';
 import { MenuData } from '../type';
@@ -18,11 +23,16 @@ export interface ItemProps {
 
 const Item: FC<ItemProps> = ({
   selected,
-  data: { id, title, state, unread, usingApp },
+  data: { id, avatar, title, state, unread, usingApp },
   showTooltip,
   closeTooltip,
   onSelect,
 }) => {
+  const currentSpace = useSelector(
+    (state: AppState) => state.space.currentSpace
+  );
+  const isRoom = currentSpace === TabOption.Room;
+
   const containerRef = useRef<HTMLDivElement>(null);
 
   const onMouseOver = useCallback(() => {
@@ -34,6 +44,23 @@ const Item: FC<ItemProps> = ({
     showTooltip('Hello Tooltip' as string, pos);
   }, [showTooltip]);
 
+  const AvatarEl = useMemo(() => {
+    if (!avatar) {
+      return isRoom ? (
+        <EmojiIcon type={EmojiIconType.Man} size={20} />
+      ) : (
+        <BoxIcon type={BoxIconType.Group} />
+      );
+    }
+
+    if (avatar.startsWith(EMOJI_PREFIX)) {
+      const type = avatar.substring(EMOJI_PREFIX.length) as EmojiIconType;
+      return <EmojiIcon type={type} size={20} />;
+    } else {
+      return <BoxIcon type={BoxIconType.Group} />;
+    }
+  }, [isRoom, avatar]);
+
   return (
     <ItemContainer
       className={classNames({ selected })}
@@ -44,7 +71,9 @@ const Item: FC<ItemProps> = ({
       onMouseLeave={closeTooltip}
     >
       <div className="left">
-        <Avatar usage={AvatarUsage.IMMenuItem} />
+        <Avatar usage={AvatarUsage.IMMenuItem} default={!isRoom}>
+          {AvatarEl}
+        </Avatar>
         <span className="title">{title}</span>
       </div>
       {(usingApp || state) && (

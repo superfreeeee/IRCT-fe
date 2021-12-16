@@ -1,3 +1,4 @@
+import { EmojiIconType, EMOJI_PREFIX } from '@components/EmojiIcon';
 import { Reducer } from 'redux';
 
 // =============== actions ===============
@@ -31,6 +32,7 @@ export enum RoomType {
 export interface RoomData {
   id: string;
   type: RoomType;
+  avatar?: string;
   pinned?: boolean;
   title: string;
   member: number;
@@ -47,6 +49,7 @@ const initRoomState: Room = {
     {
       id: 'room-0',
       type: RoomType.Office,
+      avatar: `${EMOJI_PREFIX}${EmojiIconType.OfficeChair}`,
       title: 'My Team Office',
       pinned: true,
       member: 4,
@@ -54,6 +57,7 @@ const initRoomState: Room = {
     {
       id: 'room-1',
       type: RoomType.Coffee,
+      avatar: `${EMOJI_PREFIX}${EmojiIconType.Coffee}`,
       title: 'Coffee Room',
       pinned: true,
       member: 3,
@@ -61,6 +65,7 @@ const initRoomState: Room = {
     {
       id: 'room-2',
       type: RoomType.Meeting,
+      avatar: `${EMOJI_PREFIX}${EmojiIconType.Book}`,
       title: 'Meeting Room',
       pinned: true,
       member: 0,
@@ -68,39 +73,62 @@ const initRoomState: Room = {
     {
       id: 'room-3',
       type: RoomType.Other,
+      avatar: `${EMOJI_PREFIX}${EmojiIconType.Golf}`,
       title: 'Gym',
       pinned: true,
       member: 5,
     },
-    { id: 'room-4', type: RoomType.Office, title: 'IT Office', member: 1 },
+    {
+      id: 'room-4',
+      type: RoomType.Office,
+      avatar: `${EMOJI_PREFIX}${EmojiIconType.Wrench}`,
+      title: 'IT Office',
+      member: 1,
+    },
     {
       id: 'room-5',
       type: RoomType.Office,
+      avatar: `${EMOJI_PREFIX}${EmojiIconType.Pencil}`,
       title: 'Design Office 1',
       member: 9,
     },
     {
       id: 'room-6',
       type: RoomType.Other,
+      avatar: `${EMOJI_PREFIX}${EmojiIconType.Noodles}`,
       title: ' Dining Room 1 LongLongLongLongName',
       member: 3,
     },
-    { id: 'room-7', type: RoomType.Office, title: "Joe's Office", member: 1 },
+    {
+      id: 'room-7',
+      type: RoomType.Office,
+      avatar: `${EMOJI_PREFIX}${EmojiIconType.Man}`,
+      title: "Joe's Office",
+      member: 1,
+    },
     {
       id: 'room-8',
       type: RoomType.Office,
+      avatar: `${EMOJI_PREFIX}${EmojiIconType.Pencil}`,
       title: 'Design Office 2',
       member: 2,
     },
     {
       id: 'room-9',
       type: RoomType.Meeting,
+      avatar: `${EMOJI_PREFIX}${EmojiIconType.Computer}`,
       title: 'Engineer Room 1',
       member: 4,
     },
-    { id: 'room-10', type: RoomType.Other, title: ' Dining Room 1', member: 3 },
+    {
+      id: 'room-10',
+      type: RoomType.Other,
+      avatar: `${EMOJI_PREFIX}${EmojiIconType.Noodles}`,
+      title: ' Dining Room 1',
+      member: 3,
+    },
   ],
-  selected: '',
+  selected: 'room-1',
 };
 
 const roomReducer: Reducer<Room> = (prevState = initRoomState, action) => {

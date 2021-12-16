@@ -14,6 +14,7 @@ export enum BoxIconType {
   LastPage = 'bxs-chevrons-left',
   NextPage = 'bxs-chevrons-right',
   Send = 'bx-send',
+  Group = 'bx-group',
 }
 
 interface BoxIconProps {

@@ -14,6 +14,7 @@ const GlobalStyle = createGlobalStyle`
     --root_bg: #d9d9d9;
     --im_bg: #757575;
     --room_space_bg: #C4C4C4;
+    --avatar_default_bg: #777;
     /* menu tag 相关 */
     --menu_tab_bg: #444444;
     --menu_tab_bg_active: #292929;

@@ -24,6 +24,7 @@ export const exitTeamAction = () => {
 export interface TeamData {
   id: string;
   pinned?: boolean;
+  avatar?: string;
   title: string;
   state?: UserState;
   unread?: number;
@@ -66,8 +67,8 @@ const initTeamState: Team = {
     },
   ],
   // TODO recover mock
-  // selected: '',
-  selected: 'user-0',
+  selected: '',
+  // selected: 'user-0',
 };
 
 const teamReducer: Reducer<Team> = (prevState = initTeamState, action) => {

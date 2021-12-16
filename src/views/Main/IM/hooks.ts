@@ -7,16 +7,16 @@ import {
   switchSpaceAction,
   toggleSpaceVisibleAction,
 } from '@store/reducers/space';
-import { TabOption } from './type';
 import { enterRoomAction, exitRoomAction } from '@store/reducers/room';
 import { enterTeamAction, exitTeamAction } from '@store/reducers/team';
+import { TabOption } from './type';
 
 /**
  * Tabs
  * @returns
  */
 export const useTab = (): [TabOption, (option: TabOption) => void] => {
-  const [tab, setTab] = useState(TabOption.Team);
+  const [tab, setTab] = useState(TabOption.Room);
 
   const dispatch = useDispatch();
   const switchSpace = useMemo(
@@ -81,10 +81,8 @@ export const useMenu = (tab: TabOption) => {
 
     return (spaceId: string) => {
       if (spaceId === selected) {
-        console.log('exit');
         options[tab].exit();
       } else {
-        console.log('enter');
         options[tab].enter(spaceId);
       }
     };
