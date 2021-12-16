@@ -1,8 +1,8 @@
 import React, { FC, useMemo } from 'react';
 
 import BoxIcon, { BoxIconType } from '@components/BoxIcon';
-import { HidePageWrapper } from './styles';
 import { wrapFn } from '@utils';
+import { HidePageWrapper } from './styles';
 
 interface AbsolutePosition {
   top?: number;

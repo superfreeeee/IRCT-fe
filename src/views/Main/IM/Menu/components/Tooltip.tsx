@@ -1,6 +1,6 @@
-import classNames from 'classnames';
-import ReactDOM from 'react-dom';
 import React, { FC, useEffect } from 'react';
+import ReactDOM from 'react-dom';
+import classNames from 'classnames';
 
 import { TooltipState } from '../hooks';
 import { ItemTooltip } from '../styles';

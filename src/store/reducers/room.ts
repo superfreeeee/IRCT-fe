@@ -1,5 +1,6 @@
-import { EmojiIconType, EMOJI_PREFIX } from '@components/EmojiIcon';
 import { Reducer } from 'redux';
+
+import { EmojiIconType, EMOJI_PREFIX } from '@components/EmojiIcon';
 
 // =============== actions ===============
 export enum RoomActionType {

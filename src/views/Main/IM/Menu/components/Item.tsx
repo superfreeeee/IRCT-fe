@@ -1,3 +1,7 @@
+import React, { FC, useCallback, useMemo, useRef } from 'react';
+import { useSelector } from 'react-redux';
+import classNames from 'classnames';
+
 import Avatar from '@components/Avatar';
 import { AvatarUsage } from '@components/Avatar/type';
 import BoxIcon, { BoxIconType } from '@components/BoxIcon';
@@ -5,11 +9,7 @@ import EmojiIcon, { EmojiIconType, EMOJI_PREFIX } from '@components/EmojiIcon';
 import StatusPoint from '@components/StatusPoint';
 import UnreadPin from '@components/UnreadPin';
 import { AppState } from '@store/reducers';
-import classNames from 'classnames';
-import React, { FC, useCallback, useMemo, useRef } from 'react';
-import { useSelector } from 'react-redux';
 import { TabOption } from '../../type';
-
 import { ItemContainer } from '../styles';
 import { MenuData } from '../type';
 

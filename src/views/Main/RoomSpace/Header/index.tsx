@@ -1,16 +1,14 @@
-import React, { FC, useEffect, useMemo } from 'react';
-import { bindActionCreators } from 'redux';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { FC, useMemo } from 'react';
+import { useSelector } from 'react-redux';
 
 import Avatar from '@components/Avatar';
 import { AvatarUsage } from '@components/Avatar/type';
 import BoxIcon, { BoxIconType } from '@components/BoxIcon';
-import { HeaderMain, HeaderSide, RoomSpaceHeader } from './styles';
+import EmojiIcon, { EmojiIconType, EMOJI_PREFIX } from '@components/EmojiIcon';
 import { AppState } from '@store/reducers';
-import { toggleSpaceVisibleAction } from '@store/reducers/space';
 import { TeamData } from '@store/reducers/team';
 import { RoomData } from '@store/reducers/room';
-import EmojiIcon, { EmojiIconType, EMOJI_PREFIX } from '@components/EmojiIcon';
+import { HeaderMain, HeaderSide, RoomSpaceHeader } from './styles';
 
 const DEFAULT_SELECTED_DATA = {
   id: '',

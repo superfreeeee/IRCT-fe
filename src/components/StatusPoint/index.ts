@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+
 import { UserState } from './type';
 
 const stateToColor = (state: UserState) => `var(--state_${state})`;

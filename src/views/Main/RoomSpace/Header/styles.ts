@@ -1,7 +1,7 @@
-import Avatar from '@components/Avatar';
-import EmojiIcon from '@components/EmojiIcon';
 import styled from 'styled-components';
 
+import Avatar from '@components/Avatar';
+import EmojiIcon from '@components/EmojiIcon';
 import { RoomSpaceContainer, ROOM_SPACE_HEADER_PADDING } from '../styles';
 import { RoomSpaceType } from '../type';
 

@@ -1,5 +1,6 @@
-import { UserState } from '@components/StatusPoint/type';
 import { Reducer } from 'redux';
+
+import { UserState } from '@components/StatusPoint/type';
 
 // =============== actions ===============
 export enum TeamActionType {

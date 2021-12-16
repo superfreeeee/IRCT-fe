@@ -3,7 +3,6 @@ import { Reducer } from 'redux';
 import { TabOption } from '@views/Main/IM/type';
 import { TeamActionType } from './team';
 import { RoomActionType } from './room';
-import store from '@store';
 
 // =============== actions ===============
 export enum SpaceActionType {

@@ -1,16 +1,16 @@
 import React, { FC, useEffect, useMemo } from 'react';
+import { bindActionCreators } from 'redux';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
 
 import { AppState } from '@store/reducers';
+import { toggleSpaceVisibleAction } from '@store/reducers/space';
 import { TabOption } from '../IM/type';
 import Chat from './Chat';
 import Header from './Header';
 import Room from './Room';
 import { Divider, RoomSpaceContainer, RoomSpaceWrapper } from './styles';
 import { RoomSpaceType, TabOption2RoomSpaceTypeMapper } from './type';
-import { toggleSpaceVisibleAction } from '@store/reducers/space';
-import { bindActionCreators } from 'redux';
 
 const option2TypeMapper: TabOption2RoomSpaceTypeMapper = {
   [TabOption.Room]: RoomSpaceType.Room,
