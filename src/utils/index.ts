@@ -23,3 +23,20 @@ export const openNewPage = (outerLink: string) => {
 export const scrollToBottom = (target: HTMLDivElement) => {
   target.scrollTo({ top: target.scrollHeight });
 };
+
+/**
+ * 限制目标数字区间
+ * @param target
+ * @param min
+ * @param max
+ */
+export const roundBy = (target: number, min: number, max: number) => {
+  let res = target;
+  if (min != null) {
+    res = Math.max(res, min);
+  }
+  if (max != null) {
+    res = Math.min(res, max);
+  }
+  return res;
+};

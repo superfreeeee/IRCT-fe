@@ -1,6 +1,7 @@
 import { Reducer } from 'redux';
 
 import { UserState } from '@components/StatusPoint/type';
+import { CommonAction } from '../type';
 
 // =============== actions ===============
 export enum UserActionType {}
@@ -8,6 +9,7 @@ export enum UserActionType {}
 // =============== type ===============
 export interface User {
   id: string;
+  avatar?: string;
   name: string;
   org: string;
   state: UserState;
@@ -21,7 +23,10 @@ const initUserState: User = {
   state: UserState.Idle,
 };
 
-const userReducer: Reducer<User> = (prevState = initUserState, action) => {
+const userReducer: Reducer<User, CommonAction<UserActionType>> = (
+  prevState = initUserState,
+  action
+) => {
   return prevState;
 };
 

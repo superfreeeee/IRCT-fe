@@ -1,6 +1,7 @@
 import { Reducer } from 'redux';
 
 import { UserState } from '@components/StatusPoint/type';
+import { CommonAction } from '../type';
 
 // =============== actions ===============
 export enum TeamActionType {
@@ -8,14 +9,16 @@ export enum TeamActionType {
   ExitTeam = 'Team#ExitTeam',
 }
 
-export const enterTeamAction = (teamId: string) => {
+export const enterTeamAction = (
+  teamId: string
+): CommonAction<TeamActionType> => {
   return {
     type: TeamActionType.EnterTeam,
     payload: teamId,
   };
 };
 
-export const exitTeamAction = () => {
+export const exitTeamAction = (): CommonAction<TeamActionType> => {
   return {
     type: TeamActionType.ExitTeam,
   };
@@ -72,12 +75,17 @@ const initTeamState: Team = {
   // selected: 'user-0',
 };
 
-const teamReducer: Reducer<Team> = (prevState = initTeamState, action) => {
+const teamReducer: Reducer<Team, CommonAction<TeamActionType>> = (
+  prevState = initTeamState,
+  action
+) => {
   switch (action.type) {
     case TeamActionType.EnterTeam:
       return { ...prevState, selected: action.payload };
+
     case TeamActionType.ExitTeam:
       return { ...prevState, selected: '' };
+
     default:
       return prevState;
   }

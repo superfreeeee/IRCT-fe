@@ -1,6 +1,7 @@
 import { Reducer } from 'redux';
 
 import { EmojiIconType, EMOJI_PREFIX } from '@components/EmojiIcon';
+import { CommonAction } from '../type';
 
 // =============== actions ===============
 export enum RoomActionType {
@@ -8,14 +9,16 @@ export enum RoomActionType {
   ExitRoom = 'Room#ExitRoom',
 }
 
-export const enterRoomAction = (roomId: string) => {
+export const enterRoomAction = (
+  roomId: string
+): CommonAction<RoomActionType> => {
   return {
     type: RoomActionType.EnterRoom,
     payload: roomId,
   };
 };
 
-export const exitRoomAction = () => {
+export const exitRoomAction = (): CommonAction<RoomActionType> => {
   return {
     type: RoomActionType.ExitRoom,
   };
@@ -132,12 +135,17 @@ const initRoomState: Room = {
   selected: 'room-1',
 };
 
-const roomReducer: Reducer<Room> = (prevState = initRoomState, action) => {
+const roomReducer: Reducer<Room, CommonAction<RoomActionType>> = (
+  prevState = initRoomState,
+  action
+) => {
   switch (action.type) {
     case RoomActionType.EnterRoom:
       return { ...prevState, selected: action.payload };
+
     case RoomActionType.ExitRoom:
       return { ...prevState, selected: '' };
+
     default:
       return prevState;
   }

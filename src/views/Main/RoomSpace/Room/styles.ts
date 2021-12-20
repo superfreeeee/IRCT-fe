@@ -21,4 +21,5 @@ export const SimulationAreaWrapper = styled.div`
   margin: 12px 24px 0;
   border-radius: 10px;
   background-color: var(--room_space_area_bg);
+  overflow: hidden;
 `;
