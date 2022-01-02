@@ -7,12 +7,13 @@ import { RoomActionType } from './room';
 
 // =============== actions ===============
 export enum SpaceActionType {
-  SwitchSpace = 'Space#SwitchSpace',
-  ToggleSpaceVisible = 'Space#ToggleSpaceVisible',
-  SendChatMessage = 'Space#SendChatMessage',
-  UpdateFigurePosition = 'UpdateFigurePosition',
-  JoinRoomSpaceAction = 'JoinRoomAction',
-  LeaveRoomSpaceAction = 'LeaveRoomSpaceAction',
+  SwitchSpace /*..........*/ = 'Space#SwitchSpace',
+  ToggleSpaceVisible /*...*/ = 'Space#ToggleSpaceVisible',
+  SendChatMessage /*......*/ = 'Space#SendChatMessage',
+  UpdateFigurePosition /*.*/ = 'Space#UpdateFigurePosition',
+  JoinRoomSpace /*........*/ = 'Space#JoinRoom',
+  LeaveRoomSpace /*.......*/ = 'Space#LeaveRoomSpace',
+  UpdateAreaOffset /*.....*/ = 'Space#UpdateAreaOffset',
 }
 
 export const switchSpaceAction = (
@@ -61,6 +62,20 @@ export const updateFigurePositionAction = (
   };
 };
 
+interface UpdateAreaOffsetParams {
+  roomId: string;
+  areaOffset: AreaOffset;
+}
+
+export const updateAreaOffsetAction = (
+  params: UpdateAreaOffsetParams
+): CommonAction<SpaceActionType> => {
+  return {
+    type: SpaceActionType.UpdateAreaOffset,
+    payload: params,
+  };
+};
+
 interface JoinRoomSpaceParams {
   roomId: string;
   figure: SpaceFigure;
@@ -69,7 +84,7 @@ export const joinRoomSpaceAction = (
   params: JoinRoomSpaceParams
 ): CommonAction<SpaceActionType> => {
   return {
-    type: SpaceActionType.JoinRoomSpaceAction,
+    type: SpaceActionType.JoinRoomSpace,
     payload: params,
   };
 };
@@ -79,7 +94,7 @@ export const leaveRoomSpaceAction = (
   userId: string
 ): CommonAction<SpaceActionType> => {
   return {
-    type: SpaceActionType.LeaveRoomSpaceAction,
+    type: SpaceActionType.LeaveRoomSpace,
     payload: {
       roomId,
       userId,
@@ -107,6 +122,8 @@ export type ChatHistory = {
  */
 export type SpaceFigurePosition = [number, number];
 
+export type AreaOffset = [number, number];
+
 export interface SpaceFigure {
   userId: string;
   avatar?: string;
@@ -120,7 +137,7 @@ export interface SpaceChat {
 
 export interface SimulationSpace {
   figures: SpaceFigure[];
-  chats: SpaceChat[];
+  areaOffset: AreaOffset;
 }
 
 export type SimulationSpaceObject = {
@@ -134,6 +151,13 @@ export interface Space {
   roomChat: ChatHistory;
   simulationSpaces: SimulationSpaceObject;
 }
+// =============== default value creator ===============
+const createSimulationSpace = (): SimulationSpace => {
+  return {
+    figures: [],
+    areaOffset: [0, 0],
+  };
+};
 
 // =============== state ===============
 const initSpaceState: Space = {
@@ -184,7 +208,7 @@ const initSpaceState: Space = {
           position: [160, 120],
         },
       ],
-      chats: [],
+      areaOffset: [0, 0],
     },
   },
 };
@@ -243,20 +267,41 @@ const updateFigurePosition = (
     simulationSpaces: {
       ...prevState.simulationSpaces,
       [roomId]: {
+        ...prevSpace,
         figures: newFigures,
-        chats: prevSpace.chats,
       },
     },
   };
   return newState;
 };
 
+const updateAreaOffset = (
+  prevState: Space,
+  { roomId, areaOffset }: UpdateAreaOffsetParams
+) => {
+  const prevSpace = prevState.simulationSpaces[roomId];
+  // 不合法 room
+  if (!prevSpace) {
+    return prevState;
+  }
+  return {
+    ...prevState,
+    simulationSpaces: {
+      ...prevState.simulationSpaces,
+      [roomId]: {
+        ...prevSpace,
+        areaOffset,
+      },
+    },
+  };
+};
+
 const joinRoomSpace = (
   prevState: Space,
   { roomId, figure }: JoinRoomSpaceParams
 ): Space => {
-  const prevSpace = prevState.simulationSpaces[roomId];
-  // 不合法 room
+  const prevSpace: SimulationSpace =
+    prevState.simulationSpaces[roomId] || createSimulationSpace();
   if (!prevSpace) {
     return prevState;
   }
@@ -269,8 +314,8 @@ const joinRoomSpace = (
     simulationSpaces: {
       ...prevState.simulationSpaces,
       [roomId]: {
+        ...prevSpace,
         figures: [...prevSpace.figures, figure],
-        chats: prevSpace.chats,
       },
     },
   };
@@ -298,11 +343,11 @@ const leaveRoomSpace = (prevState: Space, { roomId, userId }) => {
       simulationSpaces: {
         ...prevState.simulationSpaces,
         [roomId]: {
+          ...prevSpace,
           figures: [
             ...prevFigures.slice(0, currentUserIndex),
             ...prevFigures.slice(currentUserIndex + 1),
           ],
-          chats: prevSpace.chats,
         },
       },
     };
@@ -330,10 +375,13 @@ const spaceReducer: Reducer<
     case SpaceActionType.UpdateFigurePosition:
       return updateFigurePosition(prevState, action.payload);
 
-    case SpaceActionType.JoinRoomSpaceAction:
+    case SpaceActionType.UpdateAreaOffset:
+      return updateAreaOffset(prevState, action.payload);
+
+    case SpaceActionType.JoinRoomSpace:
       return joinRoomSpace(prevState, action.payload);
 
-    case SpaceActionType.LeaveRoomSpaceAction:
+    case SpaceActionType.LeaveRoomSpace:
       return leaveRoomSpace(prevState, action.payload);
 
     // TeamActionType, RoomActionType

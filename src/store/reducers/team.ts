@@ -5,8 +5,8 @@ import { CommonAction } from '../type';
 
 // =============== actions ===============
 export enum TeamActionType {
-  EnterTeam = 'Team#EnterTeam',
-  ExitTeam = 'Team#ExitTeam',
+  EnterTeam /*.*/ = 'Team#EnterTeam',
+  ExitTeam /*..*/ = 'Team#ExitTeam',
 }
 
 export const enterTeamAction = (

@@ -17,6 +17,7 @@ import {
   RoomDescription,
   SimulationAreaWrapper,
 } from './styles';
+import { roundBy } from '@utils';
 
 const useAreaResizer = (): [number, MouseEventHandler] => {
   const [h, setH] = useState(DEFAULT_SIMULATION_AREA_HEIGHT);
@@ -28,22 +29,25 @@ const useAreaResizer = (): [number, MouseEventHandler] => {
     const currentY = e.clientY;
     const prevY = pressedPositionRef.current;
 
-    const newH = Math.max(
+    const newH = roundBy(
+      prevHeightRef.current + (currentY - prevY),
       MIN_SIMULATION_AREA_HEIGHT,
-      Math.min(
-        MAX_SIMULATION_AREA_HEIGHT,
-        prevHeightRef.current + (currentY - prevY)
-      )
+      MAX_SIMULATION_AREA_HEIGHT
     );
 
     setH(newH);
-    console.log(`calcH = ${newH}`);
+    return newH;
   }, []);
 
+  /**
+   * mousedown 开始监听事件，修改 h 高度
+   *   挂载 mousemove、mouseup 事件
+   *   释放后取消监听
+   */
   const onMouseDown = useCallback(
     (e: MouseEvent) => {
       e.preventDefault();
-      // console.log(e);
+      console.log(`[Room.useAreaResizer] h = ${h}`);
       // update ref state
       prevHeightRef.current = h;
       pressedPositionRef.current = e.clientY;
@@ -55,14 +59,12 @@ const useAreaResizer = (): [number, MouseEventHandler] => {
   );
 
   const onMouseMove = useCallback((e) => {
-    // console.log(e);
     calcH(e);
   }, []);
 
   const onMouseUp = useCallback((e) => {
-    calcH(e);
-    // console.log(e);
-    // update ref state
+    const newH = calcH(e);
+    console.log(`[Room.useAreaResizer] newH = ${newH}`);
     // remove listening
     document.removeEventListener('mousemove', onMouseMove);
     document.removeEventListener('mouseup', onMouseUp);
@@ -72,7 +74,9 @@ const useAreaResizer = (): [number, MouseEventHandler] => {
 };
 
 const Room = () => {
-  const [areaH, onMouseDown] = useAreaResizer();
+  const [areaH, onDividerMouseDown] = useAreaResizer();
+
+  const areaWrapperRef = useRef<HTMLDivElement>(null);
 
   return (
     <RoomContainer>
@@ -85,12 +89,12 @@ const Room = () => {
       </RoomDescription>
       <Divider />
       {/* Room 仿真空间 */}
-      <SimulationAreaWrapper style={{ height: areaH }}>
-        <SimulationArea />
+      <SimulationAreaWrapper style={{ height: areaH }} ref={areaWrapperRef}>
+        <SimulationArea areaWrapperRef={areaWrapperRef} />
       </SimulationAreaWrapper>
       {/* 拖拽调整仿真空间高度 */}
       <Divider
-        onMouseDown={onMouseDown}
+        onMouseDown={onDividerMouseDown}
         style={{ cursor: 'ns-resize', paddingBottom: 12 }}
       />
       {/* 文字聊天记录 */}

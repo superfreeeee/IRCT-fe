@@ -5,8 +5,8 @@ import { CommonAction } from '../type';
 
 // =============== actions ===============
 export enum RoomActionType {
-  EnterRoom = 'Room#EnterRoom',
-  ExitRoom = 'Room#ExitRoom',
+  EnterRoom /*.*/ = 'Room#EnterRoom',
+  ExitRoom /*..*/ = 'Room#ExitRoom',
 }
 
 export const enterRoomAction = (

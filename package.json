@@ -7,6 +7,7 @@
   "scripts": {
     "start": "cross-env NODE_ENV=development webpack serve",
     "build": "cross-env NODE_ENV=production webpack",
+    "deploy": "./deploy/upload",
     "reinstall": "rm -rf node_modules && yarn",
     "clear": "rm -rf dist"
   },

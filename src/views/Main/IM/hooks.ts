@@ -61,7 +61,9 @@ export const useMenu = (tab: TabOption) => {
   }, [tab, team.selected, room.selected]);
 
   const dispatch = useDispatch();
-
+  /**
+   * 点击目录切换
+   */
   const onItemClick = useMemo(() => {
     const enterRoom = bindActionCreators(enterRoomAction, dispatch);
     const exitRoom = bindActionCreators(exitRoomAction, dispatch);

@@ -1,0 +1,8 @@
+#!/bin/bash
+
+cd deploy
+echo 'working directory:'
+pwd
+
+scp ./docker-compose.yml root@101.43.30.63:/home/apps/IRCT/
+scp -r ../dist root@101.43.30.63:/home/apps/IRCT/

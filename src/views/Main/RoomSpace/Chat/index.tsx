@@ -1,6 +1,13 @@
 import React, { FC, useEffect, useRef } from 'react';
+import { bindActionCreators } from 'redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import BoxIcon, { BoxIconType } from '@components/BoxIcon';
+import { AppState } from '@store/reducers';
+import { sendChatMessageAction } from '@store/reducers/space';
+import { scrollToBottom } from '@utils';
+import { useEnterListener, useInput } from './hooks';
+import ChatRecordEl from './ChatRecordEl';
 import {
   ChatContainer,
   ChatHistory,
@@ -8,13 +15,6 @@ import {
   Input,
   SendButton,
 } from './styles';
-import { useEnterListener, useInput } from './hooks';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppState } from '@store/reducers';
-import ChatRecordEl from './ChatRecordEl';
-import { sendChatMessageAction } from '@store/reducers/space';
-import { bindActionCreators } from 'redux';
-import { scrollToBottom } from '@utils';
 
 interface ChatProps {
   isInRoom?: boolean;
@@ -33,12 +33,13 @@ const Chat: FC<ChatProps> = ({ isInRoom = false, onSend }) => {
   const records = chatHistory[selected] || [];
 
   // TODO clear console
-  useEffect(() => {
-    console.log(
-      `[Chat] space.${isInRoom ? 'room' : 'team'}Chat[${selected}] records =`,
-      records
-    );
-  }, [chatHistory[selected]]);
+  // useEffect(() => {
+  //   const spaceType = isInRoom ? 'room' : 'team';
+  //   console.log(
+  //     `[Chat] space.${spaceType}Chat[${selected}] records =`,
+  //     records
+  //   );
+  // }, [chatHistory[selected]]);
 
   const [input, onInputChange, { resetInput }] = useInput();
 

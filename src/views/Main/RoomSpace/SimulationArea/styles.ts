@@ -1,11 +1,15 @@
 import styled from 'styled-components';
 
-export const SIMULATION_BOARD_WIDTH = 1000;
-export const SIMULATION_BOARD_HEIGHT = 1000;
+export const SIMULATION_BOARD_WIDTH = 500;
+export const SIMULATION_BOARD_HEIGHT = 500;
 export const SIMULATION_BOARD_PADDING = 25;
 
+export const SIMULATION_FIGURE_SIZE = 41;
+export const SIMULATION_FIGURE_SIZE_INNER = 15;
+export const SIMULATION_FIGURE_SIZE_OUTER = 24;
+
 export const SimulationBoard = styled.div`
-  position: relative;
+  position: absolute;
   width: ${SIMULATION_BOARD_WIDTH}px;
   height: ${SIMULATION_BOARD_HEIGHT}px;
 

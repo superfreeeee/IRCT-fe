@@ -7,6 +7,8 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import { bindActionCreators } from 'redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import Avatar from '@components/Avatar';
 import { AvatarUsage } from '@components/Avatar/type';
@@ -15,11 +17,10 @@ import {
   SpaceFigurePosition,
   updateFigurePositionAction,
 } from '@store/reducers/space';
-import { noop, roundBy } from '@utils';
-import { FigureContainer, SIMULATION_BOARD_PADDING } from './styles';
-import { useDispatch, useSelector } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { AppState } from '@store/reducers';
+import { noop, roundBy } from '@utils';
+import { stopPropagationHandler } from '@utils/dom';
+import { FigureContainer, SIMULATION_BOARD_PADDING } from './styles';
 
 interface FigureProps {
   figure: SpaceFigure;
@@ -39,12 +40,13 @@ const Figure: FC<FigureProps> = ({ figure, boardRef }) => {
 
   const removeMouseListenerRef = useRef(noop);
   const onMouseDown = useCallback((e: MouseEvent) => {
+    e.stopPropagation();
     const { clientX: x0, clientY: y0 } = e;
 
     // TODO clear console
-    // console.log(
-    //   `[Figure] mouse down(${figure.userId}): (x0, y0) = (${x0}, ${y0})`
-    // );
+    console.log(
+      `[Figure] mouse down(${figure.userId}): (x0, y0) = (${x0}, ${y0})`
+    );
 
     const originPosition = (lastPositionRef.current = positionRef.current);
 
@@ -84,15 +86,14 @@ const Figure: FC<FigureProps> = ({ figure, boardRef }) => {
 
     const onMouseUp = (e) => {
       const { clientX: x1, clientY: y1 } = e;
-      // TODO clear console
-      // console.log(
-      //   `[Figure] mouse up(${
-      //     figure.userId
-      //   }): (x1, y1) = (${x1}, ${y1}), (dx, dy) = (${x1 - x0}, ${y1 - y0})`
-      // );
 
       const finalPosition = calcNewPosition(x1, y1);
       setPosition(finalPosition);
+
+      // TODO clear console
+      console.log(
+        `[Figure] mouse up(${figure.userId}): (x, y) = (${finalPosition[0]}, ${finalPosition[1]})`
+      );
 
       removeMouseListenerRef.current();
 
@@ -103,6 +104,7 @@ const Figure: FC<FigureProps> = ({ figure, boardRef }) => {
       });
     };
 
+    // listeners set & remove
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
 
@@ -122,6 +124,7 @@ const Figure: FC<FigureProps> = ({ figure, boardRef }) => {
 
   return (
     <FigureContainer
+      onClick={stopPropagationHandler}
       onMouseDown={onMouseDown}
       style={{ left: position[0], top: position[1] }}
     >

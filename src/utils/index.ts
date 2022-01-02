@@ -30,7 +30,7 @@ export const scrollToBottom = (target: HTMLDivElement) => {
  * @param min
  * @param max
  */
-export const roundBy = (target: number, min: number, max: number) => {
+export const roundBy = (target: number, min?: number, max?: number) => {
   let res = target;
   if (min != null) {
     res = Math.max(res, min);
