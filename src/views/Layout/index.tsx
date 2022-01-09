@@ -8,8 +8,9 @@ const Layout = () => {
   return (
     <Switch>
       {/* <Route exact path="/" component={Home}></Route> */}
-      <Route exact path="/main" component={Main}></Route>
+      {/* <Route exact path="/main" component={Main}></Route> */}
       <Route exact path="/" component={Main}></Route>
+      <Route exact path="/home" component={Home}></Route>
       <Route>
         <Redirect to="/" />
       </Route>

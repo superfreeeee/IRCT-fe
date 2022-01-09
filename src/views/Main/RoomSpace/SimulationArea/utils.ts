@@ -1,5 +1,17 @@
-import { SpaceFigure, SpaceFigurePosition } from '@store/reducers/space';
+import {
+  SpaceFigure,
+  SpaceFigurePosition,
+  SpaceFigureWithVideo,
+} from '@store/reducers/space';
 import { SIMULATION_BOARD_HEIGHT, SIMULATION_BOARD_WIDTH } from './styles';
+import {
+  FIGURE_DISTANCE_LEVEL1,
+  FIGURE_DISTANCE_LEVEL2,
+  FIGURE_DISTANCE_LEVEL3,
+  SIMULATION_FIGURE_SIZE,
+  SIMULATION_FIGURE_SIZE_INNER,
+  SIMULATION_FIGURE_SIZE_OUTER,
+} from './config';
 
 /**
  * 计算初入房间位置
@@ -15,39 +27,61 @@ export const calcInitPosition = (
   return [width / 2, height / 2];
 };
 
+enum VideoVoiceRate {
+  LEVEL1 = 100,
+  LEVEL2 = 60,
+  LEVEL3 = 20,
+  LEVEL4 = 0,
+}
+
 /**
- * 获取距离最近的其他任务
+ * 获取临近附近人物
  * @param currentFigure
  * @param figures
  * @returns
  */
-export const calcClosestFigure = (
+export const calcNearbyFigures = (
   currentFigure: SpaceFigure,
   figures: SpaceFigure[]
-) => {
+): SpaceFigureWithVideo[] => {
   if (figures.length <= 1) {
-    return null;
+    return [];
   }
 
-  let closestFigure =
-    figures[0].userId === currentFigure.userId ? figures[1] : figures[0];
-  let closestDistance = calcDistance(currentFigure, closestFigure);
-
-  figures
-    .filter((figure) => figure.userId !== currentFigure.userId)
-    .forEach((figure) => {
-      const distance = calcDistance(currentFigure, figure);
-      if (distance < closestDistance) {
-        closestFigure = figure;
-        closestDistance = distance;
+  const nearbyFigures: SpaceFigureWithVideo[] = figures
+    .map((figure) => {
+      // 1. calc distance
+      const _d = calcDistance(currentFigure, figure);
+      // 2. calc voice rate base on distance
+      let voiceRate;
+      if (_d <= FIGURE_DISTANCE_LEVEL1) {
+        voiceRate = VideoVoiceRate.LEVEL1;
+      } else if (_d <= FIGURE_DISTANCE_LEVEL2) {
+        voiceRate = VideoVoiceRate.LEVEL2;
+      } else if (_d <= FIGURE_DISTANCE_LEVEL3) {
+        voiceRate = VideoVoiceRate.LEVEL3;
+      } else {
+        voiceRate = VideoVoiceRate.LEVEL4;
       }
-    });
-  console.log(`[calcClosestFigure] closestFigure`, closestFigure);
-  console.log(`[calcClosestFigure] closestDistance`, closestDistance);
+      return {
+        ...figure,
+        voiceRate,
+      };
+    })
+    // 3. filter by voice rate
+    .filter(
+      (figure) => figure.voiceRate > 0 && figure.userId !== currentFigure.userId
+    );
 
-  return closestFigure;
+  return nearbyFigures;
 };
 
+/**
+ * 计算 dx^2 + dy^2
+ * @param f1
+ * @param f2
+ * @returns
+ */
 const calcDistance = (f1: SpaceFigure, f2: SpaceFigure) => {
   const [x0, y0] = f1.position;
   const [x1, y1] = f2.position;

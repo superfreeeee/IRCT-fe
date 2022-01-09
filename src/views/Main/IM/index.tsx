@@ -17,16 +17,7 @@ const IM = () => {
   const userInfo = useSelector((state: AppState) => state.user);
 
   const [tab, onTabClick] = useTab();
-
   const { menuList, selected, onItemClick } = useMenu(tab);
-
-  const { org, state: userState } = userInfo;
-
-  // TODO clear console
-  useEffect(() => {
-    console.log('[IM] userInfo', userInfo);
-  }, [userInfo]);
-
   const [spaceVisible, toggleSpaceVisible] = useHidePage();
 
   return (
@@ -34,10 +25,10 @@ const IM = () => {
       <UserInfo>
         <div className="selection">
           <BoxIcon type={BoxIconType.ExpandVertical} />
-          <span>{org}</span>
+          <span>{userInfo.org}</span>
         </div>
         <Avatar usage={AvatarUsage.IMUserInfo}>
-          <StatusPoint style={{ right: 2, bottom: 2 }} state={userState} />
+          <StatusPoint style={{ right: 2, bottom: 2 }} state={userInfo.state} />
         </Avatar>
       </UserInfo>
       <SearchBar>

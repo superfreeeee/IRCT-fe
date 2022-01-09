@@ -14,13 +14,6 @@ interface TooltipProps {
 const Tooltip: FC<TooltipProps> = ({
   state: { visible, content, position },
 }) => {
-  // TODO clear console
-  useEffect(() => {
-    if (visible) {
-      // console.log(`[Menu] tooltipContent = ${content}`);
-    }
-  }, [visible]);
-
   // container 生命周期
   useEffect(() => {
     document.body.appendChild(tooltipContainer);

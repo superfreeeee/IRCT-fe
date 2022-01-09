@@ -32,23 +32,15 @@ const Chat: FC<ChatProps> = ({ isInRoom = false, onSend }) => {
   const selected = isInRoom ? selectedRoom : selectedTeam;
   const records = chatHistory[selected] || [];
 
-  // TODO clear console
-  // useEffect(() => {
-  //   const spaceType = isInRoom ? 'room' : 'team';
-  //   console.log(
-  //     `[Chat] space.${spaceType}Chat[${selected}] records =`,
-  //     records
-  //   );
-  // }, [chatHistory[selected]]);
-
+  // 输入框
   const [input, onInputChange, { resetInput }] = useInput();
 
   const dispatch = useDispatch();
-  const sendChatMessage = bindActionCreators(sendChatMessageAction, dispatch);
   const chatHistoryRef = useRef<HTMLDivElement>(null);
   const sendMessage = (input: string) => {
     console.log(`[Chat] send message = ${input}`);
 
+    const sendChatMessage = bindActionCreators(sendChatMessageAction, dispatch);
     sendChatMessage({
       spaceId: selected,
       record: {
@@ -57,6 +49,7 @@ const Chat: FC<ChatProps> = ({ isInRoom = false, onSend }) => {
       },
     });
 
+    // 发出讯息后自动滚动
     setTimeout(() => {
       scrollToBottom(chatHistoryRef.current);
     });

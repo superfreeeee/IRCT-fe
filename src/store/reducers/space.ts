@@ -14,6 +14,7 @@ export enum SpaceActionType {
   JoinRoomSpace /*........*/ = 'Space#JoinRoom',
   LeaveRoomSpace /*.......*/ = 'Space#LeaveRoomSpace',
   UpdateAreaOffset /*.....*/ = 'Space#UpdateAreaOffset',
+  UpdateNearbyFigures /*..*/ = 'Space#UpdateNearbyFigures',
 }
 
 export const switchSpaceAction = (
@@ -102,6 +103,15 @@ export const leaveRoomSpaceAction = (
   };
 };
 
+export const updateNearbyFiguresAction = (
+  figures: SpaceFigureWithVideo[] = []
+): CommonAction<SpaceActionType> => {
+  return {
+    type: SpaceActionType.UpdateNearbyFigures,
+    payload: figures,
+  };
+};
+
 // =============== type ===============
 /**
  * 聊天相关
@@ -131,6 +141,8 @@ export interface SpaceFigure {
   position: SpaceFigurePosition;
 }
 
+export type SpaceFigureWithVideo = SpaceFigure & { voiceRate: number };
+
 export interface SpaceChat {
   figures: SpaceFigure[];
 }
@@ -150,6 +162,7 @@ export interface Space {
   teamChat: ChatHistory;
   roomChat: ChatHistory;
   simulationSpaces: SimulationSpaceObject;
+  nearbyFigures: SpaceFigureWithVideo[];
 }
 // =============== default value creator ===============
 const createSimulationSpace = (): SimulationSpace => {
@@ -211,6 +224,7 @@ const initSpaceState: Space = {
       areaOffset: [0, 0],
     },
   },
+  nearbyFigures: [],
 };
 
 const toggleVisible = (prevState: Space, visible?: boolean): Space => {
@@ -321,7 +335,7 @@ const joinRoomSpace = (
   };
 };
 
-const leaveRoomSpace = (prevState: Space, { roomId, userId }) => {
+const leaveRoomSpace = (prevState: Space, { roomId, userId }): Space => {
   const prevSpace = prevState.simulationSpaces[roomId];
   // 不合法 room
   if (!prevSpace) {
@@ -357,6 +371,16 @@ const leaveRoomSpace = (prevState: Space, { roomId, userId }) => {
   }
 };
 
+const updateNearbyFigures = (
+  prevState: Space,
+  figures: SpaceFigureWithVideo[]
+): Space => {
+  return {
+    ...prevState,
+    nearbyFigures: figures,
+  };
+};
+
 const spaceReducer: Reducer<
   Space,
   CommonAction<SpaceActionType | TeamActionType | RoomActionType>
@@ -383,6 +407,9 @@ const spaceReducer: Reducer<
 
     case SpaceActionType.LeaveRoomSpace:
       return leaveRoomSpace(prevState, action.payload);
+
+    case SpaceActionType.UpdateNearbyFigures:
+      return updateNearbyFigures(prevState, action.payload);
 
     // TeamActionType, RoomActionType
     case TeamActionType.EnterTeam:

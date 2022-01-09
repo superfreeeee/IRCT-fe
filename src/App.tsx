@@ -30,6 +30,8 @@ const GlobalStyle = createGlobalStyle`
     --room_space_area_bg: #EDEDED;
     --room_space_chat_record_bg_other: #838383;
     --room_space_chat_record_bg_self: #E9E9E9;
+    --room_space_figure_radius_level1: rgba(162, 231, 161, 0.5);
+    --room_space_figure_radius_level2: rgba(162, 231, 161, 0.2);;
     /* 状态颜色 */
     --state_idle: #5DD45A;
     --state_work: #5ABED4;

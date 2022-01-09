@@ -47,7 +47,6 @@ const useAreaResizer = (): [number, MouseEventHandler] => {
   const onMouseDown = useCallback(
     (e: MouseEvent) => {
       e.preventDefault();
-      console.log(`[Room.useAreaResizer] h = ${h}`);
       // update ref state
       prevHeightRef.current = h;
       pressedPositionRef.current = e.clientY;

@@ -1,12 +1,4 @@
-import React, {
-  FC,
-  MouseEvent,
-  RefObject,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { FC, RefObject, useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -18,109 +10,66 @@ import {
   updateFigurePositionAction,
 } from '@store/reducers/space';
 import { AppState } from '@store/reducers';
-import { noop, roundBy } from '@utils';
+import { roundBy } from '@utils';
 import { stopPropagationHandler } from '@utils/dom';
+import useClosestRef from '@hooks/useClosestRef';
+import useDragPosition, { DragEventType } from '@hooks/useDragPosition';
 import { FigureContainer, SIMULATION_BOARD_PADDING } from './styles';
 
 interface FigureProps {
   figure: SpaceFigure;
   boardRef: RefObject<HTMLDivElement>;
+  onFigureMove: () => void;
 }
 
-const Figure: FC<FigureProps> = ({ figure, boardRef }) => {
+const Figure: FC<FigureProps> = ({ figure, boardRef, onFigureMove }) => {
   const roomId = useSelector((state: AppState) => state.room.selected);
 
   const [position, setPosition] = useState(figure.position);
-  const positionRef = useRef<SpaceFigurePosition>(null);
-  positionRef.current = position;
-
-  const lastPositionRef = useRef<SpaceFigurePosition>(null);
+  const positionRef = useClosestRef(position);
+  const figureRef = useClosestRef(figure);
 
   const dispatch = useDispatch();
-
-  const removeMouseListenerRef = useRef(noop);
-  const onMouseDown = useCallback((e: MouseEvent) => {
+  const lastPositionRef = useRef<SpaceFigurePosition>(null);
+  const boardRectRef = useRef<DOMRect>(null); // 记忆背景板 DOMRect 对象
+  const { onMouseDown } = useDragPosition((e, { type, dx, dy }) => {
     e.stopPropagation();
-    const { clientX: x0, clientY: y0 } = e;
-
-    // TODO clear console
-    console.log(
-      `[Figure] mouse down(${figure.userId}): (x0, y0) = (${x0}, ${y0})`
-    );
-
-    const originPosition = (lastPositionRef.current = positionRef.current);
-
-    const calcNewPosition = (x1: number, y1: number): SpaceFigurePosition => {
+    if (type === DragEventType.Down) {
+      lastPositionRef.current = [...positionRef.current];
+      boardRectRef.current = boardRef.current.getBoundingClientRect();
+    } else {
       const { width, height } = boardRef.current.getBoundingClientRect();
-      const [dx, dy] = [x1 - x0, y1 - y0];
-      const x = roundBy(
-        originPosition[0] + dx,
+      const [x, y] = lastPositionRef.current;
+
+      const x1 = roundBy(
+        x + dx,
         SIMULATION_BOARD_PADDING,
         width - SIMULATION_BOARD_PADDING
       );
-      const y = roundBy(
-        originPosition[1] + dy,
+      const y1 = roundBy(
+        y + dy,
         SIMULATION_BOARD_PADDING,
         height - SIMULATION_BOARD_PADDING
       );
-      return [x, y];
-    };
+      const newPosition: SpaceFigurePosition = [x1, y1];
+      setPosition(newPosition);
 
-    const onMouseMove = (e) => {
-      const { clientX: x1, clientY: y1 } = e;
-      // TODO clear console
-      // console.log(
-      //   `[Figure] mouse move(${
-      //     figure.userId
-      //   }): (x1, y1) = (${x1}, ${y1}), (dx, dy) = (${x1 - x0}, ${y1 - y0})`
-      // );
+      // 释放鼠标
+      if (type === DragEventType.Up && (x !== x1 || y !== y1)) {
+        const updateFigurePosition = bindActionCreators(
+          updateFigurePositionAction,
+          dispatch
+        );
+        updateFigurePosition({
+          roomId,
+          userId: figure.userId,
+          position: newPosition,
+        });
 
-      const tempPosition = calcNewPosition(x1, y1);
-      setPosition(tempPosition);
-    };
-
-    const updateFigurePosition = bindActionCreators(
-      updateFigurePositionAction,
-      dispatch
-    );
-
-    const onMouseUp = (e) => {
-      const { clientX: x1, clientY: y1 } = e;
-
-      const finalPosition = calcNewPosition(x1, y1);
-      setPosition(finalPosition);
-
-      // TODO clear console
-      console.log(
-        `[Figure] mouse up(${figure.userId}): (x, y) = (${finalPosition[0]}, ${finalPosition[1]})`
-      );
-
-      removeMouseListenerRef.current();
-
-      updateFigurePosition({
-        roomId,
-        userId: figure.userId,
-        position: finalPosition,
-      });
-    };
-
-    // listeners set & remove
-    document.addEventListener('mousemove', onMouseMove);
-    document.addEventListener('mouseup', onMouseUp);
-
-    removeMouseListenerRef.current = () => {
-      document.removeEventListener('mousemove', onMouseMove);
-      document.removeEventListener('mouseup', onMouseUp);
-      removeMouseListenerRef.current = noop;
-    };
-  }, []);
-
-  useEffect(
-    () => () => {
-      removeMouseListenerRef.current();
-    },
-    []
-  );
+        onFigureMove();
+      }
+    }
+  });
 
   return (
     <FigureContainer

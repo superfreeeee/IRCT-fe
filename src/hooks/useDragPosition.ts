@@ -10,6 +10,7 @@ import {
 import { noop } from '@utils';
 import useClosestRef from './useClosestRef';
 
+// ========== 类型声明 ==========
 export enum DragEventType {
   Down = 'down',
   Move = 'move',
@@ -44,7 +45,8 @@ export interface UseDragPositionRes {
 }
 
 const positionObjectCreator =
-  (x0: number, y0: number) => (type: DragEventType, x: number, y: number) => {
+  (x0: number, y0: number) =>
+  (type: DragEventType, x: number, y: number): DragPositionObject => {
     return {
       type,
       x0,
@@ -56,6 +58,11 @@ const positionObjectCreator =
     };
   };
 
+/**
+ * 使用拖拽位置
+ * @param cb
+ * @returns
+ */
 const useDragPosition = (
   cb: UseDragPositionListener | UseDragPositionListenerObj
 ): UseDragPositionRes => {
@@ -69,7 +76,7 @@ const useDragPosition = (
     }
 
     return cb;
-  }, [cb]);
+  }, []);
 
   const cbRef = useClosestRef(cbObj);
 

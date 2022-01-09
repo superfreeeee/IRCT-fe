@@ -31,10 +31,6 @@ const RoomSpace: FC<RoomSpaceProps> = ({}) => {
     const selectedSpaceId =
       currentSpace === TabOption.Room ? selectedRoom : selectedTeam;
 
-    // TODO clear console
-    // console.log(
-    //   `[RoomSpace] selectedSpaceId=${selectedSpaceId}, visible=${visible}`
-    // );
     if (!!selectedSpaceId !== visible) {
       const toggleSpaceVisible = bindActionCreators(
         toggleSpaceVisibleAction,

@@ -1,6 +1,7 @@
 import React, {
   FC,
   RefObject,
+  useCallback,
   useEffect,
   useMemo,
   useRef,
@@ -16,13 +17,18 @@ import {
   joinRoomSpaceAction,
   leaveRoomSpaceAction,
   SimulationSpace,
+  SpaceFigure,
   updateAreaOffsetAction,
+  updateNearbyFiguresAction,
 } from '@store/reducers/space';
 import { roundBy } from '@utils';
 import useDragPosition, { DragEventType } from '@hooks/useDragPosition';
+import useClosestRef from '@hooks/useClosestRef';
 import Figure from './Figure';
 import { SimulationBoard } from './styles';
-import { calcInitPosition } from './utils';
+import { calcNearbyFigures, calcInitPosition } from './utils';
+import { SIMULATION_AREA_SHRINK } from './config';
+import useLog from '@hooks/useLog';
 
 interface UseBoardDraggerOptions {
   roomId: string;
@@ -42,15 +48,18 @@ const useBoardDragger = (
   { roomId, adaptSize, areaWrapperRef, boardRef }: UseBoardDraggerOptions
 ) => {
   const [areaOffset, setAreaOffset] = useState<AreaOffset>(initOffset);
+  const areaOffsetRef = useClosestRef(areaOffset);
 
-  const boardRectRef = useRef<DOMRect>(null);
-  const prevOffsetRef = useRef<AreaOffset>(null);
+  const boardRectRef = useRef<DOMRect>(null); // 记忆背景板 DOMRect 对象
+  const prevOffsetRef = useRef<AreaOffset>(null); // 记忆拖拽起始位置
   const dispatch = useDispatch();
   let { onMouseDown: onBoardMouseDown } = useDragPosition(
     (_, { type, dx, dy }) => {
       if (type === DragEventType.Down) {
-        prevOffsetRef.current = areaOffset;
+        // 1. Down
+        prevOffsetRef.current = areaOffsetRef.current;
       } else {
+        // 2. Move | Up
         if (!boardRectRef.current) {
           boardRectRef.current = boardRef.current.getBoundingClientRect();
         }
@@ -58,9 +67,9 @@ const useBoardDragger = (
         const wrapperRect = areaWrapperRef.current.getBoundingClientRect();
 
         // TODO clear console
-        console.log(
-          `[Room.onWrapperMouseDown] ${type}(dx, dy) = (${dx}, ${dy})`
-        );
+        // console.log(
+        //   `[SimulationArea.useBoardDragger] ${type}(dx, dy) = (${dx},${dy})`
+        // );
         const [x, y] = prevOffsetRef.current;
 
         const left = roundBy(x + dx, wrapperRect.width - boardRect.width, 0);
@@ -69,7 +78,9 @@ const useBoardDragger = (
         const nextAreaOffset: AreaOffset = [left, top];
         setAreaOffset(nextAreaOffset);
 
-        if (type === DragEventType.Up) {
+        // 3. Up
+        if (type === DragEventType.Up && (x !== left || y !== top)) {
+          console.log(`[SimulationArea.useBoardDragger] sync(${left},${top})`);
           // 鼠标释放的时候同步到 redux
           const updateAreaOffset = bindActionCreators(
             updateAreaOffsetAction,
@@ -84,6 +95,7 @@ const useBoardDragger = (
     }
   );
 
+  // no board drag
   if (adaptSize) {
     onBoardMouseDown = (e) => e.preventDefault();
   }
@@ -100,7 +112,7 @@ interface SimulationAreaProps {
 }
 
 const SimulationArea: FC<SimulationAreaProps> = ({
-  adaptSize = false,
+  adaptSize = SIMULATION_AREA_SHRINK,
   areaWrapperRef,
 }) => {
   // redux state catch
@@ -112,16 +124,16 @@ const SimulationArea: FC<SimulationAreaProps> = ({
 
   const space = simulationSpaces[selectedRoomId];
 
-  const { figures, chats, areaOffset } = useMemo<SimulationSpace>(() => {
+  const { figures, areaOffset } = useMemo<SimulationSpace>(() => {
     if (!space) {
       return {
         figures: [],
-        chats: [],
         areaOffset: [0, 0],
       };
     }
     return space;
   }, [space]);
+  const figuresRef = useClosestRef(figures);
 
   // >>>>> main login
   const simulationBoardRef = useRef<HTMLDivElement>(null);
@@ -134,11 +146,6 @@ const SimulationArea: FC<SimulationAreaProps> = ({
     areaWrapperRef,
     boardRef: simulationBoardRef,
   });
-
-  // TODO clear console
-  useEffect(() => {
-    console.log('[SimulationArea] figures', figures);
-  }, [figures]);
 
   const dispatch = useDispatch();
   // mount 时加入房间, unmount 时离开房间
@@ -156,6 +163,7 @@ const SimulationArea: FC<SimulationAreaProps> = ({
         return;
       }
       const { width, height } = board.getBoundingClientRect();
+      // TODO clear console
       console.log(
         `[SimulationArea] simulationBoard: width = ${width}, height = ${height}`
       );
@@ -168,14 +176,44 @@ const SimulationArea: FC<SimulationAreaProps> = ({
           position: calcInitPosition(figures, width, height),
         },
       });
-      console.log(`join room ${selectedRoomId}`);
+      // TODO clear console
+      console.log(`[SimulationArea] join room ${selectedRoomId}`);
     });
 
     return () => {
       leaveRoomSpace(selectedRoomId, user.id);
-      console.log(`leave room ${selectedRoomId}`);
+      // TODO clear console
+      console.log(`[SimulationArea] leave room ${selectedRoomId}`);
     };
   }, [selectedRoomId, user.id]);
+
+  // 重新计算临近人物
+  const resetNearbyFigures = useCallback(() => {
+    const figures = figuresRef.current;
+
+    const [selfFigure] = figures.filter((figure) => figure.userId === user.id);
+    if (!selfFigure) {
+      return;
+    }
+    hasNearbyFiguresInit.current = true;
+    const nearByFigures = calcNearbyFigures(selfFigure, figures);
+
+    const updateNearbyFigures = bindActionCreators(
+      updateNearbyFiguresAction,
+      dispatch
+    );
+    updateNearbyFigures(nearByFigures);
+  }, []);
+
+  const hasNearbyFiguresInit = useRef(false);
+  useEffect(() => {
+    if (!hasNearbyFiguresInit.current) {
+      resetNearbyFigures();
+    }
+  }, [figures]);
+
+  // TODO clear console
+  useLog({ figures }, 'SimulationArea.obj');
 
   return (
     <SimulationBoard
@@ -189,6 +227,7 @@ const SimulationArea: FC<SimulationAreaProps> = ({
           key={figure.userId}
           figure={figure}
           boardRef={simulationBoardRef}
+          onFigureMove={resetNearbyFigures}
         />
       ))}
     </SimulationBoard>

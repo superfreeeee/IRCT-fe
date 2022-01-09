@@ -1,12 +1,12 @@
 import styled from 'styled-components';
+import {
+  SIMULATION_FIGURE_SIZE_INNER,
+  SIMULATION_FIGURE_SIZE_OUTER,
+} from './config';
 
 export const SIMULATION_BOARD_WIDTH = 500;
 export const SIMULATION_BOARD_HEIGHT = 500;
 export const SIMULATION_BOARD_PADDING = 25;
-
-export const SIMULATION_FIGURE_SIZE = 41;
-export const SIMULATION_FIGURE_SIZE_INNER = 15;
-export const SIMULATION_FIGURE_SIZE_OUTER = 24;
 
 export const SimulationBoard = styled.div`
   position: absolute;
@@ -23,6 +23,11 @@ export const FigureContainer = styled.div`
   position: absolute;
   left: ${SIMULATION_BOARD_PADDING}px;
   top: ${SIMULATION_BOARD_PADDING}px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 ${SIMULATION_FIGURE_SIZE_INNER}px
+      var(--room_space_figure_radius_level1),
+    0 0 0 ${SIMULATION_FIGURE_SIZE_INNER + SIMULATION_FIGURE_SIZE_OUTER}px
+      var(--room_space_figure_radius_level2);
   transform: translate(-50%, -50%);
   user-select: none;
 `;
