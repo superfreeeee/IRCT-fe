@@ -15,7 +15,13 @@ export enum BoxIconType {
   NextPage = 'bxs-chevrons-right',
   Send = 'bx-send',
   Group = 'bx-group',
-  MicroOff = 'bx-microphone-off',
+  Microphone = 'bxs-microphone',
+  MicrophoneOff = 'bx-microphone-off',
+  MicrophoneOffFill = 'bxs-microphone-off',
+  VoiceWave = 'bx-equalizer',
+  Video = 'bxs-video',
+  VideoOff = 'bxs-video-off',
+  PhoneOff = 'bxs-phone-off',
 }
 
 interface BoxIconProps {
@@ -23,6 +29,7 @@ interface BoxIconProps {
   size?: 'xs' | 'sm' | 'md' | 'lg';
   clickable?: boolean;
   onClick?: () => void;
+  className?: string;
 }
 
 const BoxIcon: FC<BoxIconProps> = ({
@@ -30,12 +37,13 @@ const BoxIcon: FC<BoxIconProps> = ({
   size,
   clickable = false,
   onClick,
+  className = '',
 }) => {
   const sizeStyle = { [`bx-${size}`]: !!size };
   return (
     <I
-      className={classNames('bx', type, sizeStyle)}
-      clickable={clickable}
+      className={classNames('bx', type, sizeStyle, className)}
+      clickable={clickable || !!onClick}
       onClick={onClick}
     />
   );

@@ -25,7 +25,7 @@ import BoxIcon, { BoxIconType } from '@components/BoxIcon';
 const MicroOff = () => {
   return (
     <MicroOffWrapper>
-      <BoxIcon type={BoxIconType.MicroOff} />
+      <BoxIcon type={BoxIconType.MicrophoneOff} />
     </MicroOffWrapper>
   );
 };

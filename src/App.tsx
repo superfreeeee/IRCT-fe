@@ -6,12 +6,10 @@ import styled, { createGlobalStyle } from 'styled-components';
 import store from './store';
 import Layout from './views/Layout';
 
-const AppRoot = styled.div``;
-
 const GlobalStyle = createGlobalStyle`
   :root {
     /* 大区域背景 */
-    --root_bg: #d9d9d9;
+    --main_bg: #171717;
     --im_bg: #757575;
     --room_space_bg: #C4C4C4;
     --avatar_default_bg: #777;
@@ -47,9 +45,13 @@ const GlobalStyle = createGlobalStyle`
   body {
     width: 100vw;
     height: 100vh;
-    margin: 0;
     font-family: 'Poppins', sans-serif;
   }
+`;
+
+const AppRoot = styled.div`
+  width: 100%;
+  height: 100%;
 `;
 
 const App: FC = () => {
