@@ -15,6 +15,7 @@ export enum BoxIconType {
   NextPage = 'bxs-chevrons-right',
   Send = 'bx-send',
   Group = 'bx-group',
+  MicroOff = 'bx-microphone-off',
 }
 
 interface BoxIconProps {

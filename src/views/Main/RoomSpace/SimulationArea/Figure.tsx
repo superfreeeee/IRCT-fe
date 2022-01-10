@@ -14,7 +14,21 @@ import { roundBy } from '@utils';
 import { stopPropagationHandler } from '@utils/dom';
 import useClosestRef from '@hooks/useClosestRef';
 import useDragPosition, { DragEventType } from '@hooks/useDragPosition';
-import { FigureContainer, SIMULATION_BOARD_PADDING } from './styles';
+import {
+  FigureContainer,
+  MicroOffWrapper,
+  SIMULATION_BOARD_PADDING,
+} from './styles';
+import classNames from 'classnames';
+import BoxIcon, { BoxIconType } from '@components/BoxIcon';
+
+const MicroOff = () => {
+  return (
+    <MicroOffWrapper>
+      <BoxIcon type={BoxIconType.MicroOff} />
+    </MicroOffWrapper>
+  );
+};
 
 interface FigureProps {
   figure: SpaceFigure;
@@ -27,7 +41,6 @@ const Figure: FC<FigureProps> = ({ figure, boardRef, onFigureMove }) => {
 
   const [position, setPosition] = useState(figure.position);
   const positionRef = useClosestRef(position);
-  const figureRef = useClosestRef(figure);
 
   const dispatch = useDispatch();
   const lastPositionRef = useRef<SpaceFigurePosition>(null);
@@ -71,15 +84,19 @@ const Figure: FC<FigureProps> = ({ figure, boardRef, onFigureMove }) => {
     }
   });
 
+  const noShadow = !figure.active || figure.mute;
+
   return (
     <FigureContainer
       onClick={stopPropagationHandler}
       onMouseDown={onMouseDown}
+      className={classNames({ noShadow })}
       style={{ left: position[0], top: position[1] }}
     >
       <Avatar usage={AvatarUsage.RoomSpaceRoom}>
         {figure.userId.substring(figure.userId.indexOf('-') + 1)}
       </Avatar>
+      {figure.mute && <MicroOff />}
     </FigureContainer>
   );
 };

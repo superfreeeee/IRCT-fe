@@ -139,6 +139,8 @@ export interface SpaceFigure {
   avatar?: string;
   videoUrl?: string;
   position: SpaceFigurePosition;
+  active: boolean;
+  mute: boolean;
 }
 
 export type SpaceFigureWithVideo = SpaceFigure & { voiceRate: number };
@@ -207,18 +209,26 @@ const initSpaceState: Space = {
         {
           userId: 'user-0',
           position: [40, 40],
+          active: true,
+          mute: false,
         },
         {
           userId: 'user-1',
           position: [80, 80],
+          active: true,
+          mute: false,
         },
         {
           userId: 'user-2',
           position: [120, 80],
+          active: true,
+          mute: true,
         },
         {
           userId: 'user-3',
           position: [160, 120],
+          active: true,
+          mute: false,
         },
       ],
       areaOffset: [0, 0],

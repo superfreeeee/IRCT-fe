@@ -30,4 +30,18 @@ export const FigureContainer = styled.div`
       var(--room_space_figure_radius_level2);
   transform: translate(-50%, -50%);
   user-select: none;
+
+  &.noShadow {
+    box-shadow: none;
+  }
+`;
+
+export const MicroOffWrapper = styled.div`
+  position: absolute;
+  left: -2px;
+  bottom: -2px;
+  padding: 2px;
+  border-radius: 50%;
+  color: #fff;
+  background-color: #666666;
 `;

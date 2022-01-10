@@ -1,8 +1,3 @@
 # IRCT = Innovation Remote collaboration tools
 
-## 开发疑问
-
-- 高优先级
-  - 
-- 低优先级
-  - Menu item app 与 title 间距
+- 部署位置：[http://101.43.30.63/](http://101.43.30.63/)
