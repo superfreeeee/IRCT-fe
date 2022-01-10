@@ -6,20 +6,15 @@ import Avatar from '@components/Avatar';
 export const ItemContainer = styled.li`
   position: relative;
   display: flex;
+  justify-content: flex-start;
   align-items: center;
-  justify-content: space-between;
   width: 100%;
-  height: 50px;
-  padding: 11px;
-  border-radius: 10px;
-  background-color: var(--menu_item_bg);
-  transition: all 0.2s;
+  height: 66px;
+  padding: 12px;
+  transition: all 0.25s;
+  overflow: hidden;
   cursor: pointer;
   list-style: none;
-
-  & + & {
-    margin-top: 12px;
-  }
 
   &:hover {
     background-color: var(--menu_item_bg_hover);
@@ -29,29 +24,34 @@ export const ItemContainer = styled.li`
     background-color: var(--menu_item_bg_active);
   }
 
-  .left {
-    width: 100%;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    overflow: hidden;
-  }
-
   ${Avatar} {
+    width: 42px;
+    height: 42px;
     margin-right: 10px;
   }
 
+  .content {
+    flex: 1;
+    overflow: hidden;
+  }
+
   .title {
-    flex-shrink: 1;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .subtitle {
+    font-size: 12px;
+  }
+
+  .title,
+  .subtitle {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    font-size: 14px;
   }
 
-  .right {
-    flex-grow: 1;
-    width: 60px;
+  .optional {
     font-size: 12px;
     margin: 0 15px 0 4px;
     overflow: hidden;
@@ -117,7 +117,7 @@ export const MenuSepTag = styled.div`
 export const Container = styled.div`
   width: calc(100% + 14px);
   height: 100%;
-  padding: 0 4px 77px 14px;
+  padding: 0 0 77px 14px;
   overflow-y: auto;
   transform: translateX(-14px);
 

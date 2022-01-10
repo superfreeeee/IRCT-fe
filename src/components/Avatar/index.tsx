@@ -28,18 +28,6 @@ const Avatar: StyledComponent<
     font-size: 18px;
   }
 
-  &.${AvatarUsage.IMUserInfo} {
-    width: 55px;
-    height: 55px;
-  }
-
-  &.${AvatarUsage.IMMenuItem} {
-    min-width: 27px;
-    width: 27px;
-    height: 27px;
-    border: 0;
-  }
-
   &.${AvatarUsage.RoomSpaceHeader} {
     width: 50px;
     height: 50px;

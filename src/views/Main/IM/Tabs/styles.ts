@@ -4,23 +4,38 @@ export const TabsContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
+  padding: 0 10px;
   margin-bottom: 9px;
+  border-bottom: 1px solid rgba(129, 130, 132, 0.6);
 `;
 
 export const Tab = styled.button`
+  position: relative;
   flex: 1;
-  height: 32px;
+  height: 36px;
+  padding: 8px 0;
   border: 0;
   border-radius: 10px;
   font-size: 14px;
   color: var(--menu_tab_text);
-  background-color: var(--menu_tab_bg);
+  background-color: transparent;
   cursor: pointer;
   user-select: none;
 
   &.active {
     color: #fff;
-    background-color: var(--menu_tab_bg_active);
+    background-color: transparent;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      display: block;
+      width: 46px;
+      height: 1px;
+      background-color: #e2e3e4;
+      transform: translate(-50%, 1px);
+    }
   }
 `;

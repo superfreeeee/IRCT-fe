@@ -21,7 +21,7 @@ const Tabs: FC<TabsProps> = ({ current, onTabClick }) => {
           className={classNames({ active: current === option })}
           value={option}
         >
-          {option}
+          <span>{option}</span>
         </Tab>
       ))}
     </TabsContainer>

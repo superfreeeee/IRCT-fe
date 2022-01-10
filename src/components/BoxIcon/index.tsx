@@ -1,12 +1,12 @@
-import classNames from 'classnames';
 import React, { FC } from 'react';
+import classNames from 'classnames';
 
 import { I } from './styles';
 
 export enum BoxIconType {
   ExpandVertical = 'bx-expand-vertical',
   Setting = 'bx-cog',
-  Search = 'bx-search-alt',
+  Search = 'bx-search',
   Calender = 'bx-calendar',
   File = 'bx-file',
   Branch = 'bx-git-branch',

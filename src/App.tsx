@@ -10,17 +10,14 @@ const GlobalStyle = createGlobalStyle`
   :root {
     /* 大区域背景 */
     --main_bg: #171717;
-    --im_bg: #757575;
+    --im_bg: #313132;
     --room_space_bg: #C4C4C4;
     --avatar_default_bg: #777;
     /* menu tag 相关 */
-    --menu_tab_bg: #444444;
-    --menu_tab_bg_active: #292929;
     --menu_tab_text: #C7C7C7;
     /* menu item 相关 */
-    --menu_item_bg: #D1D1D1;
-    --menu_item_bg_hover: #A7A7A7;
-    --menu_item_bg_active: #444444;
+    --menu_item_bg_hover: rgba(71, 72, 73, 0.3);
+    --menu_item_bg_active: rgb(71, 72, 73);
     --menu_item_tip_bg: #2E2E2E;
     --menu_item_option_bg: #C4C4C4;
     --menu_item_unread_bg: #FF8989;

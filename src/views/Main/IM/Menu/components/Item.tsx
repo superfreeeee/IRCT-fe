@@ -41,25 +41,25 @@ const Item: FC<ItemProps> = ({
       bottom: window.innerHeight - rect.top + 12,
       left: (rect.left + rect.right) / 2,
     };
-    showTooltip('Hello Tooltip' as string, pos);
+    // showTooltip('Hello Tooltip' as string, pos);
   }, [showTooltip]);
 
-  const AvatarEl = useMemo(() => {
-    if (!avatar) {
-      return isRoom ? (
-        <EmojiIcon type={EmojiIconType.Man} size={20} />
-      ) : (
-        <BoxIcon type={BoxIconType.Group} />
-      );
-    }
+  // const AvatarEl = useMemo(() => {
+  //   if (!avatar) {
+  //     return isRoom ? (
+  //       <EmojiIcon type={EmojiIconType.Man} size={20} />
+  //     ) : (
+  //       <BoxIcon type={BoxIconType.Group} />
+  //     );
+  //   }
 
-    if (avatar.startsWith(EMOJI_PREFIX)) {
-      const type = avatar.substring(EMOJI_PREFIX.length) as EmojiIconType;
-      return <EmojiIcon type={type} size={20} />;
-    } else {
-      return <BoxIcon type={BoxIconType.Group} />;
-    }
-  }, [isRoom, avatar]);
+  //   if (avatar.startsWith(EMOJI_PREFIX)) {
+  //     const type = avatar.substring(EMOJI_PREFIX.length) as EmojiIconType;
+  //     return <EmojiIcon type={type} size={20} />;
+  //   } else {
+  //     return <BoxIcon type={BoxIconType.Group} />;
+  //   }
+  // }, [isRoom, avatar]);
 
   return (
     <ItemContainer
@@ -70,21 +70,21 @@ const Item: FC<ItemProps> = ({
       onMouseOver={onMouseOver}
       onMouseLeave={closeTooltip}
     >
-      <div className="left">
-        <Avatar usage={AvatarUsage.IMMenuItem} default={!isRoom}>
-          {AvatarEl}
-        </Avatar>
-        <span className="title">{title}</span>
+      <Avatar>
+        <BoxIcon type={BoxIconType.Group} />
+      </Avatar>
+      <div className="content">
+        <div className="title">{title}</div>
+        <div className="subtitle">{title}</div>
       </div>
-      {(usingApp || state) && (
-        <div className="right">
-          <span>{usingApp}</span>
-        </div>
-      )}
+      <div className="optional">
+        {/* <span>{usingApp}</span> */}
+      </div>
       {/* 未读信息 */}
-      {unread && <UnreadPin num={unread} />}
+      {/* // TODO check unread is need or not */}
+      {/* {unread && <UnreadPin num={unread} />} */}
       {/* 状态点 */}
-      {state && <StatusPoint state={state} style={{ right: 11, bottom: 18 }} />}
+      {/* {state && <StatusPoint state={state} style={{ right: 11, bottom: 18 }} />} */}
     </ItemContainer>
   );
 };
