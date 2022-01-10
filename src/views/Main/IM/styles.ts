@@ -10,7 +10,7 @@ export const IMContainer = styled.div`
   height: calc(100% - 30px);
   margin: 15px 10px 15px 0;
   border-radius: 10px;
-  background-color: var(--im_bg);
+  background-color: var(--container_bg);
   z-index: 100;
 `;
 

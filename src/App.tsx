@@ -10,8 +10,7 @@ const GlobalStyle = createGlobalStyle`
   :root {
     /* 大区域背景 */
     --main_bg: #171717;
-    --im_bg: #313132;
-    --room_space_bg: #C4C4C4;
+    --container_bg: #313132;
     --avatar_default_bg: #777;
     /* menu tag 相关 */
     --menu_tab_text: #C7C7C7;

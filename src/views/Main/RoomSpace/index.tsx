@@ -9,7 +9,12 @@ import { TabOption } from '../IM/type';
 import Chat from './Chat';
 import Header from './Header';
 import Room from './Room';
-import { Divider, RoomSpaceContainer, RoomSpaceWrapper } from './styles';
+import {
+  Divider,
+  RoomSpaceBody,
+  RoomSpaceContainer,
+  RoomSpaceWrapper,
+} from './styles';
 import { RoomSpaceType, TabOption2RoomSpaceTypeMapper } from './type';
 
 const option2TypeMapper: TabOption2RoomSpaceTypeMapper = {
@@ -62,7 +67,7 @@ const RoomSpace: FC<RoomSpaceProps> = ({}) => {
         <Divider />
         {/* --------------- */}
         {/* body */}
-        {BodyEl}
+        <RoomSpaceBody>{BodyEl}</RoomSpaceBody>
       </RoomSpaceWrapper>
     </RoomSpaceContainer>
   );

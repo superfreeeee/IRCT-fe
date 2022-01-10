@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 
 export const ChatContainer = styled.div`
-  flex: 1;
   display: flex;
   flex-direction: column;
+  height: 100%;
   padding: 22px 20px 26px;
   overflow: hidden;
 `;

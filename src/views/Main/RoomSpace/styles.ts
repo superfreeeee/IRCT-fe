@@ -1,39 +1,31 @@
 import styled from 'styled-components';
 
-import { ROOM_SPACE_WIDTH_CHAT, ROOM_SPACE_WIDTH_ROOM } from '../styles';
-import { RoomSpaceType } from './type';
-
-const ROOM_SPACE_LEFT_PADDING = 60;
-export const ROOM_SPACE_HEADER_PADDING = 18;
+const ROOM_SPACE_WIDTH = 360;
 
 export const RoomSpaceContainer = styled.div`
-  height: 100%;
-  z-index: 10;
+  width: ${ROOM_SPACE_WIDTH}px;
+  height: calc(100% - 30px);
+  margin: 15px 15px 15px 0;
+  border-radius: 10px;
+  background-color: var(--container_bg);
 
   &.hidden {
     display: none;
   }
-
-  &.${RoomSpaceType.Room} {
-    width: ${ROOM_SPACE_WIDTH_ROOM}px;
-  }
-
-  &.${RoomSpaceType.Chat} {
-    width: ${ROOM_SPACE_WIDTH_CHAT}px;
-  }
 `;
 
-// wrapper 向左偏移填满圆角边缘颜色
 export const RoomSpaceWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  width: calc(100% + ${ROOM_SPACE_LEFT_PADDING}px);
+  justify-content: flex-start;
+  align-items: stretch;
+  width: ${ROOM_SPACE_WIDTH}px;
   height: 100%;
-  padding-left: ${ROOM_SPACE_LEFT_PADDING}px;
-  border-radius: 30px;
-  background-color: var(--room_space_bg);
-  transform: translateX(-${ROOM_SPACE_LEFT_PADDING}px);
   overflow: hidden;
+`;
+
+export const RoomSpaceBody = styled.div`
+  flex: 1;
 `;
 
 export const Divider = styled.div`

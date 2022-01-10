@@ -2,8 +2,10 @@ import styled from 'styled-components';
 
 import Avatar from '@components/Avatar';
 import EmojiIcon from '@components/EmojiIcon';
-import { RoomSpaceContainer, ROOM_SPACE_HEADER_PADDING } from '../styles';
+import { RoomSpaceContainer } from '../styles';
 import { RoomSpaceType } from '../type';
+
+const ROOM_SPACE_HEADER_PADDING = 18;
 
 export const RoomSpaceHeader = styled.div`
   position: relative;
