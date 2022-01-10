@@ -21,18 +21,20 @@ const GlobalStyle = createGlobalStyle`
     --menu_item_option_bg: #C4C4C4;
     --menu_item_unread_bg: #FF8989;
     /* room space 相关 */
-    --room_space_area_bg: #EDEDED;
+    --room_space_area_bg: #474849;
     --room_space_chat_record_bg_other: #838383;
     --room_space_chat_record_bg_self: #E9E9E9;
-    --room_space_figure_radius_level1: rgba(162, 231, 161, 0.5);
-    --room_space_figure_radius_level2: rgba(162, 231, 161, 0.2);;
+    --room_space_figure_radius_level1: rgba(188, 189, 191, 0.3);
+    --room_space_figure_radius_level2: rgba(189, 191, 193, 0.2);
     /* 状态颜色 */
     --state_idle: #5DD45A;
     --state_work: #5ABED4;
     --state_busy: #FFD231;
+    /* divider color */
+    --divider_color_bg: rgba(129, 130, 132, 0.6);
   }
 
-  * {
+        * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;

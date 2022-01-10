@@ -6,7 +6,7 @@ export const TabsContainer = styled.div`
   align-items: center;
   padding: 0 10px;
   margin-bottom: 9px;
-  border-bottom: 1px solid rgba(129, 130, 132, 0.6);
+  border-bottom: 1px solid var(--divider_color_bg);
 `;
 
 export const Tab = styled.button`

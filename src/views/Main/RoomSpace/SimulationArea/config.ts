@@ -1,9 +1,9 @@
 export const SIMULATION_AREA_SHRINK = true; // 可拖动面板是否缩放至当前面板大小
 
 // 模拟空间声音扩散范围
-export const SIMULATION_FIGURE_SIZE = 41;
-export const SIMULATION_FIGURE_SIZE_INNER = 15;
-export const SIMULATION_FIGURE_SIZE_OUTER = 24;
+export const SIMULATION_FIGURE_SIZE = 36;
+export const SIMULATION_FIGURE_SIZE_INNER = 24;
+export const SIMULATION_FIGURE_SIZE_OUTER = 26;
 
 // level1: 内圈贴内圈
 export const FIGURE_DISTANCE_LEVEL1 =

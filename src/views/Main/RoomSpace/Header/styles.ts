@@ -13,6 +13,7 @@ export const RoomSpaceHeader = styled.div`
   justify-content: space-between;
   width: 100%;
   padding: ${ROOM_SPACE_HEADER_PADDING}px;
+  border-bottom: 1px solid var(--divider_color_bg);
   color: #fff;
 `;
 

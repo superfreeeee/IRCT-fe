@@ -86,7 +86,6 @@ const Room = () => {
         with the designer you want to find, please consciously control the
         distance and microphone sound
       </RoomDescription>
-      <Divider />
       {/* Room 仿真空间 */}
       <SimulationAreaWrapper style={{ height: areaH }} ref={areaWrapperRef}>
         <SimulationArea areaWrapperRef={areaWrapperRef} />

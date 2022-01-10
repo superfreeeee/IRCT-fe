@@ -26,6 +26,7 @@ export const RoomSpaceWrapper = styled.div`
 
 export const RoomSpaceBody = styled.div`
   flex: 1;
+  overflow: hidden;
 `;
 
 export const Divider = styled.div`

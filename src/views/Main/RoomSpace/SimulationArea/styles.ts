@@ -1,5 +1,7 @@
+import Avatar from '@components/Avatar';
 import styled from 'styled-components';
 import {
+  SIMULATION_FIGURE_SIZE,
   SIMULATION_FIGURE_SIZE_INNER,
   SIMULATION_FIGURE_SIZE_OUTER,
 } from './config';
@@ -33,6 +35,12 @@ export const FigureContainer = styled.div`
 
   &.noShadow {
     box-shadow: none;
+  }
+
+  ${Avatar} {
+    width: ${SIMULATION_FIGURE_SIZE}px;
+    height: ${SIMULATION_FIGURE_SIZE}px;
+    cursor: grab;
   }
 `;
 

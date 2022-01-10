@@ -4,7 +4,7 @@ export const ChatContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: 22px 20px 26px;
+  padding: 22px 17px 23px;
   overflow: hidden;
 `;
 
@@ -54,16 +54,17 @@ export const ChatInputBar = styled.div`
 
 export const SendButton = styled.div`
   margin-left: 10px;
-  padding: 6px 15px;
+  padding: 6px;
+  color: #fff;
   cursor: pointer;
 
   &:hover {
     border-radius: 10px;
-    background-color: #b7b7b7;
+    background-color: rgb(71, 72, 73);
   }
 
-  i {
-    transform: translateY(-1px) rotate(-45deg);
+  & > i {
+    transform: translate(2px, -1px) rotate(-45deg);
   }
 `;
 

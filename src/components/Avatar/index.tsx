@@ -41,14 +41,6 @@ const Avatar: StyledComponent<
     color: #fff;
   }
 
-  &.${AvatarUsage.RoomSpaceRoom} {
-    width: 41px;
-    height: 41px;
-    border-color: var(--avatar_default_bg);
-    background-color: var(--room_space_area_bg);
-    z-index: 1000;
-  }
-
   &.${AvatarUsage.MeetingCall} {
     width: 73px;
     height: 73px;

@@ -18,7 +18,7 @@ export const RoomContainer = styled.div`
 `;
 
 export const RoomDescription = styled.p`
-  margin: 15px 35px 15px 40px; // 40 px total
+  margin: 12px 16px 40px; // 40 px total
   font-size: 14px;
   color: #fff;
 `;

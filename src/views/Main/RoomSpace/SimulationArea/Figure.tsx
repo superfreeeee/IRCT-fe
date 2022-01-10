@@ -93,9 +93,7 @@ const Figure: FC<FigureProps> = ({ figure, boardRef, onFigureMove }) => {
       className={classNames({ noShadow })}
       style={{ left: position[0], top: position[1] }}
     >
-      <Avatar usage={AvatarUsage.RoomSpaceRoom}>
-        {figure.userId.substring(figure.userId.indexOf('-') + 1)}
-      </Avatar>
+      <Avatar>{figure.userId.substring(figure.userId.indexOf('-') + 1)}</Avatar>
       {figure.mute && <MicroOff />}
     </FigureContainer>
   );
