@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 
 import Item, { ItemProps } from './components/Item';
 import Tooltip from './components/Tooltip';
-import { Container, MenuSepContainer, MenuSepTag } from './styles';
+import { MenuContainer, MenuSepContainer, MenuSepTag } from './styles';
 import { useTooltip } from './hooks';
 import { MenuData } from './type';
 
@@ -68,10 +68,10 @@ const Menu: FC<MenuProps> & { Item: FC<ItemProps> } = ({
   const [tooltipState, { showTooltip, closeTooltip }] = useTooltip();
 
   return (
-    <Container>
+    <MenuContainer>
       {!noPinned && (
         <>
-          <MenuSepTag>置顶</MenuSepTag>
+          {/* <MenuSepTag>置顶</MenuSepTag> */}
           {/* 置顶列表 */}
           <MenuSep
             selected={selected}
@@ -80,7 +80,7 @@ const Menu: FC<MenuProps> & { Item: FC<ItemProps> } = ({
             closeTooltip={closeTooltip}
             onSelect={onItemClick}
           />
-          <MenuSepTag>其他</MenuSepTag>
+          {/* <MenuSepTag>其他</MenuSepTag> */}
         </>
       )}
       {/* 其他列表 */}
@@ -93,7 +93,7 @@ const Menu: FC<MenuProps> & { Item: FC<ItemProps> } = ({
       />
       {/* hover 文字 */}
       <Tooltip state={tooltipState} />
-    </Container>
+    </MenuContainer>
   );
 };
 

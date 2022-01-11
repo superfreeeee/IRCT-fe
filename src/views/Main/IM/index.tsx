@@ -34,11 +34,11 @@ const IM = () => {
         onItemClick={onItemClick}
       ></Menu>
       <FooterNav />
-      <HidePage
+      {/* <HidePage
         position={{ left: 266, top: 60 }}
         revert={!spaceVisible}
         onClick={toggleSpaceVisible}
-      />
+      /> */}
     </IMContainer>
   );
 };

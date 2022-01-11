@@ -5,7 +5,6 @@ export const TabsContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 0 10px;
-  margin-bottom: 9px;
   border-bottom: 1px solid var(--divider_color_bg);
 `;
 

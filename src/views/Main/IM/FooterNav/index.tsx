@@ -1,20 +1,33 @@
 import React from 'react';
 
 import { BoxIconType } from '@components/BoxIcon';
-import { Container } from './styles';
+import { FooterNavContainer } from './styles';
 import NavApp from './NavApp';
 
 const FooterNav = () => {
-  const figmaLink = 'https://www.figma.com/file/VDlm87TVWZtDKFQRYJ4fgg/Untitled?node-id=17%3A829';
-  const storyLink = 'https://joezhao.notion.site/MVP-Story-211938a1ba3b4949a74c10dd6080a96d';
+  const clickDate = () => {
+    console.log(`[FooterNav] clickDate`);
+  };
+
+  const clickDoc = () => {
+    console.log(`[FooterNav] clickDoc`);
+  };
+
+  const clickPath = () => {
+    console.log(`[FooterNav] clickPath`);
+  };
+
+  const clickTodo = () => {
+    console.log(`[FooterNav] clickTodo`);
+  };
 
   return (
-    <Container>
-      <NavApp icon={BoxIconType.Calender} title={'Date'} outerLink={storyLink} />
-      <NavApp icon={BoxIconType.File} title={'Doc'} outerLink={storyLink} />
-      <NavApp icon={BoxIconType.Branch} title={'Path'} outerLink={storyLink} />
-      <NavApp icon={BoxIconType.ListCheck} title={'Todo'} outerLink={storyLink} />
-    </Container>
+    <FooterNavContainer>
+      <NavApp icon={BoxIconType.Calender} title={'Date'} onClick={clickDate} />
+      <NavApp icon={BoxIconType.File} title={'Doc'} onClick={clickDoc} />
+      <NavApp icon={BoxIconType.Branch} title={'Path'} onClick={clickPath} />
+      <NavApp icon={BoxIconType.ListCheck} title={'Todo'} onClick={clickTodo} />
+    </FooterNavContainer>
   );
 };
 

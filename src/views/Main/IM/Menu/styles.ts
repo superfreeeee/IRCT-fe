@@ -53,10 +53,12 @@ export const ItemContainer = styled.li`
 
   .optional {
     font-size: 12px;
-    margin: 0 15px 0 4px;
     overflow: hidden;
-    text-overflow: ellipsis;
-    /* white-space: nowrap; */
+
+    &.inTeam {
+      align-self: flex-start;
+      line-height: 21px;
+    }
   }
 `;
 
@@ -114,10 +116,10 @@ export const MenuSepTag = styled.div`
 `;
 
 // 总容器
-export const Container = styled.div`
+export const MenuContainer = styled.div`
   width: calc(100% + 14px);
   height: 100%;
-  padding: 0 0 77px 14px;
+  padding: 0 0 66px 14px;
   overflow-y: auto;
   transform: translateX(-14px);
 

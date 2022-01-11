@@ -1,13 +1,9 @@
-import React, { FC, useCallback, useMemo, useRef } from 'react';
+import React, { FC, useCallback, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import classNames from 'classnames';
 
 import Avatar from '@components/Avatar';
-import { AvatarUsage } from '@components/Avatar/type';
 import BoxIcon, { BoxIconType } from '@components/BoxIcon';
-import EmojiIcon, { EmojiIconType, EMOJI_PREFIX } from '@components/EmojiIcon';
-import StatusPoint from '@components/StatusPoint';
-import UnreadPin from '@components/UnreadPin';
 import { AppState } from '@store/reducers';
 import { TabOption } from '../../type';
 import { ItemContainer } from '../styles';
@@ -74,11 +70,13 @@ const Item: FC<ItemProps> = ({
         <BoxIcon type={BoxIconType.Group} />
       </Avatar>
       <div className="content">
-        <div className="title">{title}</div>
+        <div className="title">
+          <span>{title}</span>
+        </div>
         <div className="subtitle">{title}</div>
       </div>
-      <div className="optional">
-        {/* <span>{usingApp}</span> */}
+      <div className={classNames('optional', { inTeam: !isRoom })}>
+        {isRoom ? <span>3</span> : <span>12:00</span>}
       </div>
       {/* 未读信息 */}
       {/* // TODO check unread is need or not */}

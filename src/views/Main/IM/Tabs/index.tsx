@@ -4,7 +4,7 @@ import React, { FC } from 'react';
 import { Tab, TabsContainer } from './styles';
 import { TabOption } from '../type';
 
-const options = [TabOption.Room, TabOption.Team];
+const options = [TabOption.Team, TabOption.Room];
 
 interface TabsProps {
   current: TabOption;

@@ -1,22 +1,26 @@
 import styled from 'styled-components';
 
-export const Container = styled.div`
+export const FooterNavContainer = styled.div`
   position: absolute;
   bottom: 0;
   left: 0;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
-  padding: 12px 16px 22px;
+  padding: 10px 0;
   width: 100%;
+  border-radius: 10px;
+  box-shadow: 0 -5px 5px rgba(0, 0, 0, 0.16);
   background-color: var(--container_bg);
-  border-bottom-left-radius: 30px;
-  border-bottom-right-radius: 30px;
 `;
 
-export const NavAppContainer = styled.div`
-  width: 25%;
+export const NavAppWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
   text-align: center;
+  font-size: 14px;
   color: #fff;
   cursor: pointer;
 `;

@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 
 import BoxIcon, { BoxIconType } from '@components/BoxIcon';
-import { NavAppContainer } from './styles';
+import { NavAppWrapper } from './styles';
 import { noop, openNewPage } from '@utils';
 
 interface NavAppProps {
@@ -21,10 +21,10 @@ const NavApp: FC<NavAppProps> = ({ icon, title, onClick, outerLink }) => {
   }
 
   return (
-    <NavAppContainer onClick={onClick}>
-      <BoxIcon type={icon} size={'md'} />
+    <NavAppWrapper onClick={onClick}>
+      <BoxIcon type={icon} size={'sm'} />
       <span>{title}</span>
-    </NavAppContainer>
+    </NavAppWrapper>
   );
 };
 
