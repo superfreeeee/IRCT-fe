@@ -12,7 +12,7 @@ const Main = () => {
       <StatusBar />
       <IM />
       <RoomSpace />
-      <VideoRoom />
+      {/* <VideoRoom /> */}
     </Container>
   );
 };

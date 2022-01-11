@@ -53,7 +53,7 @@ const RoomSpace: FC<RoomSpaceProps> = ({}) => {
 
   return (
     <RoomSpaceContainer
-      className={classNames(roomSpaceType, { hidden: !visible })}
+      className={classNames(roomSpaceType, { hidden: !visible, shrink: false })}
     >
       <RoomSpaceWrapper>
         {/* Header */}
