@@ -29,7 +29,7 @@ const GlobalStyle = createGlobalStyle`
     /* 状态颜色 */
     --state_idle: #5DD45A;
     --state_work: #5ABED4;
-    --state_busy: #FFD231;
+    --state_busy: #EDD171;
     /* divider color */
     --divider_color_bg: rgba(129, 130, 132, 0.6);
   }

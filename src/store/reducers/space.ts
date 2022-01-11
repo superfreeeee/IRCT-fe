@@ -447,7 +447,7 @@ const updateNearbyFigures = (
 const spaceReducer: Reducer<
   Space,
   CommonAction<SpaceActionType | TeamActionType | RoomActionType>
-> = (prevState = initSpaceState, action) => {
+> = (prevState = initSpaceState, action): Space => {
   switch (action.type) {
     // SpaceActionType
     case SpaceActionType.SwitchSpace:

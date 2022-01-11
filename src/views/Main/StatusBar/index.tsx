@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import Avatar from '@components/Avatar';
 import { AppState } from '@store/reducers';
@@ -13,6 +13,8 @@ import {
   StatusBarBottom,
   StatusBarContainer,
 } from './styles';
+import { bindActionCreators } from 'redux';
+import { exitRoomAction } from '@store/reducers/room';
 
 const StatusBar = () => {
   const user = useSelector((state: AppState) => state.user);
@@ -33,8 +35,11 @@ const StatusBar = () => {
     setVideoVoice(!videoVoice);
   };
 
+  const dispatch = useDispatch();
   const exitVideoRoom = () => {
     console.log(`[StatusBar] exitVideoRoom`);
+    const exitRoom = bindActionCreators(exitRoomAction, dispatch);
+    exitRoom();
   };
 
   const jumpToRoomSpace = () => {

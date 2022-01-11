@@ -18,12 +18,13 @@ export interface ItemProps {
   extraData?: ItemExtraData;
   showTooltip: (content: string, position) => void;
   closeTooltip: () => void;
-  onSelect: (id: string) => void;
+  onSelect: (data: MenuData) => void;
 }
 
 const Item: FC<ItemProps> = ({
   currentTab,
   selected,
+  data,
   data: { id, avatar, title },
   extraData: { subtitle, members } = {},
   showTooltip,
@@ -48,7 +49,7 @@ const Item: FC<ItemProps> = ({
       className={classNames({ selected })}
       // @ts-ignore
       ref={containerRef}
-      onClick={() => onSelect(id)}
+      onClick={() => onSelect(data)}
       onMouseOver={onMouseOver}
       onMouseLeave={closeTooltip}
     >

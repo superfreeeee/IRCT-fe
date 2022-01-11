@@ -23,7 +23,7 @@ interface MenuProps {
   currentTab: TabOption;
   list: MenuData[];
   selected: string;
-  onItemClick: (id: string) => void;
+  onItemClick: (data: MenuData) => void;
 }
 
 const Menu: FC<MenuProps> & { Item: FC<ItemProps> } = ({

@@ -7,10 +7,15 @@ import {
   switchSpaceAction,
   toggleSpaceVisibleAction,
 } from '@store/reducers/space';
-import { enterRoomAction } from '@store/reducers/room';
-import { enterTeamAction, exitTeamAction } from '@store/reducers/team';
+import { enterRoomAction, RoomData } from '@store/reducers/room';
+import {
+  enterTeamAction,
+  exitTeamAction,
+  TeamData,
+} from '@store/reducers/team';
 import { TabOption } from './type';
 import { DEFAULT_TAB } from './config';
+import { MenuData } from './Menu/type';
 
 /**
  * Tabs
@@ -34,7 +39,8 @@ export const useTab = (): [TabOption, (option: TabOption) => void] => {
       setTab(option);
       const newTabSelected =
         option === TabOption.Team ? selectedTeam : selectedRoom;
-      console.log(`[useTab.onTabClick] ${option}, selected: ${newTabSelected}`);
+      // TODO clear console
+      // console.log(`[useTab.onTabClick] ${option}, selected: ${newTabSelected}`);
       if (newTabSelected) {
         const switchSpace = bindActionCreators(switchSpaceAction, dispatch);
         switchSpace(option);
@@ -75,13 +81,15 @@ export const useMenu = (tab: TabOption) => {
     const exitTeam = bindActionCreators(exitTeamAction, dispatch);
     const switchSpace = bindActionCreators(switchSpaceAction, dispatch);
 
-    return (spaceId: string) => {
+    //  spaceId: string
+    return (data: MenuData) => {
+      const { id: spaceId } = data;
       if (spaceId !== selected) {
         // select other roomSpace/teamChat
         if (tab === TabOption.Room) {
-          enterRoom(spaceId);
+          enterRoom(data as RoomData);
         } else {
-          enterTeam(spaceId);
+          enterTeam(data as TeamData);
         }
         switchSpace(tab);
       } else if (tab === TabOption.Team) {

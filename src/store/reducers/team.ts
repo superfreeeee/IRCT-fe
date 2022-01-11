@@ -22,11 +22,11 @@ export enum TeamActionType {
 }
 
 export const enterTeamAction = (
-  teamId: string
+  team: TeamData
 ): CommonAction<TeamActionType> => {
   return {
     type: TeamActionType.EnterTeam,
-    payload: teamId,
+    payload: team,
   };
 };
 
@@ -119,10 +119,13 @@ const initTeamState: Team = {
 const teamReducer: Reducer<
   Team,
   CommonAction<TeamActionType | RoomActionType>
-> = (prevState = initTeamState, action) => {
+> = (prevState = initTeamState, action): Team => {
   switch (action.type) {
     case TeamActionType.EnterTeam:
-      return { ...prevState, selected: action.payload };
+      return {
+        ...prevState,
+        selected: (action.payload as TeamData).id,
+      };
 
     case TeamActionType.ExitTeam:
       return { ...prevState, selected: '' };

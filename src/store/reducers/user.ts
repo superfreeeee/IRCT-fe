@@ -1,14 +1,23 @@
 import { Reducer } from 'redux';
 
 import { UserState } from '@components/StatusPoint/type';
-import { CommonAction } from '../type';
-import { SpaceActionType } from './space';
-
-// @ts-ignore
 import user1000 from '@assets/img/user_1000.png';
+import { CommonAction } from '../type';
+import { RoomActionType, RoomData, RoomType } from './room';
 
 // =============== actions ===============
-export enum UserActionType {}
+export enum UserActionType {
+  UpdateUserState = 'User#UpdateUserState',
+}
+
+export const updateUserStateAction = (
+  state: UserState
+): CommonAction<UserActionType> => {
+  return {
+    type: UserActionType.UpdateUserState,
+    payload: state,
+  };
+};
 
 // =============== type ===============
 export interface User {
@@ -17,7 +26,6 @@ export interface User {
   name: string;
   org: string;
   state: UserState;
-  currentRoom: string; // roomId
 }
 
 // =============== state ===============
@@ -27,19 +35,38 @@ const initUserState: User = {
   name: 'superfree',
   org: 'Alibaba Dingtalk',
   state: UserState.Idle,
-  currentRoom: '',
+};
+
+const updateUserState = (prevState: User, state: UserState): User => {
+  return {
+    ...prevState,
+    state,
+  };
+};
+
+const enterNewRoom = (prevState: User, room: RoomData): User => {
+  const currentState = prevState.state;
+  const state = room.type === RoomType.Coffee ? UserState.Idle : UserState.Work;
+  if (currentState === state) {
+    return prevState;
+  }
+  return updateUserState(prevState, state);
 };
 
 const userReducer: Reducer<
   User,
-  CommonAction<UserActionType | SpaceActionType>
-> = (prevState = initUserState, action) => {
+  CommonAction<UserActionType | RoomActionType>
+> = (prevState = initUserState, action): User => {
   switch (action.type) {
-    case SpaceActionType.JoinRoomSpace:
-      return { ...prevState, currentRoom: action.payload.roomId };
+    case UserActionType.UpdateUserState:
+      return updateUserState(prevState, action.payload);
 
-    case SpaceActionType.LeaveRoomSpace:
-      return { ...prevState, currentRoom: '' };
+    // Room Actions
+    case RoomActionType.EnterRoom:
+      return enterNewRoom(prevState, action.payload);
+
+    case RoomActionType.ExitRoom:
+      return { ...prevState, state: UserState.Idle };
 
     default:
       return prevState;

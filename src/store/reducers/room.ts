@@ -1,9 +1,9 @@
 import { Reducer } from 'redux';
 
-import { EmojiIconType, EMOJI_PREFIX } from '@components/EmojiIcon';
 import { CommonAction } from '../type';
 import { TeamActionType } from './team';
 
+// imgs
 import officeBookAvatar from '@assets/img/office_book.png';
 import officeToolsAvatar from '@assets/img/office_tools.png';
 import officeGraphicsAvatar from '@assets/img/office_graphics.png';
@@ -19,11 +19,11 @@ export enum RoomActionType {
 }
 
 export const enterRoomAction = (
-  roomId: string
+  room: RoomData
 ): CommonAction<RoomActionType> => {
   return {
     type: RoomActionType.EnterRoom,
-    payload: roomId,
+    payload: room,
   };
 };
 
@@ -141,10 +141,13 @@ const initRoomState: Room = {
 const roomReducer: Reducer<
   Room,
   CommonAction<RoomActionType | TeamActionType>
-> = (prevState = initRoomState, action) => {
+> = (prevState = initRoomState, action): Room => {
   switch (action.type) {
     case RoomActionType.EnterRoom:
-      return { ...prevState, selected: action.payload };
+      return {
+        ...prevState,
+        selected: (action.payload as RoomData).id,
+      };
 
     case RoomActionType.ExitRoom:
       return { ...prevState, selected: '' };

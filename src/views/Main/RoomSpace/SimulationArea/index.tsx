@@ -17,18 +17,17 @@ import {
   joinRoomSpaceAction,
   leaveRoomSpaceAction,
   SimulationSpace,
-  SpaceFigure,
   updateAreaOffsetAction,
   updateNearbyFiguresAction,
 } from '@store/reducers/space';
 import { roundBy } from '@utils';
 import useDragPosition, { DragEventType } from '@hooks/useDragPosition';
 import useClosestRef from '@hooks/useClosestRef';
+import useLog from '@hooks/useLog';
 import Figure from './Figure';
 import { SimulationBoard } from './styles';
 import { calcNearbyFigures, calcInitPosition } from './utils';
 import { SIMULATION_AREA_SHRINK } from './config';
-import useLog from '@hooks/useLog';
 
 interface UseBoardDraggerOptions {
   roomId: string;
@@ -133,7 +132,6 @@ const SimulationArea: FC<SimulationAreaProps> = ({
     }
     return space;
   }, [space]);
-  const figuresRef = useClosestRef(figures);
 
   // >>>>> main login
   const simulationBoardRef = useRef<HTMLDivElement>(null);
@@ -164,9 +162,9 @@ const SimulationArea: FC<SimulationAreaProps> = ({
       }
       const { width, height } = board.getBoundingClientRect();
       // TODO clear console
-      console.log(
-        `[SimulationArea] simulationBoard: width = ${width}, height = ${height}`
-      );
+      // console.log(
+      //   `[SimulationArea] simulationBoard: width = ${width}, height = ${height}`
+      // );
 
       joinRoomSpace({
         roomId: selectedRoomId,
@@ -179,17 +177,18 @@ const SimulationArea: FC<SimulationAreaProps> = ({
         },
       });
       // TODO clear console
-      console.log(`[SimulationArea] join room ${selectedRoomId}`);
+      console.log(`[SimulationArea] back to room ${selectedRoomId}`);
     });
 
     return () => {
       leaveRoomSpace(selectedRoomId, user.id);
       // TODO clear console
-      console.log(`[SimulationArea] leave room ${selectedRoomId}`);
+      console.log(`[SimulationArea] clear currentSapce`);
     };
   }, [selectedRoomId, user.id]);
 
   // 重新计算临近人物
+  const figuresRef = useClosestRef(figures);
   const resetNearbyFigures = useCallback(() => {
     const figures = figuresRef.current;
 
@@ -215,7 +214,7 @@ const SimulationArea: FC<SimulationAreaProps> = ({
   }, [figures]);
 
   // TODO clear console
-  useLog({ figures }, 'SimulationArea.obj');
+  // useLog({ figures }, 'SimulationArea.obj');
 
   return (
     <SimulationBoard
