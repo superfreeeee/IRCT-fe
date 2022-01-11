@@ -1,46 +1,16 @@
-import React, { FC } from 'react';
+import React, { FC, useMemo } from 'react';
 
 import Item, { ItemProps } from './components/Item';
 import Tooltip from './components/Tooltip';
-import { MenuContainer, MenuSepContainer, MenuSepTag } from './styles';
+import { MenuContainer, MenuSepContainer } from './styles';
 import { useTooltip } from './hooks';
-import { MenuData } from './type';
-
-/**
- * 列表分区（置顶/其他）
- */
-interface MenuSepProps {
-  selected: string;
-  list: MenuData[];
-  showTooltip: (content: string, position) => void;
-  closeTooltip: () => void;
-  onSelect: (id: string) => void;
-}
-
-const MenuSep: FC<MenuSepProps> = ({
-  selected,
-  list,
-  showTooltip,
-  closeTooltip,
-  onSelect,
-}) => {
-  return (
-    <MenuSepContainer>
-      {list.map((data) => {
-        return (
-          <Item
-            key={data.id}
-            selected={selected === data.id}
-            data={data}
-            showTooltip={showTooltip}
-            closeTooltip={closeTooltip}
-            onSelect={onSelect}
-          ></Item>
-        );
-      })}
-    </MenuSepContainer>
-  );
-};
+import { ItemExtraData, MenuData } from './type';
+import { TabOption } from '../type';
+import { useSelector } from 'react-redux';
+import { AppState } from '@store/reducers';
+import { RoomData } from '@store/reducers/room';
+import useLog from '@hooks/useLog';
+import { TeamData } from '@store/reducers/team';
 
 /**
  * IM - Menu 列表
@@ -50,47 +20,77 @@ const MenuSep: FC<MenuSepProps> = ({
  * @returns
  */
 interface MenuProps {
+  currentTab: TabOption;
   list: MenuData[];
   selected: string;
   onItemClick: (id: string) => void;
 }
 
 const Menu: FC<MenuProps> & { Item: FC<ItemProps> } = ({
+  currentTab,
   list,
   selected,
   onItemClick,
 }) => {
-  const pinnedList = list.filter((data) => data.pinned);
-  const otherList = list.filter((data) => !data.pinned);
-
-  const noPinned = !pinnedList.length;
-
   const [tooltipState, { showTooltip, closeTooltip }] = useTooltip();
+
+  const isRoom = currentTab === TabOption.Room;
+
+  const space = useSelector((state: AppState) => state.space);
+  const subtitleMap: { [id: string]: ItemExtraData } = useMemo(() => {
+    if (isRoom) {
+      // extraData for Room
+      const mapper: { [id: string]: ItemExtraData } = {};
+
+      const simulationSpaces = space.simulationSpaces;
+      (list as RoomData[]).forEach(({ id: roomId }) => {
+        const spaceObj = simulationSpaces[roomId];
+        const members = spaceObj ? spaceObj.figures.length : 0;
+        mapper[roomId] = {
+          subtitle: members
+            ? `${spaceObj.figures.length} people here`
+            : 'empty',
+          members,
+        };
+      }, mapper);
+
+      return mapper;
+    } else {
+      // extraData for Team
+      const mapper: { [id: string]: ItemExtraData } = {};
+
+      const teamChats = space.teamChat;
+      (list as TeamData[]).forEach(({ id: userId }) => {
+        const records = teamChats[userId];
+        if (records) {
+          mapper[userId] = {
+            subtitle: records[records.length - 1].text,
+          };
+        }
+      });
+
+      return mapper;
+    }
+  }, [list, isRoom, space]);
 
   return (
     <MenuContainer>
-      {!noPinned && (
-        <>
-          {/* <MenuSepTag>置顶</MenuSepTag> */}
-          {/* 置顶列表 */}
-          <MenuSep
-            selected={selected}
-            list={pinnedList}
-            showTooltip={showTooltip}
-            closeTooltip={closeTooltip}
-            onSelect={onItemClick}
-          />
-          {/* <MenuSepTag>其他</MenuSepTag> */}
-        </>
-      )}
-      {/* 其他列表 */}
-      <MenuSep
-        selected={selected}
-        list={otherList}
-        showTooltip={showTooltip}
-        closeTooltip={closeTooltip}
-        onSelect={onItemClick}
-      />
+      <MenuSepContainer>
+        {list.map((data) => {
+          return (
+            <Item
+              key={data.id}
+              currentTab={currentTab}
+              selected={selected === data.id}
+              data={data}
+              extraData={subtitleMap[data.id]}
+              showTooltip={showTooltip}
+              closeTooltip={closeTooltip}
+              onSelect={onItemClick}
+            ></Item>
+          );
+        })}
+      </MenuSepContainer>
       {/* hover 文字 */}
       <Tooltip state={tooltipState} />
     </MenuContainer>

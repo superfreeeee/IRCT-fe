@@ -4,9 +4,10 @@ import { IM_WIDTH } from '../styles';
 
 export const IMContainer = styled.div`
   position: relative;
-  width: ${IM_WIDTH}px;
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
+  width: ${IM_WIDTH}px;
   height: calc(100% - 30px);
   margin: 15px 10px 15px 0;
   border-radius: 10px;

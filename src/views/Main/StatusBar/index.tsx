@@ -45,7 +45,9 @@ const StatusBar = () => {
     <StatusBarContainer>
       {/* 上半 */}
       <AvatarBlock>
-        <Avatar></Avatar>
+        <Avatar>
+          <img src={user.avatar} width={'140%'} />
+        </Avatar>
         <StateUnderline state={user.state} />
       </AvatarBlock>
       {/* 下半 */}

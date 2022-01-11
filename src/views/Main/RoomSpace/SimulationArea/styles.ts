@@ -40,6 +40,8 @@ export const FigureContainer = styled.div`
   ${Avatar} {
     width: ${SIMULATION_FIGURE_SIZE}px;
     height: ${SIMULATION_FIGURE_SIZE}px;
+    border: 2px solid #fff;
+    background-color: #bfbfbf;
     cursor: grab;
   }
 `;

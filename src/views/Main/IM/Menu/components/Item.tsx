@@ -3,31 +3,34 @@ import { useSelector } from 'react-redux';
 import classNames from 'classnames';
 
 import Avatar from '@components/Avatar';
-import BoxIcon, { BoxIconType } from '@components/BoxIcon';
 import { AppState } from '@store/reducers';
 import { TabOption } from '../../type';
 import { ItemContainer } from '../styles';
-import { MenuData } from '../type';
+import { ItemExtraData, MenuData } from '../type';
+
+import graphic2Avatar from '@assets/img/graphic_2.png';
+import { RoomData } from '@store/reducers/room';
 
 export interface ItemProps {
+  currentTab: TabOption;
   selected: boolean;
   data: MenuData;
+  extraData?: ItemExtraData;
   showTooltip: (content: string, position) => void;
   closeTooltip: () => void;
   onSelect: (id: string) => void;
 }
 
 const Item: FC<ItemProps> = ({
+  currentTab,
   selected,
-  data: { id, avatar, title, state, unread, usingApp },
+  data: { id, avatar, title },
+  extraData: { subtitle, members } = {},
   showTooltip,
   closeTooltip,
   onSelect,
 }) => {
-  const currentSpace = useSelector(
-    (state: AppState) => state.space.currentSpace
-  );
-  const isRoom = currentSpace === TabOption.Room;
+  const isRoom = currentTab === TabOption.Room;
 
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -40,23 +43,6 @@ const Item: FC<ItemProps> = ({
     // showTooltip('Hello Tooltip' as string, pos);
   }, [showTooltip]);
 
-  // const AvatarEl = useMemo(() => {
-  //   if (!avatar) {
-  //     return isRoom ? (
-  //       <EmojiIcon type={EmojiIconType.Man} size={20} />
-  //     ) : (
-  //       <BoxIcon type={BoxIconType.Group} />
-  //     );
-  //   }
-
-  //   if (avatar.startsWith(EMOJI_PREFIX)) {
-  //     const type = avatar.substring(EMOJI_PREFIX.length) as EmojiIconType;
-  //     return <EmojiIcon type={type} size={20} />;
-  //   } else {
-  //     return <BoxIcon type={BoxIconType.Group} />;
-  //   }
-  // }, [isRoom, avatar]);
-
   return (
     <ItemContainer
       className={classNames({ selected })}
@@ -67,19 +53,19 @@ const Item: FC<ItemProps> = ({
       onMouseLeave={closeTooltip}
     >
       <Avatar>
-        <BoxIcon type={BoxIconType.Group} />
+        <img src={avatar || graphic2Avatar} width={'100%'} alt={'wrong url'} />
       </Avatar>
       <div className="content">
         <div className="title">
           <span>{title}</span>
         </div>
-        <div className="subtitle">{title}</div>
+        <div className="subtitle">{subtitle}</div>
       </div>
       <div className={classNames('optional', { inTeam: !isRoom })}>
-        {isRoom ? <span>3</span> : <span>12:00</span>}
+        {isRoom ? <span>{members}</span> : <span>12:00</span>}
       </div>
       {/* 未读信息 */}
-      {/* // TODO check unread is need or not */}
+      {/* // TODO posible add back in future */}
       {/* {unread && <UnreadPin num={unread} />} */}
       {/* 状态点 */}
       {/* {state && <StatusPoint state={state} style={{ right: 11, bottom: 18 }} />} */}

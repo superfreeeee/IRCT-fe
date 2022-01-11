@@ -22,8 +22,8 @@ const GlobalStyle = createGlobalStyle`
     --menu_item_unread_bg: #FF8989;
     /* room space 相关 */
     --room_space_area_bg: #474849;
-    --room_space_chat_record_bg_other: #838383;
-    --room_space_chat_record_bg_self: #E9E9E9;
+    --room_space_chat_record_bg_other: #474849;
+    --room_space_chat_record_bg_self: #BCBEC0;
     --room_space_figure_radius_level1: rgba(188, 189, 191, 0.3);
     --room_space_figure_radius_level2: rgba(189, 191, 193, 0.2);
     /* 状态颜色 */
@@ -43,7 +43,7 @@ const GlobalStyle = createGlobalStyle`
   body {
     width: 100vw;
     height: 100vh;
-    font-family: 'Poppins', sans-serif;
+    /* font-family: 'Poppins', sans-serif; */
   }
 `;
 

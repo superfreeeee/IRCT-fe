@@ -42,6 +42,7 @@ export const ItemContainer = styled.li`
 
   .subtitle {
     font-size: 12px;
+    color: rgba(255, 255, 255, 0.6);
   }
 
   .title,
@@ -52,6 +53,7 @@ export const ItemContainer = styled.li`
   }
 
   .optional {
+    margin: 3px 0 0 5px;
     font-size: 12px;
     overflow: hidden;
 
@@ -102,17 +104,6 @@ export const ItemTooltip = styled.div`
 export const MenuSepContainer = styled.ul`
   width: 100%;
   color: #fff;
-`;
-
-// 置顶 / 其他
-export const MenuSepTag = styled.div`
-  margin-bottom: 8px;
-  font-size: 12px;
-  color: #fff;
-
-  ${MenuSepContainer} + & {
-    margin-top: 12px;
-  }
 `;
 
 // 总容器

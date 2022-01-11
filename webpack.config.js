@@ -21,6 +21,7 @@ module.exports = {
       '@hooks': path.resolve(__dirname, 'src/hooks'),
       '@libs': path.resolve(__dirname, 'src/libs'),
       '@utils': path.resolve(__dirname, 'src/utils'),
+      '@assets': path.resolve(__dirname, 'src/assets'),
     },
     extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
   },
@@ -49,6 +50,18 @@ module.exports = {
             },
           },
           'sass-loader',
+        ],
+      },
+      {
+        test: /\.(png|jpe?g|gif)$/i,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: 'img/[name].[ext]',
+              limit: 8192,
+            },
+          },
         ],
       },
     ],

@@ -19,6 +19,7 @@ export const NavAppWrapper = styled.div`
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+  width: 45px;
   text-align: center;
   font-size: 14px;
   color: #fff;

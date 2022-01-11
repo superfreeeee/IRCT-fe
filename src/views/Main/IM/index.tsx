@@ -1,14 +1,12 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
 
 import BoxIcon, { BoxIconType } from '@components/BoxIcon';
-import { AppState } from '@store/reducers';
 import HidePage from '@components/HidePage';
 import Menu from './Menu';
 import FooterNav from './FooterNav';
 import Tabs from './Tabs';
-import { IMContainer, SearchBar } from './styles';
 import { useTab, useHidePage, useMenu } from './hooks';
+import { IMContainer, SearchBar } from './styles';
 
 const IM = () => {
   const [tab, onTabClick] = useTab();
@@ -29,6 +27,7 @@ const IM = () => {
       </SearchBar>
       <Tabs current={tab} onTabClick={onTabClick} />
       <Menu
+        currentTab={tab}
         list={menuList}
         selected={selected}
         onItemClick={onItemClick}

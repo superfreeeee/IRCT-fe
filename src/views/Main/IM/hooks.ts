@@ -7,35 +7,40 @@ import {
   switchSpaceAction,
   toggleSpaceVisibleAction,
 } from '@store/reducers/space';
-import { enterRoomAction, exitRoomAction } from '@store/reducers/room';
+import { enterRoomAction } from '@store/reducers/room';
 import { enterTeamAction, exitTeamAction } from '@store/reducers/team';
 import { TabOption } from './type';
+import { DEFAULT_TAB } from './config';
 
 /**
  * Tabs
  * @returns
  */
 export const useTab = (): [TabOption, (option: TabOption) => void] => {
-  const [tab, setTab] = useState(TabOption.Room);
+  const [tab, setTab] = useState(DEFAULT_TAB);
 
   const dispatch = useDispatch();
-  const switchSpace = useMemo(
-    () => bindActionCreators(switchSpaceAction, dispatch),
-    [dispatch]
-  );
-
   // 初始化
   useEffect(() => {
+    const switchSpace = bindActionCreators(switchSpaceAction, dispatch);
     switchSpace(tab);
   }, []);
+
+  const selectedTeam = useSelector((state: AppState) => state.team.selected);
+  const selectedRoom = useSelector((state: AppState) => state.room.selected);
 
   const onTabClick = useCallback(
     (option: TabOption) => {
       setTab(option);
-      // tab 同步到 space/currentSpace
-      switchSpace(option);
+      const newTabSelected =
+        option === TabOption.Team ? selectedTeam : selectedRoom;
+      console.log(`[useTab.onTabClick] ${option}, selected: ${newTabSelected}`);
+      if (newTabSelected) {
+        const switchSpace = bindActionCreators(switchSpaceAction, dispatch);
+        switchSpace(option);
+      }
     },
-    [switchSpace]
+    [selectedTeam, selectedRoom]
   );
 
   return [tab, onTabClick];
@@ -66,26 +71,21 @@ export const useMenu = (tab: TabOption) => {
    */
   const onItemClick = useMemo(() => {
     const enterRoom = bindActionCreators(enterRoomAction, dispatch);
-    const exitRoom = bindActionCreators(exitRoomAction, dispatch);
     const enterTeam = bindActionCreators(enterTeamAction, dispatch);
     const exitTeam = bindActionCreators(exitTeamAction, dispatch);
-
-    const options = {
-      [TabOption.Room]: {
-        enter: enterRoom,
-        exit: exitRoom,
-      },
-      [TabOption.Team]: {
-        enter: enterTeam,
-        exit: exitTeam,
-      },
-    };
+    const switchSpace = bindActionCreators(switchSpaceAction, dispatch);
 
     return (spaceId: string) => {
-      if (spaceId === selected) {
-        options[tab].exit();
-      } else {
-        options[tab].enter(spaceId);
+      if (spaceId !== selected) {
+        // select other roomSpace/teamChat
+        if (tab === TabOption.Room) {
+          enterRoom(spaceId);
+        } else {
+          enterTeam(spaceId);
+        }
+        switchSpace(tab);
+      } else if (tab === TabOption.Team) {
+        exitTeam();
       }
     };
   }, [tab, selected]);

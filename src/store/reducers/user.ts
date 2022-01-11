@@ -4,6 +4,9 @@ import { UserState } from '@components/StatusPoint/type';
 import { CommonAction } from '../type';
 import { SpaceActionType } from './space';
 
+// @ts-ignore
+import user1000 from '@assets/img/user_1000.png';
+
 // =============== actions ===============
 export enum UserActionType {}
 
@@ -20,6 +23,7 @@ export interface User {
 // =============== state ===============
 const initUserState: User = {
   id: 'user-1000',
+  avatar: user1000,
   name: 'superfree',
   org: 'Alibaba Dingtalk',
   state: UserState.Idle,

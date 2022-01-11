@@ -4,6 +4,7 @@ import Avatar from '@components/Avatar';
 import { UserState } from '@components/StatusPoint/type';
 
 export const StatusBarContainer = styled.div`
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
   justify-content: space-between;

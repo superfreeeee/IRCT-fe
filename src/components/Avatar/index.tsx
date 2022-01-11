@@ -20,8 +20,9 @@ const Avatar: StyledComponent<
   align-items: center;
   width: 50px;
   height: 50px;
-  border: 2px solid #fff;
   border-radius: 50%;
+  overflow: hidden;
+  object-fit: fill;
 
   &.noAvatar {
     background-color: var(--avatar_default_bg);

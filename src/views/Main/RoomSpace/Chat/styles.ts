@@ -41,6 +41,8 @@ export const ChatRecordWrapper = styled.div<ChatRecordWrapperProps>`
     max-width: calc(100% - 84px);
     padding: 8px 14px;
     border-radius: 10px;
+    box-shadow: 0 5px 5px rgba(0, 0, 0, 0.16);
+    color: #fff;
     background-color: ${recordTextBg};
     white-space: pre-line;
   }

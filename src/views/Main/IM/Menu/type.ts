@@ -1,24 +1,19 @@
-import { UserState } from '@components/StatusPoint/type';
+import { RoomData } from '@store/reducers/room';
+import { TeamData } from '@store/reducers/team';
 
 /**
  * IM - Menu Item 列表项数据
  */
-export interface MenuData {
-  // public attr
-  id: string;
-  avatar?: string;
-  pinned?: boolean;
-  title: string;
-  // Team Mode
-  state?: UserState;
-  unread?: number;
-  usingApp?: string;
-  // Room Mode
-}
+export type MenuData = RoomData | TeamData;
 
 export interface TooltipPosition {
   top?: number;
   right?: number;
   bottom?: number;
   left?: number;
+}
+
+export interface ItemExtraData {
+  subtitle?: string;
+  members?: number;
 }

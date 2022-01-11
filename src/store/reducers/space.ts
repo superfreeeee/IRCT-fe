@@ -181,6 +181,62 @@ const initSpaceState: Space = {
   teamChat: {
     'user-0': [
       {
+        userId: 'user-1000',
+        text: 'I want to find you to understand some of the details of the relevant PRD, it will not be too long',
+      },
+      {
+        userId: 'user-0',
+        text: "Ok let's talk, I'm at Coffee Bar now, Plz follow me",
+      },
+    ],
+    'user-1': [
+      {
+        userId: 'user-1000',
+        text: 'How is your design going?',
+      },
+      {
+        userId: 'user-1',
+        text: 'Not bad, you can take a look at my recent goals on Path, and you can talk about it later',
+      },
+    ],
+    'user-2': [
+      {
+        userId: 'user-1000',
+        text: 'Hi, are u the PM for Project A?',
+      },
+      {
+        userId: 'user-2',
+        text: 'Yes, is there any problem?',
+      },
+    ],
+    'user-5': [
+      {
+        userId: 'user-1000',
+        text: 'This software is so much fun',
+      },
+      {
+        userId: 'user-5',
+        text: 'Lollllll',
+      },
+    ],
+    'user-7': [
+      {
+        userId: 'user-1000',
+        text: 'Where are you, there is a technical question you would like to ask',
+      },
+      {
+        userId: 'user-7',
+        text: 'Something is wrong with my computer and I checked it here',
+      },
+    ],
+    'user-9': [
+      {
+        userId: 'user-9',
+        text: 'get lunch together?',
+      },
+    ],
+    'user-2020': [
+      {
         userId: 'user-0',
         text: '1 line -----------------------',
       },
@@ -247,7 +303,7 @@ const toggleVisible = (prevState: Space, visible?: boolean): Space => {
   };
 };
 
-const mergeSendChatMessage = (
+const appendChatMessage = (
   prevState: Space,
   { spaceId, record }: SendChatMessageParams
 ): Space => {
@@ -326,9 +382,6 @@ const joinRoomSpace = (
 ): Space => {
   const prevSpace: SimulationSpace =
     prevState.simulationSpaces[roomId] || createSimulationSpace();
-  if (!prevSpace) {
-    return prevState;
-  }
   // 已经存在于房间内
   if (prevSpace.figures.some((f) => f.userId === figure.userId)) {
     return prevState;
@@ -404,7 +457,7 @@ const spaceReducer: Reducer<
       return toggleVisible(prevState, action.payload);
 
     case SpaceActionType.SendChatMessage:
-      return mergeSendChatMessage(prevState, action.payload);
+      return appendChatMessage(prevState, action.payload);
 
     case SpaceActionType.UpdateFigurePosition:
       return updateFigurePosition(prevState, action.payload);

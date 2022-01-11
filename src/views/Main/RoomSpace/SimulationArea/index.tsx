@@ -174,6 +174,8 @@ const SimulationArea: FC<SimulationAreaProps> = ({
           userId: user.id,
           avatar: user.avatar,
           position: calcInitPosition(figures, width, height),
+          active: true,
+          mute: false,
         },
       });
       // TODO clear console
