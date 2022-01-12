@@ -27,9 +27,12 @@ export const enterRoomAction = (
   };
 };
 
-export const exitRoomAction = (): CommonAction<RoomActionType> => {
+export const exitRoomAction = (
+  reserveSpace: boolean = false
+): CommonAction<RoomActionType> => {
   return {
     type: RoomActionType.ExitRoom,
+    payload: reserveSpace,
   };
 };
 
@@ -40,7 +43,7 @@ export enum RoomType {
   Coffee = 'coffee', // 咖啡间
   Meeting = 'meeting', // 视频会议
   TempMeeting = 'temp-meeting', // 暂时会议
-  Other = 'other',
+  None = 'none',
 }
 
 export interface RoomData {

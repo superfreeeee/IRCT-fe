@@ -24,10 +24,6 @@ export const ItemContainer = styled.li`
     background-color: var(--menu_item_bg_active);
   }
 
-  &.isRoom {
-    /* cursor: default; */
-  }
-
   ${Avatar} {
     width: 42px;
     height: 42px;
@@ -72,7 +68,11 @@ export const ItemContainer = styled.li`
   }
 
   &.selected:hover .optional {
-    color: inherit;
+    color: var(--menu_item_bg_active);
+  }
+
+  &.isGroup:hover .optional {
+    color: #fff;
   }
 `;
 
@@ -83,25 +83,42 @@ export const ItemActions = styled.div`
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  width: 120px;
+  min-width: 60px;
   height: 100%;
   background: linear-gradient(
     to left,
     rgb(77, 77, 78) 0%,
-    rgba(52, 55, 60, 0.33) 60%,
+    rgba(52, 55, 60, 0.85) 75%,
     transparent
   );
-  transform: scaleX(0);
+  transform: translateX(100%);
   transform-origin: right;
   transition: all 0.3s;
 
   ${ItemContainer}:hover & {
-    transform: scaleX(100%);
+    transform: translateX(0%);
   }
 `;
 
+export const ItemActionDivider = styled.div`
+  width: 0.5px;
+  height: 14px;
+  background-color: #fff;
+`;
+
 // Icon 按钮
-export const ItemActionIcon = styled.div``;
+export const ItemActionIcon = styled.div`
+  box-sizing: content-box;
+  width: 24px;
+  height: 24px;
+  padding: 4px;
+  margin: 4px;
+  border-radius: 5px;
+
+  &:hover {
+    background-color: #474849;
+  }
+`;
 // Join 按钮
 export const ItemActionBtn = styled.button`
   padding: 4px 10px;
@@ -115,7 +132,7 @@ export const ItemActionBtn = styled.button`
   cursor: inherit;
 
   &:hover {
-  box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.16);
+    box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.16);
   }
 `;
 

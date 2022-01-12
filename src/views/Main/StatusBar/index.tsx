@@ -16,6 +16,8 @@ import {
   StatusBarContainer,
 } from './styles';
 import { TabOption } from '../IM/type';
+import { switchTabAction } from '@store/reducers/im';
+import { switchSpaceAction } from '@store/reducers/space';
 
 const StatusBar = () => {
   const user = useSelector((state: AppState) => state.user);
@@ -54,7 +56,8 @@ const StatusBar = () => {
   const exitVideoRoom = () => {
     console.log(`[StatusBar] exitVideoRoom`);
     const exitRoom = bindActionCreators(exitRoomAction, dispatch);
-    exitRoom();
+    const reserveSpace = currentSpace === TabOption.Team;
+    exitRoom(reserveSpace);
   };
 
   /**
@@ -62,6 +65,10 @@ const StatusBar = () => {
    */
   const jumpToRoomSpace = () => {
     console.log(`[StatusBar] jumpToRoomSpace`);
+    const switchTab = bindActionCreators(switchTabAction, dispatch);
+    const switchSpace = bindActionCreators(switchSpaceAction, dispatch);
+    switchTab(TabOption.Room);
+    switchSpace(TabOption.Room);
   };
 
   return (

@@ -16,13 +16,14 @@ import {
 import { TabOption } from './type';
 import { DEFAULT_TAB } from './config';
 import { MenuData } from './Menu/type';
+import { switchTabAction } from '@store/reducers/im';
 
 /**
  * Tabs
  * @returns
  */
 export const useTab = (): [TabOption, (option: TabOption) => void] => {
-  const [tab, setTab] = useState(DEFAULT_TAB);
+  const tab = useSelector((state: AppState) => state.im.currentTab);
 
   const dispatch = useDispatch();
   // 初始化
@@ -36,7 +37,9 @@ export const useTab = (): [TabOption, (option: TabOption) => void] => {
 
   const onTabClick = useCallback(
     (option: TabOption) => {
-      setTab(option);
+      const switchTab = bindActionCreators(switchTabAction, dispatch);
+      switchTab(option);
+
       const newTabSelected =
         option === TabOption.Team ? selectedTeam : selectedRoom;
       // TODO clear console
@@ -78,6 +81,7 @@ export const useMenu = (tab: TabOption) => {
   const onItemClick = useMemo(() => {
     const enterTeam = bindActionCreators(enterTeamAction, dispatch);
     const exitTeam = bindActionCreators(exitTeamAction, dispatch);
+    const switchSpace = bindActionCreators(switchSpaceAction, dispatch);
 
     //  spaceId: string
     return (data: MenuData) => {
@@ -89,6 +93,7 @@ export const useMenu = (tab: TabOption) => {
           enterTeam(data as TeamData);
         }
       }
+      switchSpace(tab);
     };
   }, [tab, selected]);
 

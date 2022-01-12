@@ -30,9 +30,12 @@ export const enterTeamAction = (
   };
 };
 
-export const exitTeamAction = (): CommonAction<TeamActionType> => {
+export const exitTeamAction = (
+  reserveSpace: boolean = false
+): CommonAction<TeamActionType> => {
   return {
     type: TeamActionType.ExitTeam,
+    payload: reserveSpace,
   };
 };
 
@@ -44,6 +47,7 @@ export interface TeamData {
   state?: UserState;
   unread?: number;
   usingApp?: AppType;
+  currentRoom?: string;
 }
 
 export interface Team {
@@ -59,34 +63,48 @@ const initTeamState: Team = {
       avatar: user0Avatar,
       title: 'Joe Zhao',
       state: UserState.Idle,
+      currentRoom: 'room-1',
     },
     {
       id: 'user-1',
       avatar: user1Avatar,
       title: 'Tingting',
       state: UserState.Work,
+      currentRoom: 'room-5',
+      usingApp: AppType.Figma,
     },
     {
       id: 'user-2',
       avatar: user2Avatar,
       title: 'Xin Liu',
       state: UserState.Busy,
+      currentRoom: 'room-11',
       usingApp: AppType.Notion,
     },
-    { id: 'user-3', avatar: graphic1Avatar, title: 'Doc PM Group' },
+    {
+      id: 'user-3',
+      avatar: graphic1Avatar,
+      title: 'Doc PM Group',
+    },
     {
       id: 'user-5',
       avatar: user5Avatar,
       title: 'Lan',
       state: UserState.Busy,
+      currentRoom: 'room-5',
       usingApp: AppType.Figma,
     },
-    { id: 'user-4', avatar: graphic2Avatar, title: 'Project Alpha Group' },
+    {
+      id: 'user-4',
+      avatar: graphic2Avatar,
+      title: 'Project Alpha Group',
+    },
     {
       id: 'user-7',
       avatar: user7Avatar,
       title: 'Tian Xie',
       state: UserState.Busy,
+      currentRoom: 'room-4',
       usingApp: AppType.Pycharm,
     },
     {
@@ -94,6 +112,7 @@ const initTeamState: Team = {
       avatar: user9Avatar,
       title: 'Shuting Tang',
       state: UserState.Busy,
+      currentRoom: 'room-11',
       usingApp: AppType.Figma,
     },
     // {
@@ -114,6 +133,7 @@ const initTeamState: Team = {
       id: 'user-11',
       title: 'Test 3 - Noise User with LongLongLongLongNmae',
       state: UserState.Work,
+      currentRoom: '',
     },
   ],
   // TODO recover mock

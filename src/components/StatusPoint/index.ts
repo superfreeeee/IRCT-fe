@@ -23,7 +23,6 @@ const StatusPoint = styled.span<StatusPointProps>`
     width: 12px;
     height: 12px;
     ${({ size }) => overrideSize(size)}
-    margin-left: 5px;
     border-radius: 50%;
     background-color: ${({ state }) => stateToColor(state)};
   }

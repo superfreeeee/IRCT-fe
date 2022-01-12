@@ -293,9 +293,24 @@ const initSpaceState: Space = {
   nearbyFigures: [],
 };
 
+const switchSpace = (prevState: Space, space: TabOption): Space => {
+  const currentSpace = prevState.currentSpace;
+  if (currentSpace === space) {
+    return prevState;
+  }
+  return {
+    ...prevState,
+    currentSpace: space,
+  };
+};
+
 const toggleVisible = (prevState: Space, visible?: boolean): Space => {
   if (visible === undefined) {
     visible = !prevState.visible;
+  }
+  const prevVisible = prevState.visible;
+  if (prevVisible === visible) {
+    return prevState;
   }
   return {
     ...prevState,
@@ -451,7 +466,7 @@ const spaceReducer: Reducer<
   switch (action.type) {
     // SpaceActionType
     case SpaceActionType.SwitchSpace:
-      return { ...prevState, currentSpace: action.payload };
+      return switchSpace(prevState, action.payload);
 
     case SpaceActionType.ToggleSpaceVisible:
       return toggleVisible(prevState, action.payload);
@@ -481,7 +496,7 @@ const spaceReducer: Reducer<
 
     case TeamActionType.ExitTeam:
     case RoomActionType.ExitRoom:
-      return toggleVisible(prevState, false);
+      return toggleVisible(prevState, action.payload);
 
     default:
       return prevState;
