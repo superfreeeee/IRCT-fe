@@ -91,10 +91,7 @@ const Room = () => {
         <SimulationArea areaWrapperRef={areaWrapperRef} />
       </SimulationAreaWrapper>
       {/* 拖拽调整仿真空间高度 */}
-      <Divider
-        onMouseDown={onDividerMouseDown}
-        style={{ cursor: 'ns-resize', paddingBottom: 12 }}
-      />
+      {/* <Divider onMouseDown={onDividerMouseDown} style={{ paddingBottom: 12 }} /> */}
       {/* 文字聊天记录 */}
       <Chat isInRoom />
     </RoomContainer>

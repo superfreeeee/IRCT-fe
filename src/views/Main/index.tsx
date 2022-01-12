@@ -4,16 +4,16 @@ import StatusBar from './StatusBar';
 import IM from './IM';
 import RoomSpace from './RoomSpace';
 import VideoRoom from './VideoRoom';
-import { Container } from './styles';
+import { MainContainer } from './styles';
 
 const Main = () => {
   return (
-    <Container>
+    <MainContainer>
       <StatusBar />
       <IM />
       <RoomSpace />
       {/* <VideoRoom /> */}
-    </Container>
+    </MainContainer>
   );
 };
 

@@ -76,24 +76,18 @@ export const useMenu = (tab: TabOption) => {
    * 点击目录切换
    */
   const onItemClick = useMemo(() => {
-    const enterRoom = bindActionCreators(enterRoomAction, dispatch);
     const enterTeam = bindActionCreators(enterTeamAction, dispatch);
     const exitTeam = bindActionCreators(exitTeamAction, dispatch);
-    const switchSpace = bindActionCreators(switchSpaceAction, dispatch);
 
     //  spaceId: string
     return (data: MenuData) => {
       const { id: spaceId } = data;
-      if (spaceId !== selected) {
-        // select other roomSpace/teamChat
-        if (tab === TabOption.Room) {
-          enterRoom(data as RoomData);
+      if (tab === TabOption.Team) {
+        if (spaceId === selected) {
+          exitTeam();
         } else {
           enterTeam(data as TeamData);
         }
-        switchSpace(tab);
-      } else if (tab === TabOption.Team) {
-        exitTeam();
       }
     };
   }, [tab, selected]);

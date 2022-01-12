@@ -1,3 +1,3 @@
 import { TabOption } from './type';
 
-export const DEFAULT_TAB = TabOption.Room;
+export const DEFAULT_TAB = TabOption.Team;

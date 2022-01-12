@@ -23,5 +23,5 @@ export const NavAppWrapper = styled.div`
   text-align: center;
   font-size: 14px;
   color: #fff;
-  cursor: pointer;
+  /* cursor: pointer; */
 `;

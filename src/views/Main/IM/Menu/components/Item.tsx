@@ -1,15 +1,18 @@
 import React, { FC, useCallback, useRef } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
 
 import Avatar from '@components/Avatar';
 import { AppState } from '@store/reducers';
 import { TabOption } from '../../type';
-import { ItemContainer } from '../styles';
+import { ItemActionBtn, ItemActions, ItemContainer } from '../styles';
 import { ItemExtraData, MenuData } from '../type';
 
 import graphic2Avatar from '@assets/img/graphic_2.png';
-import { RoomData } from '@store/reducers/room';
+import { enterRoomAction, RoomData } from '@store/reducers/room';
+import { bindActionCreators } from 'redux';
+import StatusPoint from '@components/StatusPoint';
+import { TeamData } from '@store/reducers/team';
 
 export interface ItemProps {
   currentTab: TabOption;
@@ -41,17 +44,26 @@ const Item: FC<ItemProps> = ({
       bottom: window.innerHeight - rect.top + 12,
       left: (rect.left + rect.right) / 2,
     };
-    // showTooltip('Hello Tooltip' as string, pos);
+    // TODO fix tooltip
+    showTooltip('Hello Tooltip' as string, pos);
   }, [showTooltip]);
+
+  const dispatch = useDispatch();
+  const joinNewRoom = () => {
+    const enterRoom = bindActionCreators(enterRoomAction, dispatch);
+    enterRoom(data as RoomData);
+  };
+
+  const showActions = !isRoom || !selected;
 
   return (
     <ItemContainer
-      className={classNames({ selected })}
+      className={classNames({ selected, isRoom })}
       // @ts-ignore
       ref={containerRef}
       onClick={() => onSelect(data)}
-      onMouseOver={onMouseOver}
-      onMouseLeave={closeTooltip}
+      // onMouseOver={onMouseOver}
+      // onMouseLeave={closeTooltip}
     >
       <Avatar>
         <img src={avatar || graphic2Avatar} width={'100%'} alt={'wrong url'} />
@@ -59,6 +71,12 @@ const Item: FC<ItemProps> = ({
       <div className="content">
         <div className="title">
           <span>{title}</span>
+          <StatusPoint
+            state={(data as TeamData).state}
+            size={8}
+            onMouseOver={onMouseOver}
+            onMouseLeave={closeTooltip}
+          />
         </div>
         <div className="subtitle">{subtitle}</div>
       </div>
@@ -70,6 +88,18 @@ const Item: FC<ItemProps> = ({
       {/* {unread && <UnreadPin num={unread} />} */}
       {/* 状态点 */}
       {/* {state && <StatusPoint state={state} style={{ right: 11, bottom: 18 }} />} */}
+      {showActions && (
+        <ItemActions>
+          {!isRoom ? (
+            <>
+              <div>btn1</div>
+              <div>btn2</div>
+            </>
+          ) : (
+            <ItemActionBtn onClick={joinNewRoom}>join</ItemActionBtn>
+          )}
+        </ItemActions>
+      )}
     </ItemContainer>
   );
 };

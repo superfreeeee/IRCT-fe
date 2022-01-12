@@ -18,7 +18,7 @@ export const Tab = styled.button`
   font-size: 14px;
   color: var(--menu_tab_text);
   background-color: transparent;
-  cursor: pointer;
+  /* cursor: pointer; */
   user-select: none;
 
   &.active {

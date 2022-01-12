@@ -64,7 +64,7 @@ export const MeetingActionBtn = styled.div`
   font-size: 22px;
   color: #474849;
   background-color: #f1f1f1;
-  cursor: pointer;
+  /* cursor: pointer; */
 
   &.hangUp {
     color: #fff;
@@ -82,5 +82,5 @@ export const InMeetingIcon = styled.div`
   font-size: 28px;
   color: #fff;
   background-color: #abd476;
-  cursor: pointer;
+  /* cursor: pointer; */
 `;

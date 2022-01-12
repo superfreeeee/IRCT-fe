@@ -58,7 +58,7 @@ export const SendButton = styled.div`
   margin-left: 10px;
   padding: 6px;
   color: #fff;
-  cursor: pointer;
+  /* cursor: pointer; */
 
   &:hover {
     border-radius: 10px;

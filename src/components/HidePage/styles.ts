@@ -13,5 +13,5 @@ export const HidePageWrapper = styled.div`
   color: #fff;
   background-color: #bfbfbf;
   transform: translateX(-50%);
-  cursor: pointer;
+  /* cursor: pointer; */
 `;

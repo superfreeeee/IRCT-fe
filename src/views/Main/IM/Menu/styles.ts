@@ -13,7 +13,7 @@ export const ItemContainer = styled.li`
   padding: 12px;
   transition: all 0.25s;
   overflow: hidden;
-  cursor: pointer;
+  /* cursor: pointer; */
   list-style: none;
 
   &:hover {
@@ -22,6 +22,10 @@ export const ItemContainer = styled.li`
 
   &.selected {
     background-color: var(--menu_item_bg_active);
+  }
+
+  &.isRoom {
+    /* cursor: default; */
   }
 
   ${Avatar} {
@@ -61,6 +65,57 @@ export const ItemContainer = styled.li`
       align-self: flex-start;
       line-height: 21px;
     }
+  }
+
+  &:hover .optional {
+    color: transparent;
+  }
+
+  &.selected:hover .optional {
+    color: inherit;
+  }
+`;
+
+export const ItemActions = styled.div`
+  position: absolute;
+  right: 0;
+  top: 0;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  width: 120px;
+  height: 100%;
+  background: linear-gradient(
+    to left,
+    rgb(77, 77, 78) 0%,
+    rgba(52, 55, 60, 0.33) 60%,
+    transparent
+  );
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: all 0.3s;
+
+  ${ItemContainer}:hover & {
+    transform: scaleX(100%);
+  }
+`;
+
+// Icon 按钮
+export const ItemActionIcon = styled.div``;
+// Join 按钮
+export const ItemActionBtn = styled.button`
+  padding: 4px 10px;
+  margin: 0 10px;
+  border: 0;
+  border-radius: 5px;
+  /* box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.16); */
+  font-size: 16px;
+  color: #fff;
+  background-color: #474849;
+  cursor: inherit;
+
+  &:hover {
+  box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.16);
   }
 `;
 

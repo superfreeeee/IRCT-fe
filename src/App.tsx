@@ -34,7 +34,7 @@ const GlobalStyle = createGlobalStyle`
     --divider_color_bg: rgba(129, 130, 132, 0.6);
   }
 
-        * {
+  * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;

@@ -42,7 +42,7 @@ export const FigureContainer = styled.div`
     height: ${SIMULATION_FIGURE_SIZE}px;
     border: 2px solid #fff;
     background-color: #bfbfbf;
-    cursor: grab;
+    /* cursor: grab; */
   }
 `;
 

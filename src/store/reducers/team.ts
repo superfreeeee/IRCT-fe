@@ -110,6 +110,11 @@ const initTeamState: Team = {
       id: 'user-10',
       title: 'Test 2 - Project Alpha Group LongLongLongLongNmae',
     },
+    {
+      id: 'user-11',
+      title: 'Test 3 - Noise User with LongLongLongLongNmae',
+      state: UserState.Work,
+    },
   ],
   // TODO recover mock
   selected: '',
