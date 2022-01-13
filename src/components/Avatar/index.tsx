@@ -29,13 +29,6 @@ const Avatar: StyledComponent<
     font-size: 18px;
   }
 
-  &.${AvatarUsage.RoomSpaceHeader} {
-    width: 50px;
-    height: 50px;
-    border: 0;
-    font-size: 26px;
-  }
-
   &.${AvatarUsage.RoomSpaceChat} {
     width: 33px;
     height: 33px;

@@ -5,51 +5,38 @@ import EmojiIcon from '@components/EmojiIcon';
 import { RoomSpaceContainer } from '../styles';
 import { RoomSpaceType } from '../type';
 
-const ROOM_SPACE_HEADER_PADDING = 18;
-
 export const RoomSpaceHeader = styled.div`
   position: relative;
   display: flex;
   justify-content: space-between;
   width: 100%;
-  padding: ${ROOM_SPACE_HEADER_PADDING}px;
+  padding: 14px 30px 14px 14px;
   border-bottom: 1px solid var(--divider_color_bg);
   color: #fff;
 `;
 
 export const HeaderMain = styled.div`
+  flex-shrink: 0;
+  flex-grow: 1;
   display: flex;
   align-items: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 
   ${Avatar} {
+    width: 42px;
+    height: 42px;
     margin-right: 15px;
   }
 
-  ${RoomSpaceContainer}.${RoomSpaceType.Room} & {
-    flex: 1;
-    justify-content: center;
-    padding: 0 40px 0 15px;
-    overflow: hidden;
-
-    & .title {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-  }
-
-  ${EmojiIcon} {
+  /* ${EmojiIcon} {
     margin-right: 12px;
-  }
+  } */
 `;
 
 export const HeaderSide = styled.div`
+  flex-shrink: 0;
   display: flex;
   align-items: center;
-
-  ${RoomSpaceContainer}.${RoomSpaceType.Room} & {
-    position: absolute;
-    top: ${ROOM_SPACE_HEADER_PADDING + 6}px;
-    right: ${ROOM_SPACE_HEADER_PADDING}px;
-  }
 `;

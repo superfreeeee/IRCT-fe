@@ -64,11 +64,20 @@ export const MeetingActionBtn = styled.div`
   font-size: 22px;
   color: #474849;
   background-color: #f1f1f1;
-  /* cursor: pointer; */
+  transition: all 0.15s;
+
+  &.off {
+    color: #fff;
+    background-color: #474849;
+  }
 
   &.hangUp {
     color: #fff;
     background-color: #ed5538;
+
+    &:active {
+      background-color: #d79a8e;
+    }
   }
 `;
 

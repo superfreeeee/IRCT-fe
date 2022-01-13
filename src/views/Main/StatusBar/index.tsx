@@ -18,6 +18,7 @@ import {
 import { TabOption } from '../IM/type';
 import { switchTabAction } from '@store/reducers/im';
 import { switchSpaceAction } from '@store/reducers/space';
+import classNames from 'classnames';
 
 const StatusBar = () => {
   const user = useSelector((state: AppState) => state.user);
@@ -86,14 +87,20 @@ const StatusBar = () => {
           <MeetingActions>
             {videoRoomHidden && (
               <>
-                <MeetingActionBtn onClick={toggleVideoVisible}>
+                <MeetingActionBtn
+                  className={classNames({ off: !videoVisible })}
+                  onClick={toggleVideoVisible}
+                >
                   <BoxIcon
                     type={
                       videoVisible ? BoxIconType.Video : BoxIconType.VideoOff
                     }
                   />
                 </MeetingActionBtn>
-                <MeetingActionBtn onClick={toggleVideoVoice}>
+                <MeetingActionBtn
+                  className={classNames({ off: !videoVoice })}
+                  onClick={toggleVideoVoice}
+                >
                   <BoxIcon
                     type={
                       videoVoice

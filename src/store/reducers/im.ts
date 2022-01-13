@@ -21,7 +21,7 @@ export interface IM {
 
 // =============== state ===============
 const initIMState: IM = {
-  currentTab: TabOption.Team,
+  currentTab: TabOption.Room,
 };
 
 const imReducer: Reducer<IM, CommonAction<IMActionType>> = (

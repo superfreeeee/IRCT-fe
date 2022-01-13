@@ -4,7 +4,9 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const WebpackBar = require('webpackbar');
 
-module.exports = {
+const isProd = process.env.NODE_ENV === 'production';
+
+const config = {
   mode: process.env.NODE_ENV,
   entry: path.join(__dirname, 'src/index'),
   output: {
@@ -66,7 +68,6 @@ module.exports = {
       },
     ],
   },
-  devtool: 'source-map',
   plugins: [
     new WebpackBar(),
     new CleanWebpackPlugin(),
@@ -90,3 +91,10 @@ module.exports = {
     },
   },
 };
+
+// source map
+if (!isProd) {
+  config.devtool = 'source-map';
+}
+
+module.exports = config;

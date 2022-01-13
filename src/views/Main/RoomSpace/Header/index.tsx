@@ -42,36 +42,12 @@ const Header: FC<HeaderProps> = ({ isRoom }) => {
 
   data = data || DEFAULT_SELECTED_DATA;
 
-  const AvatarEl = useMemo(() => {
-    const avatar = data.avatar;
-    if (!avatar) {
-      if (!isRoom) {
-        // default chat avatar
-        return (
-          <Avatar usage={AvatarUsage.RoomSpaceHeader} default>
-            <BoxIcon type={BoxIconType.Group} />
-          </Avatar>
-        );
-      }
-      return null;
-    }
-
-    if (avatar.startsWith(EMOJI_PREFIX)) {
-      const type = avatar.substring(EMOJI_PREFIX.length) as EmojiIconType;
-      return <EmojiIcon type={type} size={'sm'} />;
-    } else {
-      return (
-        <Avatar usage={AvatarUsage.RoomSpaceHeader} default>
-          <BoxIcon type={avatar as BoxIconType} />
-        </Avatar>
-      );
-    }
-  }, [data, isRoom]);
-
   return (
     <RoomSpaceHeader>
       <HeaderMain>
-        {AvatarEl}
+        <Avatar>
+          <img src={data.avatar} width={'100%'} />
+        </Avatar>
         <span className="title">{data.title}</span>
       </HeaderMain>
       <HeaderSide>
