@@ -3,14 +3,10 @@ import { useSelector } from 'react-redux';
 
 import { AppState } from '@store/reducers';
 import useLog from '@hooks/useLog';
-import { VideoRoomContainer } from './styles';
 import VideoBlock from './VideoBlock';
+import { VideoRoomContainer } from './styles';
 
 const VideoRoom = () => {
-  // const currentSpace = useSelector(
-  //   (state: AppState) => state.space.currentSpace
-  // );
-
   const { id: userId } = useSelector((state: AppState) => state.user);
   const nearbyFigures = useSelector(
     (state: AppState) => state.space.nearbyFigures

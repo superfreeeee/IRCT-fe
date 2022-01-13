@@ -144,12 +144,19 @@ const Item: FC<ItemProps> = ({
     console.log(`[Menu.Item] userActionCollaborate`);
   };
 
+  const currentSpace = useSelector(
+    (state: AppState) => state.space.currentSpace
+  );
   /**
    * 加入新房间
    */
   const joinNewRoom = () => {
     const enterRoom = bindActionCreators(enterRoomAction, dispatch);
     enterRoom(data as RoomData);
+    if (currentSpace === TabOption.Team) {
+      const switchSpace = bindActionCreators(switchSpaceAction, dispatch);
+      switchSpace(TabOption.Room);
+    }
   };
 
   const showActions = (!isRoom && isUser) || (isRoom && !selected);

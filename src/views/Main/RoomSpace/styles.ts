@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { HidePageWrapper } from '@components/HidePage/styles';
 
 const ROOM_SPACE_WIDTH = 360;
+const ROOM_SPACE_WIDTH_WIDE = 420;
 
 export const RoomSpaceContainer = styled.div`
   position: relative;
@@ -18,7 +19,6 @@ export const RoomSpaceContainer = styled.div`
 
   &.shrink {
     flex: 0;
-    width: ${ROOM_SPACE_WIDTH}px;
   }
 
   ${HidePageWrapper} {
@@ -54,12 +54,18 @@ export const RoomSpaceBody = styled.div`
 export const RoomSpaceOrigin = styled.div`
   width: ${ROOM_SPACE_WIDTH}px;
   height: 100%;
+
+  &.isChat {
+    width: ${ROOM_SPACE_WIDTH_WIDE}px;
+  }
 `;
 
 export const RoomSpaceVideo = styled.div`
   position: relative;
   flex: 1;
+  min-width: 160px;
   height: 100%;
+  padding-top: 112px;
   overflow-x: hidden;
   overflow-y: auto;
 `;

@@ -92,8 +92,8 @@ export const useMenu = (tab: TabOption) => {
         } else {
           enterTeam(data as TeamData);
         }
+        switchSpace(tab);
       }
-      switchSpace(tab);
     };
   }, [tab, selected]);
 

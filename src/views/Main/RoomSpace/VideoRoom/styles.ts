@@ -7,8 +7,8 @@ export const VideoRoomContainer = styled.div`
   justify-content: flex-start;
   align-items: flex-start;
   gap: 10px;
-  height: 100%;
-  padding: 112px 30px 83px;
+  max-height: 100%;
+  padding: 0 30px 83px;
   z-index: 1;
   overflow: auto;
 `;
