@@ -9,6 +9,7 @@ import { RoomActionType } from './room';
 export enum SpaceActionType {
   SwitchSpace /*..........*/ = 'Space#SwitchSpace',
   ToggleSpaceVisible /*...*/ = 'Space#ToggleSpaceVisible',
+  ToggleExpandVideoRoom /**/ = 'Space#ToggleExpandVideoRoom',
   SendChatMessage /*......*/ = 'Space#SendChatMessage',
   UpdateFigurePosition /*.*/ = 'Space#UpdateFigurePosition',
   JoinRoomSpace /*........*/ = 'Space#JoinRoom',
@@ -32,6 +33,15 @@ export const toggleSpaceVisibleAction = (
   return {
     type: SpaceActionType.ToggleSpaceVisible,
     payload: visible,
+  };
+};
+
+export const toggleExpandVideoRoomAction = (
+  expand?: boolean
+): CommonAction<SpaceActionType> => {
+  return {
+    type: SpaceActionType.ToggleExpandVideoRoom,
+    payload: expand,
   };
 };
 
@@ -67,7 +77,6 @@ interface UpdateAreaOffsetParams {
   roomId: string;
   areaOffset: AreaOffset;
 }
-
 export const updateAreaOffsetAction = (
   params: UpdateAreaOffsetParams
 ): CommonAction<SpaceActionType> => {
@@ -143,7 +152,14 @@ export interface SpaceFigure {
   mute: boolean;
 }
 
-export type SpaceFigureWithVideo = SpaceFigure & { voiceRate: number };
+export enum VideoVoiceRate {
+  LEVEL1 = 100,
+  LEVEL2 = 60,
+  LEVEL3 = 20,
+  LEVEL4 = 0,
+}
+
+export type SpaceFigureWithVideo = SpaceFigure & { voiceRate: VideoVoiceRate };
 
 export interface SpaceChat {
   figures: SpaceFigure[];
@@ -165,6 +181,7 @@ export interface Space {
   roomChat: ChatHistory;
   simulationSpaces: SimulationSpaceObject;
   nearbyFigures: SpaceFigureWithVideo[];
+  expandVideoRoom: boolean;
 }
 // =============== default value creator ===============
 const createSimulationSpace = (): SimulationSpace => {
@@ -291,6 +308,7 @@ const initSpaceState: Space = {
     },
   },
   nearbyFigures: [],
+  expandVideoRoom: true,
 };
 
 const switchSpace = (prevState: Space, space: TabOption): Space => {
@@ -307,14 +325,24 @@ const switchSpace = (prevState: Space, space: TabOption): Space => {
 const toggleVisible = (prevState: Space, visible?: boolean): Space => {
   if (visible === undefined) {
     visible = !prevState.visible;
-  }
-  const prevVisible = prevState.visible;
-  if (prevVisible === visible) {
+  } else if (prevState.visible === visible) {
     return prevState;
   }
   return {
     ...prevState,
     visible,
+  };
+};
+
+const toggleExpand = (prevState: Space, expand?: boolean): Space => {
+  if (expand === undefined) {
+    expand = !prevState.expandVideoRoom;
+  } else if (prevState.expandVideoRoom === expand) {
+    return prevState;
+  }
+  return {
+    ...prevState,
+    expandVideoRoom: expand,
   };
 };
 
@@ -470,6 +498,9 @@ const spaceReducer: Reducer<
 
     case SpaceActionType.ToggleSpaceVisible:
       return toggleVisible(prevState, action.payload);
+
+    case SpaceActionType.ToggleExpandVideoRoom:
+      return toggleExpand(prevState, action.payload);
 
     case SpaceActionType.SendChatMessage:
       return appendChatMessage(prevState, action.payload);

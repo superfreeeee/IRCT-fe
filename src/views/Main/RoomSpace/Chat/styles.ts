@@ -6,6 +6,10 @@ export const ChatContainer = styled.div`
   height: 100%;
   padding: 22px 17px 23px;
   overflow: hidden;
+
+  &.isInRoom {
+    min-height: 200px;
+  }
 `;
 
 export const ChatHistory = styled.div`

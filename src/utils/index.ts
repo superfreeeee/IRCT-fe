@@ -2,10 +2,10 @@ import { EventHandler, SyntheticEvent } from 'react';
 
 export const noop = () => {};
 
-export const wrapFn = (fn: () => void): EventHandler<SyntheticEvent> => {
+export const wrapFn = (fn?: () => void): EventHandler<SyntheticEvent> => {
   const wrapper = (e: SyntheticEvent) => {
     e.preventDefault();
-    fn();
+    fn && fn();
   };
 
   return wrapper;

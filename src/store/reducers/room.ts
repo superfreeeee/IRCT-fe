@@ -37,7 +37,6 @@ export const exitRoomAction = (
 };
 
 // =============== type ===============
-
 export enum RoomType {
   Office = 'office', // 办公室
   Coffee = 'coffee', // 咖啡间

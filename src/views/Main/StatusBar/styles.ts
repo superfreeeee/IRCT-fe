@@ -58,8 +58,7 @@ export const MeetingActionBtn = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 32px;
-  height: 32px;
+  padding: 5px;
   border-radius: 4px;
   font-size: 22px;
   color: #474849;

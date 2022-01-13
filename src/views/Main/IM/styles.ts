@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { IM_WIDTH } from '../styles';
+const IM_WIDTH = 248;
 
 export const IMContainer = styled.div`
   position: relative;

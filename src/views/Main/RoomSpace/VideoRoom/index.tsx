@@ -1,7 +1,8 @@
-import useLog from '@hooks/useLog';
-import { AppState } from '@store/reducers';
 import React from 'react';
 import { useSelector } from 'react-redux';
+
+import { AppState } from '@store/reducers';
+import useLog from '@hooks/useLog';
 import { VideoRoomContainer } from './styles';
 import VideoBlock from './VideoBlock';
 
@@ -13,7 +14,9 @@ const VideoRoom = () => {
   const { id: userId } = useSelector((state: AppState) => state.user);
   const nearbyFigures = useSelector(
     (state: AppState) => state.space.nearbyFigures
-  ).filter((figure) => figure.userId !== userId);
+  )
+    .filter((figure) => figure.userId !== userId)
+    .sort((f1, f2) => f2.voiceRate - f1.voiceRate);
 
   useLog({ nearbyFigures }, 'VideoRoom.useLog');
 

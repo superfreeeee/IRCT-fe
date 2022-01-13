@@ -1,6 +1,7 @@
-import React, { FC, useEffect, useRef } from 'react';
+import React, { FC, useCallback, useEffect, useRef } from 'react';
 import { bindActionCreators } from 'redux';
 import { useDispatch, useSelector } from 'react-redux';
+import classNames from 'classnames';
 
 import BoxIcon, { BoxIconType } from '@components/BoxIcon';
 import { AppState } from '@store/reducers';
@@ -37,26 +38,60 @@ const Chat: FC<ChatProps> = ({ isInRoom = false, onSend }) => {
 
   const dispatch = useDispatch();
   const chatHistoryRef = useRef<HTMLDivElement>(null);
+  const chatInputRef = useRef<HTMLInputElement>(null);
+  const focusChatInput = useCallback(() => {
+    if (document.activeElement !== chatInputRef.current) {
+      chatInputRef.current.focus();
+    }
+  }, []);
   const sendMessage = (input: string) => {
     console.log(`[Chat] send message = ${input}`);
+    if (input) {
+      // only send when input not empty
+      const sendChatMessage = bindActionCreators(
+        sendChatMessageAction,
+        dispatch
+      );
+      sendChatMessage({
+        spaceId: selected,
+        record: {
+          userId,
+          text: input,
+        },
+      });
 
-    const sendChatMessage = bindActionCreators(sendChatMessageAction, dispatch);
-    sendChatMessage({
-      spaceId: selected,
-      record: {
-        userId,
-        text: input,
-      },
-    });
+      // 发出讯息后自动滚动
+      setTimeout(() => {
+        scrollToBottom(chatHistoryRef.current);
+      });
 
-    // 发出讯息后自动滚动
-    setTimeout(() => {
-      scrollToBottom(chatHistoryRef.current);
-    });
+      onSend && onSend(input);
+    }
 
-    onSend && onSend(input);
+    // refocus after sending message
+    focusChatInput();
   };
 
+  /**
+   * 渲染聊天界面的时候，单击 Enter focus 到输入框上
+   */
+  useEffect(() => {
+    const focusInputWhileEnter = (e: KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        focusChatInput();
+      }
+    };
+
+    document.addEventListener('keydown', focusInputWhileEnter);
+    return () => {
+      document.removeEventListener('keydown', focusInputWhileEnter);
+    };
+  }, []);
+
+  /**
+   * focus 输入框时监听 enter 输入
+   * blur 时删除 enter 监听
+   */
   const { setEnterListener, removeEnterListener, send } = useEnterListener({
     input,
     onSend: sendMessage,
@@ -69,7 +104,7 @@ const Chat: FC<ChatProps> = ({ isInRoom = false, onSend }) => {
   }, []);
 
   return (
-    <ChatContainer>
+    <ChatContainer className={classNames({ isInRoom })}>
       <ChatHistory ref={chatHistoryRef}>
         {records.map((record, index) => (
           <ChatRecordEl key={index} record={record} />
@@ -77,6 +112,7 @@ const Chat: FC<ChatProps> = ({ isInRoom = false, onSend }) => {
       </ChatHistory>
       <ChatInputBar>
         <Input
+          ref={chatInputRef}
           value={input}
           onChange={onInputChange}
           onFocus={setEnterListener}

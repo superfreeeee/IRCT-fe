@@ -1,11 +1,22 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { bindActionCreators } from 'redux';
 import { useDispatch, useSelector } from 'react-redux';
+import classNames from 'classnames';
 
 import { AppState } from '@store/reducers';
 import { exitRoomAction } from '@store/reducers/room';
+import { switchTabAction } from '@store/reducers/im';
+import {
+  switchSpaceAction,
+  toggleExpandVideoRoomAction,
+} from '@store/reducers/space';
+import {
+  toggleVideoVisibleAction,
+  toggleVideoVoiceAction,
+} from '@store/reducers/user';
 import Avatar from '@components/Avatar';
 import BoxIcon, { BoxIconType } from '@components/BoxIcon';
+import { TabOption } from '../IM/type';
 import {
   AvatarBlock,
   InMeetingIcon,
@@ -15,45 +26,30 @@ import {
   StatusBarBottom,
   StatusBarContainer,
 } from './styles';
-import { TabOption } from '../IM/type';
-import { switchTabAction } from '@store/reducers/im';
-import { switchSpaceAction } from '@store/reducers/space';
-import classNames from 'classnames';
 
 const StatusBar = () => {
-  const user = useSelector((state: AppState) => state.user);
+  const { state, avatar, videoVisible, videoVoice } = useSelector(
+    (state: AppState) => state.user
+  );
   const selectedRoomId = useSelector((state: AppState) => state.room.selected);
-  const currentSpace = useSelector(
-    (state: AppState) => state.space.currentSpace
+  const { currentSpace, expandVideoRoom } = useSelector(
+    (state: AppState) => state.space
   );
 
-  // TODO mock inMeeting State
   const inMeeting = !!selectedRoomId;
-  // TODO and videoRoom shrink
-  const videoRoomHidden = currentSpace !== TabOption.Room;
+  const videoRoomHidden = currentSpace !== TabOption.Room || !expandVideoRoom;
 
-  /**
-   * 视屏通话状态：屏幕
-   */
-  const [videoVisible, setVideoVisible] = useState(true);
-  const toggleVideoVisible = () => {
-    console.log(`[StatusBar] toggleVideoVisible`);
-    setVideoVisible(!videoVisible);
-  };
-
-  /**
-   * 视屏通话状态：声音
-   */
-  const [videoVoice, setVideoVoice] = useState(true);
-  const toggleVideoVoice = () => {
-    console.log(`[StatusBar] toggleVideoVoice`);
-    setVideoVoice(!videoVoice);
-  };
+  const dispatch = useDispatch();
+  // 房间状态：屏幕 | 声音
+  const toggleVideoVisible = bindActionCreators(
+    toggleVideoVisibleAction,
+    dispatch
+  );
+  const toggleVideoVoice = bindActionCreators(toggleVideoVoiceAction, dispatch);
 
   /**
    * 离开房间
    */
-  const dispatch = useDispatch();
   const exitVideoRoom = () => {
     console.log(`[StatusBar] exitVideoRoom`);
     const exitRoom = bindActionCreators(exitRoomAction, dispatch);
@@ -64,12 +60,17 @@ const StatusBar = () => {
   /**
    * 跳转到所在房间
    */
-  const jumpToRoomSpace = () => {
+  const jumpAndExpandRoomSpace = () => {
     console.log(`[StatusBar] jumpToRoomSpace`);
     const switchTab = bindActionCreators(switchTabAction, dispatch);
     const switchSpace = bindActionCreators(switchSpaceAction, dispatch);
+    const toggleExpandVideoRoom = bindActionCreators(
+      toggleExpandVideoRoomAction,
+      dispatch
+    );
     switchTab(TabOption.Room);
     switchSpace(TabOption.Room);
+    toggleExpandVideoRoom(true);
   };
 
   return (
@@ -77,9 +78,9 @@ const StatusBar = () => {
       {/* 上半 */}
       <AvatarBlock>
         <Avatar>
-          <img src={user.avatar} width={'140%'} />
+          <img src={avatar} width={'140%'} />
         </Avatar>
-        <StateUnderline state={user.state} />
+        <StateUnderline state={state} />
       </AvatarBlock>
       {/* 下半 */}
       <StatusBarBottom className="bottom">
@@ -114,7 +115,7 @@ const StatusBar = () => {
                 </MeetingActionBtn>
               </>
             )}
-            <InMeetingIcon onClick={jumpToRoomSpace}>
+            <InMeetingIcon onClick={jumpAndExpandRoomSpace}>
               <BoxIcon type={BoxIconType.VoiceWave} />
             </InMeetingIcon>
           </MeetingActions>

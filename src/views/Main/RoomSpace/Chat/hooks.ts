@@ -1,5 +1,3 @@
-import useClosestRef from '@hooks/useClosestRef';
-import { noop } from '@utils';
 import {
   ChangeEvent,
   ChangeEventHandler,
@@ -7,6 +5,9 @@ import {
   useRef,
   useState,
 } from 'react';
+
+import useClosestRef from '@hooks/useClosestRef';
+import { noop } from '@utils';
 
 /**
  * 输入框

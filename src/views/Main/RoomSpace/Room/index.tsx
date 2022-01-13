@@ -6,7 +6,7 @@ import React, {
   useState,
 } from 'react';
 
-import { Divider } from '../styles';
+import { roundBy } from '@utils';
 import Chat from '../Chat';
 import SimulationArea from '../SimulationArea';
 import {
@@ -17,7 +17,6 @@ import {
   RoomDescription,
   SimulationAreaWrapper,
 } from './styles';
-import { roundBy } from '@utils';
 
 const useAreaResizer = (): [number, MouseEventHandler] => {
   const [h, setH] = useState(DEFAULT_SIMULATION_AREA_HEIGHT);
@@ -72,9 +71,9 @@ const useAreaResizer = (): [number, MouseEventHandler] => {
   return [h, onMouseDown];
 };
 
-const Room = () => {
-  const [areaH, onDividerMouseDown] = useAreaResizer();
+const description = `A place to relax. If you want ☕️ coffee, please click the menu on the upper right to select coffee. It will be delivered to your office area in 30 minutes`;
 
+const Room = () => {
   const areaWrapperRef = useRef<HTMLDivElement>(null);
 
   return (
@@ -82,12 +81,10 @@ const Room = () => {
       <RoomDescription>
         Desription:
         <br />
-        Here is the design group 1 workstation, drag the head to communicate
-        with the designer you want to find, please consciously control the
-        distance and microphone sound
+        {description}
       </RoomDescription>
       {/* Room 仿真空间 */}
-      <SimulationAreaWrapper style={{ height: areaH }} ref={areaWrapperRef}>
+      <SimulationAreaWrapper ref={areaWrapperRef}>
         <SimulationArea areaWrapperRef={areaWrapperRef} />
       </SimulationAreaWrapper>
       {/* 拖拽调整仿真空间高度 */}

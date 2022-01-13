@@ -2,15 +2,13 @@ import {
   SpaceFigure,
   SpaceFigurePosition,
   SpaceFigureWithVideo,
+  VideoVoiceRate,
 } from '@store/reducers/space';
 import { SIMULATION_BOARD_HEIGHT, SIMULATION_BOARD_WIDTH } from './styles';
 import {
   FIGURE_DISTANCE_LEVEL1,
   FIGURE_DISTANCE_LEVEL2,
   FIGURE_DISTANCE_LEVEL3,
-  SIMULATION_FIGURE_SIZE,
-  SIMULATION_FIGURE_SIZE_INNER,
-  SIMULATION_FIGURE_SIZE_OUTER,
 } from './config';
 
 /**
@@ -26,13 +24,6 @@ export const calcInitPosition = (
 ): SpaceFigurePosition => {
   return [width / 2, height / 2];
 };
-
-enum VideoVoiceRate {
-  LEVEL1 = 100,
-  LEVEL2 = 60,
-  LEVEL3 = 20,
-  LEVEL4 = 0,
-}
 
 /**
  * 获取临近附近人物
@@ -53,7 +44,7 @@ export const calcNearbyFigures = (
       // 1. calc distance
       const _d = calcDistance(currentFigure, figure);
       // 2. calc voice rate base on distance
-      let voiceRate;
+      let voiceRate: VideoVoiceRate;
       if (_d <= FIGURE_DISTANCE_LEVEL1) {
         voiceRate = VideoVoiceRate.LEVEL1;
       } else if (_d <= FIGURE_DISTANCE_LEVEL2) {

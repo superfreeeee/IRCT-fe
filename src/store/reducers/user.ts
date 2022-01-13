@@ -8,6 +8,8 @@ import { RoomActionType, RoomData, RoomType } from './room';
 // =============== actions ===============
 export enum UserActionType {
   UpdateUserState = 'User#UpdateUserState',
+  ToggleVideoVisible = 'User#ToggleVideoVisible',
+  ToggleVideoVoice = 'User#ToggleVideoVoice',
 }
 
 export const updateUserStateAction = (
@@ -19,6 +21,14 @@ export const updateUserStateAction = (
   };
 };
 
+export const toggleVideoVisibleAction = (): CommonAction<UserActionType> => {
+  return { type: UserActionType.ToggleVideoVisible };
+};
+
+export const toggleVideoVoiceAction = (): CommonAction<UserActionType> => {
+  return { type: UserActionType.ToggleVideoVoice };
+};
+
 // =============== type ===============
 export interface User {
   id: string;
@@ -26,6 +36,8 @@ export interface User {
   name: string;
   org: string;
   state: UserState;
+  videoVisible: boolean;
+  videoVoice: boolean;
 }
 
 // =============== state ===============
@@ -35,6 +47,8 @@ const initUserState: User = {
   name: 'superfree',
   org: 'Alibaba Dingtalk',
   state: UserState.Idle,
+  videoVisible: true,
+  videoVoice: true,
 };
 
 const updateUserState = (prevState: User, state: UserState): User => {
@@ -60,6 +74,12 @@ const userReducer: Reducer<
   switch (action.type) {
     case UserActionType.UpdateUserState:
       return updateUserState(prevState, action.payload);
+
+    case UserActionType.ToggleVideoVisible:
+      return { ...prevState, videoVisible: !prevState.videoVisible };
+
+    case UserActionType.ToggleVideoVoice:
+      return { ...prevState, videoVoice: !prevState.videoVoice };
 
     // Room Actions
     case RoomActionType.EnterRoom:

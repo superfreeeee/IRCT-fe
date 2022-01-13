@@ -20,10 +20,9 @@ import {
   updateAreaOffsetAction,
   updateNearbyFiguresAction,
 } from '@store/reducers/space';
-import { roundBy } from '@utils';
 import useDragPosition, { DragEventType } from '@hooks/useDragPosition';
 import useClosestRef from '@hooks/useClosestRef';
-import useLog from '@hooks/useLog';
+import { roundBy } from '@utils';
 import Figure from './Figure';
 import { SimulationBoard } from './styles';
 import { calcNearbyFigures, calcInitPosition } from './utils';

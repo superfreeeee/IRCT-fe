@@ -10,7 +10,7 @@ export const RoomContainer = styled.div`
   height: 100%;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: auto;
 
   ${ChatContainer} {
     flex: 1;
@@ -18,13 +18,18 @@ export const RoomContainer = styled.div`
 `;
 
 export const RoomDescription = styled.p`
-  margin: 12px 16px 40px; // 40 px total
-  font-size: 14px;
+  flex-shrink: 0;
+  padding: 12px 16px;
+  height: 100px;
+  font-size: 12px;
   color: #fff;
+  overflow: auto;
 `;
 
 export const SimulationAreaWrapper = styled.div`
+  flex-shrink: 0;
   position: relative;
+  height: ${DEFAULT_SIMULATION_AREA_HEIGHT}px;
   margin: 12px 24px 0;
   border-radius: 10px;
   background-color: var(--room_space_area_bg);
