@@ -2,8 +2,8 @@ import styled from 'styled-components';
 
 import { HidePageWrapper } from '@components/HidePage/styles';
 
-const ROOM_SPACE_WIDTH = 360;
-const ROOM_SPACE_WIDTH_WIDE = 420;
+export const ROOM_SPACE_WIDTH = 360;
+export const ROOM_SPACE_WIDTH_WIDE = 420;
 
 export const RoomSpaceContainer = styled.div`
   position: relative;

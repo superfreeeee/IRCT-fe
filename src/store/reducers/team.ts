@@ -26,7 +26,7 @@ export enum TeamActionType {
 }
 
 export const enterTeamAction = (
-  team: TeamData
+  team: TeamData,
 ): CommonAction<TeamActionType> => {
   return {
     type: TeamActionType.EnterTeam,
@@ -35,7 +35,7 @@ export const enterTeamAction = (
 };
 
 export const exitTeamAction = (
-  reserveSpace: boolean = false
+  reserveSpace: boolean = false,
 ): CommonAction<TeamActionType> => {
   return {
     type: TeamActionType.ExitTeam,
@@ -152,14 +152,17 @@ const initTeamState: Team = {
     },
     {
       id: 'user-6',
+      avatar: graphic2Avatar,
       title: 'Test 1 - Project Alpha Group LongLongLongLongNmae',
     },
     {
       id: 'user-10',
+      avatar: graphic2Avatar,
       title: 'Test 2 - Project Alpha Group LongLongLongLongNmae',
     },
     {
       id: 'user-11',
+      avatar: graphic2Avatar,
       title: 'Test 3 - Noise User with LongLongLongLongNmae',
       state: UserState.Work,
     },

@@ -73,7 +73,7 @@ const RoomSpace: FC<RoomSpaceProps> = ({}) => {
     >
       <RoomSpaceWrapper>
         {/* Header */}
-        <Header isRoom={isRoom} />
+        <Header isRoom={isRoom} expand={expandVideoRoom}/>
         {/* body: Room | Chat */}
         <RoomSpaceBody>
           <RoomSpaceOrigin className={classNames({ isChat: !isRoom })}>

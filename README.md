@@ -10,7 +10,7 @@
 - [x] IM 跟随功能
 - [ ] Date、Doc、Path 展开图片实现
 - [ ] IM 合作功能
-- [ ] RoomSpace 房间头像
+- [x] RoomSpace 房间头像
 - [ ] RoomSpace header 详情
 - [ ] RoomSpace header action
 - [ ] RoomSpace Meeting Room 实现

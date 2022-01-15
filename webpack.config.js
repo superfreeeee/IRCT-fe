@@ -66,6 +66,10 @@ const config = {
           },
         ],
       },
+      {
+        test: /\.(ttf|otf|eot|woff)$/,
+        use: 'file-loader',
+      },
     ],
   },
   plugins: [
