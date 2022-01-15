@@ -3,11 +3,14 @@ import { bindActionCreators } from 'redux';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
 
+import { AppState } from '@store/reducers';
 import { enterRoomAction, RoomData, RoomType } from '@store/reducers/room';
 import { TeamData } from '@store/reducers/team';
+import { switchTabAction } from '@store/reducers/im';
+import { switchSpaceAction } from '@store/reducers/space';
 import Avatar from '@components/Avatar';
 import StatusPoint from '@components/StatusPoint';
-import BoxIcon, { BoxIconType } from '@components/BoxIcon';
+import AppIcon from '@components/AppIcon';
 import { TabOption } from '../../type';
 import {
   ItemActionBtn,
@@ -25,9 +28,6 @@ import {
 } from '../type';
 
 import graphic2Avatar from '@assets/img/graphic_2.png';
-import { AppState } from '@store/reducers';
-import { switchTabAction } from '@store/reducers/im';
-import { switchSpaceAction } from '@store/reducers/space';
 
 export interface ItemProps {
   currentTab: TabOption;
@@ -127,7 +127,7 @@ const Item: FC<ItemProps> = ({
     if (room) {
       console.log(`[Menu.Item] userActionFollow`, room);
       const enterRoom = bindActionCreators(enterRoomAction, dispatch);
-      enterRoom(room);
+      enterRoom({ room, followee: id });
       if (currentTab === TabOption.Team) {
         const switchTab = bindActionCreators(switchTabAction, dispatch);
         const switchSpace = bindActionCreators(switchSpaceAction, dispatch);
@@ -152,7 +152,7 @@ const Item: FC<ItemProps> = ({
    */
   const joinNewRoom = () => {
     const enterRoom = bindActionCreators(enterRoomAction, dispatch);
-    enterRoom(data as RoomData);
+    enterRoom({ room: data as RoomData });
     if (currentSpace === TabOption.Team) {
       const switchSpace = bindActionCreators(switchSpaceAction, dispatch);
       switchSpace(TabOption.Room);
@@ -167,12 +167,19 @@ const Item: FC<ItemProps> = ({
       // @ts-ignore
       ref={containerRef}
       onClick={() => onSelect(data)}
-      // onMouseOver={onMouseOver}
-      // onMouseLeave={closeTooltip}
     >
-      <Avatar>
-        <img src={avatar || graphic2Avatar} width={'100%'} alt={'wrong url'} />
-      </Avatar>
+      <div className="avatar">
+        <Avatar>
+          <img
+            src={avatar || graphic2Avatar}
+            width={'100%'}
+            alt={'wrong url'}
+          />
+        </Avatar>
+        {isUser && (data as TeamData).usingApp && (
+          <AppIcon type={(data as TeamData).usingApp} size={20} />
+        )}
+      </div>
       <div className="content">
         <div className="title">
           <span>{title}</span>

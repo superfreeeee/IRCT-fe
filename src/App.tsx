@@ -26,6 +26,7 @@ const GlobalStyle = createGlobalStyle`
     --room_space_chat_record_bg_self: #BCBEC0;
     --room_space_figure_radius_level1: rgba(188, 189, 191, 0.3);
     --room_space_figure_radius_level2: rgba(189, 191, 193, 0.2);
+    --room_space_figure_radius_level3: rgba(189, 191, 193, 0.08);
     /* 状态颜色 */
     --state_idle: #5DD45A;
     --state_work: #5ABED4;

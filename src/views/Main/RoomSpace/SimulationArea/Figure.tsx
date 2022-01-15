@@ -3,7 +3,6 @@ import { bindActionCreators } from 'redux';
 import { useDispatch, useSelector } from 'react-redux';
 
 import Avatar from '@components/Avatar';
-import { AvatarUsage } from '@components/Avatar/type';
 import {
   SpaceFigure,
   SpaceFigurePosition,
@@ -21,6 +20,7 @@ import {
 } from './styles';
 import classNames from 'classnames';
 import BoxIcon, { BoxIconType } from '@components/BoxIcon';
+import StatusPoint from '@components/StatusPoint';
 
 const MicroOff = () => {
   return (
@@ -57,12 +57,12 @@ const Figure: FC<FigureProps> = ({ figure, boardRef, onFigureMove }) => {
       const x1 = roundBy(
         x + dx,
         SIMULATION_BOARD_PADDING,
-        width - SIMULATION_BOARD_PADDING
+        width - SIMULATION_BOARD_PADDING,
       );
       const y1 = roundBy(
         y + dy,
         SIMULATION_BOARD_PADDING,
-        height - SIMULATION_BOARD_PADDING
+        height - SIMULATION_BOARD_PADDING,
       );
       const newPosition: SpaceFigurePosition = [x1, y1];
       setPosition(newPosition);
@@ -71,7 +71,7 @@ const Figure: FC<FigureProps> = ({ figure, boardRef, onFigureMove }) => {
       if (type === DragEventType.Up && (x !== x1 || y !== y1)) {
         const updateFigurePosition = bindActionCreators(
           updateFigurePositionAction,
-          dispatch
+          dispatch,
         );
         updateFigurePosition({
           roomId,
@@ -84,16 +84,21 @@ const Figure: FC<FigureProps> = ({ figure, boardRef, onFigureMove }) => {
     }
   });
 
-  const noShadow = !figure.active || figure.mute;
+  const inactive = !figure.active;
+  const activeButMute = figure.active && figure.mute;
 
   return (
     <FigureContainer
+      className={classNames({ inactive, mute: activeButMute })}
+      title="点击+拖拽"
       onClick={stopPropagationHandler}
       onMouseDown={onMouseDown}
-      className={classNames({ noShadow })}
       style={{ left: position[0], top: position[1] }}
     >
-      <Avatar>{figure.userId.substring(figure.userId.indexOf('-') + 1)}</Avatar>
+      <Avatar>
+        <img src={figure.avatar} width={'100%'} />
+      </Avatar>
+      <StatusPoint state={figure.state} />
       {figure.mute && <MicroOff />}
     </FigureContainer>
   );

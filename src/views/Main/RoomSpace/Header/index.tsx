@@ -1,14 +1,17 @@
-import React, { FC, useMemo } from 'react';
+import React, { FC } from 'react';
 import { useSelector } from 'react-redux';
 
 import Avatar from '@components/Avatar';
-import { AvatarUsage } from '@components/Avatar/type';
 import BoxIcon, { BoxIconType } from '@components/BoxIcon';
-import EmojiIcon, { EmojiIconType, EMOJI_PREFIX } from '@components/EmojiIcon';
 import { AppState } from '@store/reducers';
 import { TeamData } from '@store/reducers/team';
 import { RoomData } from '@store/reducers/room';
-import { HeaderMain, HeaderSide, RoomSpaceHeader } from './styles';
+import {
+  HeaderMain,
+  HeaderSide,
+  HeaderSideBtn,
+  RoomSpaceHeader,
+} from './styles';
 
 const DEFAULT_SELECTED_DATA = {
   id: '',
@@ -51,7 +54,12 @@ const Header: FC<HeaderProps> = ({ isRoom }) => {
         <span className="title">{data.title}</span>
       </HeaderMain>
       <HeaderSide>
-        <BoxIcon type={BoxIconType.Branch} size={'sm'} clickable />
+        <HeaderSideBtn>
+          <BoxIcon type={BoxIconType.GroupFill} size={'sm'} clickable />
+        </HeaderSideBtn>
+        <HeaderSideBtn>
+          <BoxIcon type={BoxIconType.More} size={'sm'} clickable />
+        </HeaderSideBtn>
       </HeaderSide>
     </RoomSpaceHeader>
   );

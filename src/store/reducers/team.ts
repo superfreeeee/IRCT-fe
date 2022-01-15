@@ -11,6 +11,10 @@ import user2Avatar from '@assets/img/user_2.png';
 import user5Avatar from '@assets/img/user_5.png';
 import user7Avatar from '@assets/img/user_7.png';
 import user9Avatar from '@assets/img/user_9.png';
+import user12Avatar from '@assets/img/user_12.png';
+import user13Avatar from '@assets/img/user_13.png';
+import user14Avatar from '@assets/img/user_14.png';
+import user15Avatar from '@assets/img/user_15.png';
 import graphic1Avatar from '@assets/img/graphic_1.png';
 import graphic2Avatar from '@assets/img/graphic_2.png';
 import { RoomActionType } from './room';
@@ -61,7 +65,7 @@ const initTeamState: Team = {
     {
       id: 'user-0',
       avatar: user0Avatar,
-      title: 'Joe Zhao',
+      title: 'Jojo Zhao',
       state: UserState.Idle,
       currentRoom: 'room-1',
     },
@@ -110,17 +114,42 @@ const initTeamState: Team = {
     {
       id: 'user-9',
       avatar: user9Avatar,
-      title: 'Shuting Tang',
+      title: 'Shu ting',
       state: UserState.Busy,
       currentRoom: 'room-11',
       usingApp: AppType.Figma,
     },
-    // {
-    //   id: 'user-8',
-    //   title: 'Hang Yu',
-    //   state: UserState.Busy,
-    //   usingApp: AppType.Pycharm,
-    // },
+    {
+      id: 'user-12',
+      avatar: user12Avatar,
+      title: 'JiaJia',
+      state: UserState.Busy,
+      currentRoom: 'room-0',
+      usingApp: AppType.Notion,
+    },
+    {
+      id: 'user-13',
+      avatar: user13Avatar,
+      title: 'Yu hang',
+      state: UserState.Busy,
+      currentRoom: 'room-0',
+      usingApp: AppType.Figma,
+    },
+    {
+      id: 'user-14',
+      avatar: user14Avatar,
+      title: 'Tian tian',
+      state: UserState.Busy,
+      currentRoom: 'room-4',
+      usingApp: AppType.Pycharm,
+    },
+    {
+      id: 'user-15',
+      avatar: user15Avatar,
+      title: 'Lei',
+      state: UserState.Busy,
+      currentRoom: 'room-1',
+    },
     {
       id: 'user-6',
       title: 'Test 1 - Project Alpha Group LongLongLongLongNmae',
@@ -133,7 +162,6 @@ const initTeamState: Team = {
       id: 'user-11',
       title: 'Test 3 - Noise User with LongLongLongLongNmae',
       state: UserState.Work,
-      currentRoom: '',
     },
   ],
   // TODO recover mock

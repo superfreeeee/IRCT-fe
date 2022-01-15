@@ -7,22 +7,50 @@ import Avatar from '@components/Avatar';
 import { AvatarUsage } from '@components/Avatar/type';
 import { ChatRecordWrapper } from './styles';
 import BoxIcon, { BoxIconType } from '@components/BoxIcon';
+import classNames from 'classnames';
 
 interface ChatRecordElProps {
+  isInRoom: boolean;
   record: ChatRecord;
 }
 
-const ChatRecordEl: FC<ChatRecordElProps> = ({ record: { userId, text } }) => {
-  const currentUserId = useSelector((state: AppState) => state.user.id);
+const ChatRecordEl: FC<ChatRecordElProps> = ({
+  isInRoom,
+  record: { userId, text, avatar },
+}) => {
+  const userList = useSelector((state: AppState) => state.team.list);
+  const { id: currentUserId, name: selfName } = useSelector(
+    (state: AppState) => state.user
+  );
+
+  const isSelf = currentUserId === userId;
+  const userName = isSelf
+    ? selfName
+    : userList.filter(({ id }) => id === userId)[0]?.title || userId;
 
   return (
-    <ChatRecordWrapper isSelf={currentUserId === userId}>
-      <div className="avatar">
-        <Avatar usage={AvatarUsage.RoomSpaceChat} default>
-          <BoxIcon type={BoxIconType.Group} />
-        </Avatar>
-      </div>
-      <div className="text">{text}</div>
+    <ChatRecordWrapper
+      className={classNames({ simple: isInRoom })}
+      isSelf={isSelf}
+    >
+      {isInRoom ? (
+        <span>
+          {userName}: {text}
+        </span>
+      ) : (
+        <>
+          <div className="avatar">
+            <Avatar usage={AvatarUsage.RoomSpaceChat} default>
+              {avatar ? (
+                <img src={avatar} width={'100%'} />
+              ) : (
+                <BoxIcon type={BoxIconType.Group} />
+              )}
+            </Avatar>
+          </div>
+          <div className="text">{text}</div>
+        </>
+      )}
     </ChatRecordWrapper>
   );
 };

@@ -1,4 +1,5 @@
 import Avatar from '@components/Avatar';
+import StatusPoint from '@components/StatusPoint';
 import styled from 'styled-components';
 import {
   SIMULATION_FIGURE_SIZE,
@@ -33,16 +34,27 @@ export const FigureContainer = styled.div`
   transform: translate(-50%, -50%);
   user-select: none;
 
-  &.noShadow {
+  &.inactive {
     box-shadow: none;
+  }
+
+  &.mute {
+    box-shadow: 0 0 0
+      ${SIMULATION_FIGURE_SIZE_INNER + SIMULATION_FIGURE_SIZE_OUTER}px
+      var(--room_space_figure_radius_level3);
   }
 
   ${Avatar} {
     width: ${SIMULATION_FIGURE_SIZE}px;
     height: ${SIMULATION_FIGURE_SIZE}px;
-    border: 2px solid #fff;
     background-color: #bfbfbf;
     /* cursor: grab; */
+  }
+
+  ${StatusPoint} {
+    position: absolute;
+    right: 0px;
+    bottom: -3px;
   }
 `;
 

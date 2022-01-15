@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { bindActionCreators } from 'redux';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -7,16 +7,14 @@ import {
   switchSpaceAction,
   toggleSpaceVisibleAction,
 } from '@store/reducers/space';
-import { enterRoomAction, RoomData } from '@store/reducers/room';
 import {
   enterTeamAction,
   exitTeamAction,
   TeamData,
 } from '@store/reducers/team';
-import { TabOption } from './type';
-import { DEFAULT_TAB } from './config';
-import { MenuData } from './Menu/type';
 import { switchTabAction } from '@store/reducers/im';
+import { TabOption } from './type';
+import { MenuData } from './Menu/type';
 
 /**
  * Tabs
@@ -42,8 +40,6 @@ export const useTab = (): [TabOption, (option: TabOption) => void] => {
 
       const newTabSelected =
         option === TabOption.Team ? selectedTeam : selectedRoom;
-      // TODO clear console
-      // console.log(`[useTab.onTabClick] ${option}, selected: ${newTabSelected}`);
       if (newTabSelected) {
         const switchSpace = bindActionCreators(switchSpaceAction, dispatch);
         switchSpace(option);

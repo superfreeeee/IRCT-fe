@@ -4,24 +4,26 @@ import classNames from 'classnames';
 import { I } from './styles';
 
 export enum BoxIconType {
-  ExpandVertical = 'bx-expand-vertical',
-  Setting = 'bx-cog',
-  Search = 'bx-search',
-  Calender = 'bx-calendar',
-  File = 'bx-file',
   Branch = 'bx-git-branch',
-  ListCheck = 'bx-list-check',
-  LastPage = 'bxs-chevrons-left',
-  NextPage = 'bxs-chevrons-right',
-  Send = 'bx-send',
+  Calender = 'bx-calendar',
+  ExpandVertical = 'bx-expand-vertical',
+  File = 'bx-file',
   Group = 'bx-group',
+  GroupFill = 'bxs-group',
+  LastPage = 'bxs-chevrons-left',
+  ListCheck = 'bx-list-check',
   Microphone = 'bxs-microphone',
   MicrophoneOff = 'bx-microphone-off',
   MicrophoneOffFill = 'bxs-microphone-off',
-  VoiceWave = 'bx-equalizer',
+  More = 'bx-dots-horizontal-rounded',
+  NextPage = 'bxs-chevrons-right',
+  PhoneOff = 'bxs-phone-off',
+  Search = 'bx-search',
+  Send = 'bx-send',
+  Setting = 'bx-cog',
   Video = 'bxs-video',
   VideoOff = 'bxs-video-off',
-  PhoneOff = 'bxs-phone-off',
+  VoiceWave = 'bx-equalizer',
 }
 
 interface BoxIconProps {

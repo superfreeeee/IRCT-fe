@@ -2,15 +2,13 @@ import styled from 'styled-components';
 
 import Avatar from '@components/Avatar';
 import EmojiIcon from '@components/EmojiIcon';
-import { RoomSpaceContainer } from '../styles';
-import { RoomSpaceType } from '../type';
 
 export const RoomSpaceHeader = styled.div`
   position: relative;
   display: flex;
   justify-content: space-between;
   width: 100%;
-  padding: 14px 30px 14px 14px;
+  padding: 14px 22px 14px 14px;
   border-bottom: 1px solid var(--divider_color_bg);
   color: #fff;
 `;
@@ -39,4 +37,14 @@ export const HeaderSide = styled.div`
   flex-shrink: 0;
   display: flex;
   align-items: center;
+  gap: 8px;
 `;
+
+export const HeaderSideBtn = styled.div`
+  padding: 4px;
+  border-radius: 4px;
+
+  &:hover {
+    background-color: #474849;
+  }
+`

@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 import Avatar from '@components/Avatar';
+import { AppIconWrapper } from '@components/AppIcon';
 
 // ========== Menu Item ==========
 export const ItemContainer = styled.li`
@@ -24,10 +25,19 @@ export const ItemContainer = styled.li`
     background-color: var(--menu_item_bg_active);
   }
 
+  .avatar {
+    position: relative;
+    margin-right: 10px;
+  }
+
   ${Avatar} {
     width: 42px;
     height: 42px;
-    margin-right: 10px;
+  }
+
+  ${AppIconWrapper} {
+    right: -2px;
+    bottom: -2px;
   }
 
   .content {

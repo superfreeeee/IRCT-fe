@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import styled from 'styled-components';
 import { AppType, APP_ICON_URL_MAPPER } from './type';
 
-const AppIconWrapper = styled.div<{ size: number }>`
+export const AppIconWrapper = styled.div<{ size: number }>`
   position: absolute;
   width: ${({ size }) => `${size}px`};
   height: ${({ size }) => `${size}px`};

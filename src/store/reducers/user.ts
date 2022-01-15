@@ -1,9 +1,10 @@
 import { Reducer } from 'redux';
 
 import { UserState } from '@components/StatusPoint/type';
-import user1000 from '@assets/img/user_1000.png';
 import { CommonAction } from '../type';
-import { RoomActionType, RoomData, RoomType } from './room';
+import { EnterRoomParams, RoomActionType, RoomType } from './room';
+
+import user1000 from '@assets/img/user_1000.png';
 
 // =============== actions ===============
 export enum UserActionType {
@@ -13,7 +14,7 @@ export enum UserActionType {
 }
 
 export const updateUserStateAction = (
-  state: UserState
+  state: UserState,
 ): CommonAction<UserActionType> => {
   return {
     type: UserActionType.UpdateUserState,
@@ -34,7 +35,6 @@ export interface User {
   id: string;
   avatar?: string;
   name: string;
-  org: string;
   state: UserState;
   videoVisible: boolean;
   videoVoice: boolean;
@@ -44,8 +44,7 @@ export interface User {
 const initUserState: User = {
   id: 'user-1000',
   avatar: user1000,
-  name: 'superfree',
-  org: 'Alibaba Dingtalk',
+  name: 'San',
   state: UserState.Idle,
   videoVisible: true,
   videoVoice: true,
@@ -58,7 +57,7 @@ const updateUserState = (prevState: User, state: UserState): User => {
   };
 };
 
-const enterNewRoom = (prevState: User, room: RoomData): User => {
+const enterNewRoom = (prevState: User, { room }: EnterRoomParams): User => {
   const currentState = prevState.state;
   const state = room.type === RoomType.Coffee ? UserState.Idle : UserState.Work;
   if (currentState === state) {

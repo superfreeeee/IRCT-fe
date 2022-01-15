@@ -18,12 +18,16 @@ export enum RoomActionType {
   ExitRoom /*..*/ = 'Room#ExitRoom',
 }
 
+export interface EnterRoomParams {
+  room: RoomData;
+  followee?: string; // target userId
+}
 export const enterRoomAction = (
-  room: RoomData
+  params: EnterRoomParams
 ): CommonAction<RoomActionType> => {
   return {
     type: RoomActionType.EnterRoom,
-    payload: room,
+    payload: params,
   };
 };
 
@@ -55,6 +59,7 @@ export interface RoomData {
 export interface Room {
   list: RoomData[];
   selected: string;
+  followee: string;
 }
 
 // =============== state ===============
@@ -138,6 +143,18 @@ const initRoomState: Room = {
     // },
   ],
   selected: 'room-1',
+  followee: '',
+};
+
+const enterRoom = (
+  prevState: Room,
+  { room: { id }, followee = '' }: EnterRoomParams
+): Room => {
+  return {
+    ...prevState,
+    selected: id,
+    followee,
+  };
 };
 
 const roomReducer: Reducer<
@@ -146,10 +163,7 @@ const roomReducer: Reducer<
 > = (prevState = initRoomState, action): Room => {
   switch (action.type) {
     case RoomActionType.EnterRoom:
-      return {
-        ...prevState,
-        selected: (action.payload as RoomData).id,
-      };
+      return enterRoom(prevState, action.payload);
 
     case RoomActionType.ExitRoom:
       return { ...prevState, selected: '' };

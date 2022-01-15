@@ -43,7 +43,7 @@ interface UseBoardDraggerOptions {
  */
 const useBoardDragger = (
   initOffset: AreaOffset,
-  { roomId, adaptSize, areaWrapperRef, boardRef }: UseBoardDraggerOptions
+  { roomId, adaptSize, areaWrapperRef, boardRef }: UseBoardDraggerOptions,
 ) => {
   const [areaOffset, setAreaOffset] = useState<AreaOffset>(initOffset);
   const areaOffsetRef = useClosestRef(areaOffset);
@@ -82,7 +82,7 @@ const useBoardDragger = (
           // 鼠标释放的时候同步到 redux
           const updateAreaOffset = bindActionCreators(
             updateAreaOffsetAction,
-            dispatch
+            dispatch,
           );
           updateAreaOffset({
             roomId,
@@ -90,7 +90,7 @@ const useBoardDragger = (
           });
         }
       }
-    }
+    },
   );
 
   // no board drag
@@ -115,9 +115,12 @@ const SimulationArea: FC<SimulationAreaProps> = ({
 }) => {
   // redux state catch
   const simulationSpaces = useSelector(
-    (state: AppState) => state.space.simulationSpaces
+    (state: AppState) => state.space.simulationSpaces,
   );
-  const selectedRoomId = useSelector((state: AppState) => state.room.selected);
+  const { selected: selectedRoomId, followee } = useSelector(
+    (state: AppState) => state.room,
+  );
+  const selectedRoomIdRef = useClosestRef(selectedRoomId);
   const user = useSelector((state: AppState) => state.user);
 
   const space = simulationSpaces[selectedRoomId];
@@ -170,7 +173,8 @@ const SimulationArea: FC<SimulationAreaProps> = ({
         figure: {
           userId: user.id,
           avatar: user.avatar,
-          position: calcInitPosition(figures, width, height),
+          state: user.state,
+          position: calcInitPosition(figures, width, height, followee),
           active: true,
           mute: false,
         },
@@ -184,7 +188,7 @@ const SimulationArea: FC<SimulationAreaProps> = ({
       // TODO clear console
       console.log(`[SimulationArea] clear currentSapce`);
     };
-  }, [selectedRoomId, user.id]);
+  }, [selectedRoomId, followee, user.id]);
 
   // 重新计算临近人物
   const figuresRef = useClosestRef(figures);
@@ -195,22 +199,22 @@ const SimulationArea: FC<SimulationAreaProps> = ({
     if (!selfFigure) {
       return;
     }
-    hasNearbyFiguresInit.current = true;
     const nearByFigures = calcNearbyFigures(selfFigure, figures);
 
     const updateNearbyFigures = bindActionCreators(
       updateNearbyFiguresAction,
-      dispatch
+      dispatch,
     );
-    updateNearbyFigures(nearByFigures);
+    updateNearbyFigures({
+      roomId: selectedRoomIdRef.current,
+      figures: nearByFigures,
+    });
   }, []);
 
-  const hasNearbyFiguresInit = useRef(false);
   useEffect(() => {
-    if (!hasNearbyFiguresInit.current) {
-      resetNearbyFigures();
-    }
-  }, [figures]);
+    // update nearby figure whenever room change
+    setTimeout(resetNearbyFigures);
+  }, [selectedRoomId]);
 
   // TODO clear console
   // useLog({ figures }, 'SimulationArea.obj');

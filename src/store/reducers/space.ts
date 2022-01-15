@@ -5,6 +5,20 @@ import { CommonAction } from '../type';
 import { TeamActionType } from './team';
 import { RoomActionType } from './room';
 
+import user0Avatar from '@assets/img/user_0.png';
+import user1Avatar from '@assets/img/user_1.png';
+import user2Avatar from '@assets/img/user_2.png';
+import user5Avatar from '@assets/img/user_5.png';
+import user7Avatar from '@assets/img/user_7.png';
+import user9Avatar from '@assets/img/user_9.png';
+import user12Avatar from '@assets/img/user_12.png';
+import user13Avatar from '@assets/img/user_13.png';
+import user14Avatar from '@assets/img/user_14.png';
+import user15Avatar from '@assets/img/user_15.png';
+import selfAvatar from '@assets/img/user_1000.png';
+import { resetActiveStates } from '@views/Main/RoomSpace/SimulationArea/utils';
+import { UserState } from '@components/StatusPoint/type';
+
 // =============== actions ===============
 export enum SpaceActionType {
   SwitchSpace /*..........*/ = 'Space#SwitchSpace',
@@ -19,7 +33,7 @@ export enum SpaceActionType {
 }
 
 export const switchSpaceAction = (
-  space: TabOption
+  space: TabOption,
 ): CommonAction<SpaceActionType> => {
   return {
     type: SpaceActionType.SwitchSpace,
@@ -28,7 +42,7 @@ export const switchSpaceAction = (
 };
 
 export const toggleSpaceVisibleAction = (
-  visible?: boolean
+  visible?: boolean,
 ): CommonAction<SpaceActionType> => {
   return {
     type: SpaceActionType.ToggleSpaceVisible,
@@ -37,7 +51,7 @@ export const toggleSpaceVisibleAction = (
 };
 
 export const toggleExpandVideoRoomAction = (
-  expand?: boolean
+  expand?: boolean,
 ): CommonAction<SpaceActionType> => {
   return {
     type: SpaceActionType.ToggleExpandVideoRoom,
@@ -50,7 +64,7 @@ interface SendChatMessageParams {
   record: ChatRecord;
 }
 export const sendChatMessageAction = (
-  params: SendChatMessageParams
+  params: SendChatMessageParams,
 ): CommonAction<SpaceActionType> => {
   return {
     type: SpaceActionType.SendChatMessage,
@@ -65,7 +79,7 @@ interface UpdateFigurePositionParams {
 }
 
 export const updateFigurePositionAction = (
-  params: UpdateFigurePositionParams
+  params: UpdateFigurePositionParams,
 ): CommonAction<SpaceActionType> => {
   return {
     type: SpaceActionType.UpdateFigurePosition,
@@ -78,7 +92,7 @@ interface UpdateAreaOffsetParams {
   areaOffset: AreaOffset;
 }
 export const updateAreaOffsetAction = (
-  params: UpdateAreaOffsetParams
+  params: UpdateAreaOffsetParams,
 ): CommonAction<SpaceActionType> => {
   return {
     type: SpaceActionType.UpdateAreaOffset,
@@ -91,7 +105,7 @@ interface JoinRoomSpaceParams {
   figure: SpaceFigure;
 }
 export const joinRoomSpaceAction = (
-  params: JoinRoomSpaceParams
+  params: JoinRoomSpaceParams,
 ): CommonAction<SpaceActionType> => {
   return {
     type: SpaceActionType.JoinRoomSpace,
@@ -101,7 +115,7 @@ export const joinRoomSpaceAction = (
 
 export const leaveRoomSpaceAction = (
   roomId: string,
-  userId: string
+  userId: string,
 ): CommonAction<SpaceActionType> => {
   return {
     type: SpaceActionType.LeaveRoomSpace,
@@ -112,12 +126,16 @@ export const leaveRoomSpaceAction = (
   };
 };
 
+interface UpdateNearbyFiguresParams {
+  roomId: string;
+  figures: SpaceFigureWithVideo[];
+}
 export const updateNearbyFiguresAction = (
-  figures: SpaceFigureWithVideo[] = []
+  params: UpdateNearbyFiguresParams,
 ): CommonAction<SpaceActionType> => {
   return {
     type: SpaceActionType.UpdateNearbyFigures,
-    payload: figures,
+    payload: params,
   };
 };
 
@@ -146,6 +164,7 @@ export type AreaOffset = [number, number];
 export interface SpaceFigure {
   userId: string;
   avatar?: string;
+  state: UserState;
   videoUrl?: string;
   position: SpaceFigurePosition;
   active: boolean;
@@ -200,78 +219,142 @@ const initSpaceState: Space = {
       {
         userId: 'user-1000',
         text: 'I want to find you to understand some of the details of the relevant PRD, it will not be too long',
+        avatar: selfAvatar,
       },
       {
         userId: 'user-0',
         text: "Ok let's talk, I'm at Coffee Bar now, Plz follow me",
+        avatar: user0Avatar,
       },
     ],
     'user-1': [
       {
         userId: 'user-1000',
         text: 'How is your design going?',
+        avatar: selfAvatar,
       },
       {
         userId: 'user-1',
         text: 'Not bad, you can take a look at my recent goals on Path, and you can talk about it later',
+        avatar: user1Avatar,
       },
     ],
     'user-2': [
       {
         userId: 'user-1000',
         text: 'Hi, are u the PM for Project A?',
+        avatar: selfAvatar,
       },
       {
         userId: 'user-2',
         text: 'Yes, is there any problem?',
+        avatar: user2Avatar,
       },
     ],
     'user-5': [
       {
         userId: 'user-1000',
         text: 'This software is so much fun',
+        avatar: selfAvatar,
       },
       {
         userId: 'user-5',
         text: 'Lollllll',
+        avatar: user5Avatar,
       },
     ],
     'user-7': [
       {
         userId: 'user-1000',
         text: 'Where are you, there is a technical question you would like to ask',
+        avatar: selfAvatar,
       },
       {
         userId: 'user-7',
         text: 'Something is wrong with my computer and I checked it here',
+        avatar: user7Avatar,
       },
     ],
     'user-9': [
       {
         userId: 'user-9',
         text: 'get lunch together?',
+        avatar: user9Avatar,
+      },
+    ],
+    'user-12': [
+      {
+        userId: 'user-1000',
+        text: 'I have some questions I would like to consult',
+        avatar: selfAvatar,
+      },
+      {
+        userId: 'user-12',
+        text: 'We can have a conversation...',
+        avatar: user12Avatar,
+      },
+    ],
+    'user-13': [
+      {
+        userId: 'user-1000',
+        text: "Sorry, I can't go to the afternoon meeting later",
+        avatar: selfAvatar,
+      },
+      {
+        userId: 'user-13',
+        text: 'Ok, Thats fine',
+        avatar: user13Avatar,
+      },
+    ],
+    'user-14': [
+      {
+        userId: 'user-1000',
+        text: 'Where are you, there is a technical question you would like to ask',
+        avatar: selfAvatar,
+      },
+      {
+        userId: 'user-14',
+        text: 'Something is wrong with my computer and I checked it here',
+        avatar: user14Avatar,
+      },
+    ],
+    'user-15': [
+      {
+        userId: 'user-1000',
+        text: "I see you this month Objective and feel like there's some place to collaborate",
+        avatar: selfAvatar,
+      },
+      {
+        userId: 'user-15',
+        text: 'No problem, wait until I finish updating the code café to see',
+        avatar: user15Avatar,
       },
     ],
     'user-2020': [
       {
         userId: 'user-0',
         text: '1 line -----------------------',
+        avatar: user0Avatar,
       },
       {
         userId: 'user-1000',
         text: '------------- 1 line',
+        avatar: selfAvatar,
       },
       {
         userId: 'user-0',
         text: '1 line ----------------------------\n2 line\n 3 line',
+        avatar: user0Avatar,
       },
       {
         userId: 'user-1000',
         text: '--------------------- 1 line',
+        avatar: selfAvatar,
       },
       {
         userId: 'user-1000',
         text: '------------------------------ 1 line\n2 line\n 3 line\n4 line',
+        avatar: selfAvatar,
       },
     ],
   },
@@ -281,25 +364,101 @@ const initSpaceState: Space = {
       figures: [
         {
           userId: 'user-0',
-          position: [40, 40],
-          active: true,
-          mute: false,
-        },
-        {
-          userId: 'user-1',
+          avatar: user0Avatar,
+          state: UserState.Idle,
           position: [80, 80],
           active: true,
           mute: false,
         },
         {
-          userId: 'user-2',
-          position: [120, 80],
+          userId: 'user-15',
+          avatar: user15Avatar,
+          state: UserState.Busy,
+          position: [220, 150],
           active: true,
           mute: true,
         },
+      ],
+      areaOffset: [0, 0],
+    },
+    'room-5': {
+      figures: [
         {
-          userId: 'user-3',
-          position: [160, 120],
+          userId: 'user-1',
+          avatar: user1Avatar,
+          state: UserState.Work,
+          position: [80, 80],
+          active: true,
+          mute: false,
+        },
+        {
+          userId: 'user-5',
+          avatar: user5Avatar,
+          state: UserState.Busy,
+          position: [220, 150],
+          active: true,
+          mute: false,
+        },
+      ],
+      areaOffset: [0, 0],
+    },
+    'room-11': {
+      figures: [
+        {
+          userId: 'user-2',
+          avatar: user2Avatar,
+          state: UserState.Busy,
+          position: [80, 80],
+          active: true,
+          mute: false,
+        },
+        {
+          userId: 'user-9',
+          avatar: user9Avatar,
+          state: UserState.Busy,
+          position: [220, 150],
+          active: true,
+          mute: false,
+        },
+      ],
+      areaOffset: [0, 0],
+    },
+    'room-4': {
+      figures: [
+        {
+          userId: 'user-7',
+          avatar: user7Avatar,
+          state: UserState.Busy,
+          position: [80, 80],
+          active: true,
+          mute: false,
+        },
+        {
+          userId: 'user-14',
+          avatar: user14Avatar,
+          state: UserState.Busy,
+          position: [220, 150],
+          active: true,
+          mute: false,
+        },
+      ],
+      areaOffset: [0, 0],
+    },
+    'room-0': {
+      figures: [
+        {
+          userId: 'user-12',
+          avatar: user12Avatar,
+          state: UserState.Busy,
+          position: [80, 80],
+          active: true,
+          mute: false,
+        },
+        {
+          userId: 'user-13',
+          avatar: user13Avatar,
+          state: UserState.Busy,
+          position: [220, 150],
           active: true,
           mute: false,
         },
@@ -348,7 +507,7 @@ const toggleExpand = (prevState: Space, expand?: boolean): Space => {
 
 const appendChatMessage = (
   prevState: Space,
-  { spaceId, record }: SendChatMessageParams
+  { spaceId, record }: SendChatMessageParams,
 ): Space => {
   const chatName =
     prevState.currentSpace === TabOption.Room ? 'roomChat' : 'teamChat';
@@ -364,7 +523,7 @@ const appendChatMessage = (
 
 const updateFigurePosition = (
   prevState: Space,
-  { roomId, userId, position }: UpdateFigurePositionParams
+  { roomId, userId, position }: UpdateFigurePositionParams,
 ): Space => {
   const prevSpace = prevState.simulationSpaces[roomId];
   if (!prevSpace) {
@@ -400,7 +559,7 @@ const updateFigurePosition = (
 
 const updateAreaOffset = (
   prevState: Space,
-  { roomId, areaOffset }: UpdateAreaOffsetParams
+  { roomId, areaOffset }: UpdateAreaOffsetParams,
 ) => {
   const prevSpace = prevState.simulationSpaces[roomId];
   // 不合法 room
@@ -421,7 +580,7 @@ const updateAreaOffset = (
 
 const joinRoomSpace = (
   prevState: Space,
-  { roomId, figure }: JoinRoomSpaceParams
+  { roomId, figure }: JoinRoomSpaceParams,
 ): Space => {
   const prevSpace: SimulationSpace =
     prevState.simulationSpaces[roomId] || createSimulationSpace();
@@ -479,10 +638,22 @@ const leaveRoomSpace = (prevState: Space, { roomId, userId }): Space => {
 
 const updateNearbyFigures = (
   prevState: Space,
-  figures: SpaceFigureWithVideo[]
+  { roomId, figures }: UpdateNearbyFiguresParams,
 ): Space => {
+  console.log(`[updateNearbyFigures] roomId: ${roomId}`);
+  const prevSpaces = prevState.simulationSpaces;
+  const prevRoomSpace = prevSpaces[roomId];
+  const newFigures = resetActiveStates(prevRoomSpace.figures);
+  console.log(`[updateNearbyFigures] newFigures`, newFigures);
   return {
     ...prevState,
+    simulationSpaces: {
+      ...prevSpaces,
+      [roomId]: {
+        ...prevRoomSpace,
+        figures: newFigures,
+      },
+    },
     nearbyFigures: figures,
   };
 };

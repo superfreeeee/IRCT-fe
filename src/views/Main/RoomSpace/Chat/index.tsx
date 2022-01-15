@@ -23,10 +23,14 @@ interface ChatProps {
 }
 
 const Chat: FC<ChatProps> = ({ isInRoom = false, onSend }) => {
-  const userId = useSelector((state: AppState) => state.user.id);
+  const { id: userId, avatar: selfAvatar } = useSelector(
+    (state: AppState) => state.user
+  );
 
   const space = useSelector((state: AppState) => state.space);
-  const selectedTeam = useSelector((state: AppState) => state.team.selected);
+  const { selected: selectedTeam, list: userList } = useSelector(
+    (state: AppState) => state.team
+  );
   const selectedRoom = useSelector((state: AppState) => state.room.selected);
 
   const chatHistory = isInRoom ? space.roomChat : space.teamChat;
@@ -56,6 +60,7 @@ const Chat: FC<ChatProps> = ({ isInRoom = false, onSend }) => {
         spaceId: selected,
         record: {
           userId,
+          avatar: selfAvatar,
           text: input,
         },
       });
@@ -106,9 +111,13 @@ const Chat: FC<ChatProps> = ({ isInRoom = false, onSend }) => {
   return (
     <ChatContainer className={classNames({ isInRoom })}>
       <ChatHistory ref={chatHistoryRef}>
-        {records.map((record, index) => (
-          <ChatRecordEl key={index} record={record} />
-        ))}
+        {records
+          .map((record) => {
+            return record;
+          })
+          .map((record, index) => (
+            <ChatRecordEl key={index} isInRoom={isInRoom} record={record} />
+          ))}
       </ChatHistory>
       <ChatInputBar>
         <Input

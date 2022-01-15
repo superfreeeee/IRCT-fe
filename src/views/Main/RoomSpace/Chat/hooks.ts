@@ -70,7 +70,7 @@ export const useEnterListener = ({
     removeListenerRef.current();
 
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Enter') {
+      if (e.key === 'Enter' && !e.isComposing) {
         send();
       }
     };

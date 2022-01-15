@@ -32,6 +32,12 @@ export const ChatRecordWrapper = styled.div<ChatRecordWrapperProps>`
   align-items: flex-start;
   justify-content: ${({ isSelf }) => (isSelf ? 'flex-end' : 'flex-start')};
   margin-bottom: 26px;
+  color: #fff;
+
+  &.simple {
+    justify-content: flex-start;
+    margin-bottom: 6px;
+  }
 
   .avatar {
     width: 30px;
@@ -46,7 +52,6 @@ export const ChatRecordWrapper = styled.div<ChatRecordWrapperProps>`
     padding: 8px 14px;
     border-radius: 10px;
     box-shadow: 0 5px 5px rgba(0, 0, 0, 0.16);
-    color: #fff;
     background-color: ${recordTextBg};
     white-space: pre-line;
   }
