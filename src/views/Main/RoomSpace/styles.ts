@@ -63,7 +63,7 @@ export const RoomSpaceOrigin = styled.div`
 export const RoomSpaceVideo = styled.div`
   position: relative;
   flex: 1;
-  min-width: 160px;
+  min-width: 224px;
   height: 100%;
   padding-top: 112px;
   overflow-x: hidden;

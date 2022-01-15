@@ -7,12 +7,10 @@ import VideoBlock from './VideoBlock';
 import { VideoRoomContainer } from './styles';
 
 const VideoRoom = () => {
-  const { id: userId } = useSelector((state: AppState) => state.user);
+  const currentUserId = useSelector((state: AppState) => state.user.id);
   const nearbyFigures = useSelector(
-    (state: AppState) => state.space.nearbyFigures
-  )
-    .filter((figure) => figure.userId !== userId)
-    .sort((f1, f2) => f2.voiceRate - f1.voiceRate);
+    (state: AppState) => state.space.nearbyFigures,
+  ).sort((f1, f2) => f2.voiceRate - f1.voiceRate);
 
   useLog({ nearbyFigures }, 'VideoRoom.useLog');
 

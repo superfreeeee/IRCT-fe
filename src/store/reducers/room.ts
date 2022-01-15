@@ -23,7 +23,7 @@ export interface EnterRoomParams {
   followee?: string; // target userId
 }
 export const enterRoomAction = (
-  params: EnterRoomParams
+  params: EnterRoomParams,
 ): CommonAction<RoomActionType> => {
   return {
     type: RoomActionType.EnterRoom,
@@ -32,7 +32,7 @@ export const enterRoomAction = (
 };
 
 export const exitRoomAction = (
-  reserveSpace: boolean = false
+  reserveSpace: boolean = false,
 ): CommonAction<RoomActionType> => {
   return {
     type: RoomActionType.ExitRoom,
@@ -113,42 +113,14 @@ const initRoomState: Room = {
       avatar: meetingAvatar,
       title: 'Design Office 2',
     },
-    // {
-    //   id: 'room-6',
-    //   type: RoomType.Other,
-    //   avatar: `${EMOJI_PREFIX}${EmojiIconType.Noodles}`,
-    //   title: ' Dining Room 1 LongLongLongLongName',
-    //   member: 3,
-    // },
-    // {
-    //   id: 'room-7',
-    //   type: RoomType.Office,
-    //   avatar: `${EMOJI_PREFIX}${EmojiIconType.Man}`,
-    //   title: "Joe's Office",
-    //   member: 1,
-    // },
-    // {
-    //   id: 'room-9',
-    //   type: RoomType.Meeting,
-    //   avatar: `${EMOJI_PREFIX}${EmojiIconType.Computer}`,
-    //   title: 'Engineer Room 1',
-    //   member: 4,
-    // },
-    // {
-    //   id: 'room-10',
-    //   type: RoomType.Other,
-    //   avatar: `${EMOJI_PREFIX}${EmojiIconType.Noodles}`,
-    //   title: ' Dining Room 1',
-    //   member: 3,
-    // },
   ],
-  selected: 'room-1',
+  selected: 'room-0',
   followee: '',
 };
 
 const enterRoom = (
   prevState: Room,
-  { room: { id }, followee = '' }: EnterRoomParams
+  { room: { id }, followee = '' }: EnterRoomParams,
 ): Room => {
   return {
     ...prevState,

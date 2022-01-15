@@ -18,6 +18,7 @@ import user15Avatar from '@assets/img/user_15.png';
 import selfAvatar from '@assets/img/user_1000.png';
 import { resetActiveStates } from '@views/Main/RoomSpace/SimulationArea/utils';
 import { UserState } from '@components/StatusPoint/type';
+import { UserActionType } from './user';
 
 // =============== actions ===============
 export enum SpaceActionType {

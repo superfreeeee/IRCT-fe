@@ -1,3 +1,5 @@
+import { AppIconWrapper } from '@components/AppIcon';
+import Avatar from '@components/Avatar';
 import styled from 'styled-components';
 
 export const VideoRoomContainer = styled.div`
@@ -57,10 +59,44 @@ export const VideoBlockContent = styled.div`
   position: absolute;
   top: 0;
   left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 100%;
   height: 100%;
   border-radius: 5px;
   background-color: #666666;
+
+  &.hide {
+    background-color: #171717;
+  }
+
+  ${Avatar} {
+    width: 70px;
+    height: 70px;
+  }
+
+  ${AppIconWrapper} {
+    right: 5px;
+    bottom: 5px;
+  }
+`;
+
+export const VideoBlockTitle = styled.div`
+  position: absolute;
+  left: 10px;
+  bottom: 6px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  font-size: 12px;
+  color: #fff;
+
+  ${Avatar} {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+  }
 `;
 
 export const VideoRoomControllerContainer = styled.div`

@@ -46,6 +46,7 @@ const Figure: FC<FigureProps> = ({ figure, boardRef, onFigureMove }) => {
   const lastPositionRef = useRef<SpaceFigurePosition>(null);
   const boardRectRef = useRef<DOMRect>(null); // 记忆背景板 DOMRect 对象
   const { onMouseDown } = useDragPosition((e, { type, dx, dy }) => {
+    e.preventDefault();
     e.stopPropagation();
     if (type === DragEventType.Down) {
       lastPositionRef.current = [...positionRef.current];
@@ -84,8 +85,15 @@ const Figure: FC<FigureProps> = ({ figure, boardRef, onFigureMove }) => {
     }
   });
 
+  const { id: currentUserId, videoVoice } = useSelector(
+    (state: AppState) => state.user,
+  );
+
+  const isSelf = figure.userId === currentUserId;
+
   const inactive = !figure.active;
-  const activeButMute = figure.active && figure.mute;
+  const isMute = isSelf ? !videoVoice : figure.mute;
+  const activeButMute = figure.active && isMute;
 
   return (
     <FigureContainer
@@ -99,7 +107,7 @@ const Figure: FC<FigureProps> = ({ figure, boardRef, onFigureMove }) => {
         <img src={figure.avatar} width={'100%'} />
       </Avatar>
       <StatusPoint state={figure.state} />
-      {figure.mute && <MicroOff />}
+      {isMute && <MicroOff />}
     </FigureContainer>
   );
 };

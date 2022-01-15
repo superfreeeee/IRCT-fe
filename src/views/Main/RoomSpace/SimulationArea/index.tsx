@@ -175,8 +175,8 @@ const SimulationArea: FC<SimulationAreaProps> = ({
           avatar: user.avatar,
           state: user.state,
           position: calcInitPosition(figures, width, height, followee),
-          active: true,
-          mute: false,
+          active: false,
+          mute: !user.videoVoice,
         },
       });
       // TODO clear console
@@ -201,6 +201,9 @@ const SimulationArea: FC<SimulationAreaProps> = ({
     }
     const nearByFigures = calcNearbyFigures(selfFigure, figures);
 
+    // TODO clear console
+    console.log(`nearByFigures`, nearByFigures);
+
     const updateNearbyFigures = bindActionCreators(
       updateNearbyFiguresAction,
       dispatch,
@@ -215,9 +218,6 @@ const SimulationArea: FC<SimulationAreaProps> = ({
     // update nearby figure whenever room change
     setTimeout(resetNearbyFigures);
   }, [selectedRoomId]);
-
-  // TODO clear console
-  // useLog({ figures }, 'SimulationArea.obj');
 
   return (
     <SimulationBoard
