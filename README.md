@@ -6,15 +6,18 @@
 
 - [x] IM 当前使用应用 icon
 - [x] 房间声波更新
-- [ ] 状态点 tooltip
 - [x] IM 跟随功能
-- [ ] Date、Doc、Path 展开图片实现
-- [ ] IM 合作功能
+- [x] Date、Doc、Path 展开图片实现
+- [ ] 状态点 tooltip
+- [ ] RoomSpace Team header 详情
+- [ ] 临时会议发起
+- [ ] IM 合作功能？
 - [x] RoomSpace 房间头像
-- [ ] RoomSpace header 详情
 - [ ] RoomSpace header action
-- [ ] RoomSpace Meeting Room 实现
-- [ ] VideoRoom 平滑移入
+  - [x] 锁定
+  - [ ] IM 锁定同步
+- [x] RoomSpace Meeting Room 实现
+- [x] VideoRoom 平滑移入
 
 ## 问题
 

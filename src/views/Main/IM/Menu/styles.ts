@@ -93,6 +93,11 @@ export const ItemOptionalRoom = styled.div`
   justify-content: center;
   align-items: center;
   gap: 8px;
+
+  /* locked Icon */
+  img {
+    margin-right: 10px;
+  }
 `;
 
 export const ItemActions = styled.div`

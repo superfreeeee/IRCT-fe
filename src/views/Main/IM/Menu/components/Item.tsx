@@ -29,6 +29,7 @@ import {
 } from '../type';
 
 import graphic2Avatar from '@assets/img/graphic_2.png';
+import lockedUrl from '@assets/img/room_action_lock.png';
 import BoxIcon, { BoxIconType } from '@components/BoxIcon';
 
 export interface ItemProps {
@@ -52,6 +53,8 @@ const Item: FC<ItemProps> = ({
   onSelect,
 }) => {
   const isRoom = currentTab === TabOption.Room;
+  const isMeeting = isRoom && (data as RoomData).type === RoomType.Meeting;
+  const meetingLocked = isMeeting && (data as RoomData).locked;
 
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -198,8 +201,14 @@ const Item: FC<ItemProps> = ({
       <div className={classNames('optional', { inTeam: !isRoom })}>
         {isRoom ? (
           <ItemOptionalRoom>
-            <BoxIcon type={BoxIconType.Volume} size={'xs'} />
-            {members}
+            {isMeeting && meetingLocked ? (
+              <img src={lockedUrl} width={18} />
+            ) : (
+              <>
+                <BoxIcon type={BoxIconType.Volume} size={'xs'} />
+                {members}
+              </>
+            )}
           </ItemOptionalRoom>
         ) : (
           <span>{lastRecordTime}</span>
