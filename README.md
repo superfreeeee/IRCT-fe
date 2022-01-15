@@ -14,6 +14,7 @@
 - [ ] RoomSpace header 详情
 - [ ] RoomSpace header action
 - [ ] RoomSpace Meeting Room 实现
+- [ ] VideoRoom 平滑移入
 
 ## 问题
 

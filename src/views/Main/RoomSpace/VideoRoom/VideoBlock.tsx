@@ -55,11 +55,9 @@ const VideoBlock: FC<VideoBlockProps> = ({ figure }) => {
             </span>
           )}
           <VideoBlockTitle>
-            {!hideVideo && (
-              <Avatar>
-                <img src={avatar} width={'100%'} />
-              </Avatar>
-            )}
+            <Avatar className={classNames({ hideVideo })}>
+              <img src={avatar} width={'100%'} />
+            </Avatar>
             {userName}
           </VideoBlockTitle>
           {usingApp && <AppIcon type={usingApp} size={22} />}

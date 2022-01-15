@@ -1,4 +1,4 @@
-import React, { FC, RefObject, useRef, useState } from 'react';
+import React, { FC, RefObject, useMemo, useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -52,7 +52,7 @@ const Figure: FC<FigureProps> = ({ figure, boardRef, onFigureMove }) => {
       lastPositionRef.current = [...positionRef.current];
       boardRectRef.current = boardRef.current.getBoundingClientRect();
     } else {
-      const { width, height } = boardRef.current.getBoundingClientRect();
+      const { width, height } = boardRectRef.current;
       const [x, y] = lastPositionRef.current;
 
       const x1 = roundBy(
@@ -107,7 +107,7 @@ const Figure: FC<FigureProps> = ({ figure, boardRef, onFigureMove }) => {
         <img src={figure.avatar} width={'100%'} />
       </Avatar>
       <StatusPoint state={figure.state} />
-      {isMute && <MicroOff />}
+      {useMemo(() => isMute && <MicroOff />, [isMute])}
     </FigureContainer>
   );
 };

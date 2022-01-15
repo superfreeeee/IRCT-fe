@@ -13,6 +13,16 @@ export const VideoRoomContainer = styled.div`
   padding: 0 30px 83px;
   z-index: 1;
   overflow: auto;
+
+  @keyframes fadeIn {
+    0% {
+      transform: translateX(-50%);
+    }
+
+    100% {
+      transform: translateX(0);
+    }
+  }
 `;
 
 export const VideoBlockContainer = styled.div`
@@ -66,14 +76,29 @@ export const VideoBlockContent = styled.div`
   height: 100%;
   border-radius: 5px;
   background-color: #666666;
+  transition: all 0.3s;
 
   &.hide {
     background-color: #171717;
   }
 
-  ${Avatar} {
+  /* 位于中央的 Avatar */
+  & > ${Avatar} {
     width: 70px;
     height: 70px;
+    animation: showAvatar 0.25s linear;
+  }
+
+  @keyframes showAvatar {
+    0% {
+      width: 0;
+      height: 0;
+    }
+
+    100% {
+      width: 70px;
+      height: 70px;
+    }
   }
 
   ${AppIconWrapper} {
@@ -90,12 +115,20 @@ export const VideoBlockTitle = styled.div`
   justify-content: flex-start;
   align-items: center;
   font-size: 12px;
+  line-height: 20px;
   color: #fff;
 
   ${Avatar} {
     width: 20px;
     height: 20px;
     margin-right: 5px;
+    transition: all 0.3s;
+
+    &.hideVideo {
+      width: 0;
+      height: 0;
+      margin: 0;
+    }
   }
 `;
 

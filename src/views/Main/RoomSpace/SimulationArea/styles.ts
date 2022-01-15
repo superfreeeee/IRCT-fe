@@ -32,6 +32,7 @@ export const FigureContainer = styled.div`
     0 0 0 ${SIMULATION_FIGURE_SIZE_INNER + SIMULATION_FIGURE_SIZE_OUTER}px
       var(--room_space_figure_radius_level2);
   transform: translate(-50%, -50%);
+  transition: all 0.3s;
   user-select: none;
 
   &.inactive {
