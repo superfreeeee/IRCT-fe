@@ -32,8 +32,9 @@ export const HeaderMain = styled.div`
   white-space: nowrap;
 
   ${Avatar} {
-    min-width: 42px;
-    height: 42px;
+    flex-shrink: 0;
+    width: 50px;
+    height: 50px;
     margin-right: 15px;
   }
 
@@ -52,6 +53,9 @@ export const HeaderSide = styled.div`
 `;
 
 export const HeaderSideBtn = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   padding: 4px;
   border-radius: 4px;
 

@@ -42,7 +42,9 @@ const VideoBlock: FC<VideoBlockProps> = ({ figure }) => {
   const usingApp = !isSelf && figureUser?.usingApp;
 
   return (
-    <VideoBlockContainer className={classNames({ sm: level2, hidden: level3 })}>
+    <VideoBlockContainer
+      className={classNames({ sm: level2 || level3, hidden: level3 })}
+    >
       <VideoBlockWrapper>
         <VideoBlockContent className={classNames({ hide: hideVideo })}>
           {hideVideo ? (

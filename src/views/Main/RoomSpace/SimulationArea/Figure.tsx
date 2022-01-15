@@ -107,7 +107,7 @@ const Figure: FC<FigureProps> = ({ figure, boardRef, onFigureMove }) => {
         <img src={figure.avatar} width={'100%'} />
       </Avatar>
       <StatusPoint state={figure.state} />
-      {useMemo(() => isMute && <MicroOff />, [isMute])}
+      {isMute && <MicroOff />}
     </FigureContainer>
   );
 };

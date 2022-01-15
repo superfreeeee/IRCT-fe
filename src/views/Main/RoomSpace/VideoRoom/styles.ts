@@ -13,21 +13,23 @@ export const VideoRoomContainer = styled.div`
   padding: 0 30px 83px;
   z-index: 1;
   overflow: auto;
-
-  @keyframes fadeIn {
-    0% {
-      transform: translateX(-50%);
-    }
-
-    100% {
-      transform: translateX(0);
-    }
-  }
 `;
 
 export const VideoBlockContainer = styled.div`
-  width: 230px;
   overflow: hidden;
+  transform: translateY(0);
+  transition: transform 0.3s, opacity 0.2s;
+  animation: fadeIn 0.3s;
+
+  @keyframes fadeIn {
+    0% {
+      transform: translateY(-100px);
+    }
+
+    100% {
+      transform: translateY(0);
+    }
+  }
 
   /* 外部宽度 773 */
   /* 3 列 = 773 + 230 * 3 + 10 * 2 */
@@ -56,7 +58,9 @@ export const VideoBlockContainer = styled.div`
   }
 
   &.hidden {
-    width: 0;
+    transform: translateY(-100%);
+    animation: none;
+    opacity: 0;
   }
 `;
 

@@ -7,7 +7,6 @@ import VideoBlock from './VideoBlock';
 import { VideoRoomContainer } from './styles';
 
 const VideoRoom = () => {
-  const currentUserId = useSelector((state: AppState) => state.user.id);
   const nearbyFigures = useSelector(
     (state: AppState) => state.space.nearbyFigures,
   ).sort((f1, f2) => f2.voiceRate - f1.voiceRate);

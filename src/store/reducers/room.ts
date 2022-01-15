@@ -11,17 +11,21 @@ import officeGitlabAvatar from '@assets/img/office_gitlab.png';
 import coffeeAvatar from '@assets/img/coffee.png';
 import coffeeGymAvatar from '@assets/img/coffee_gym.png';
 import meetingAvatar from '@assets/img/meeting.png';
+import meetingTempAvatar from '@assets/img/meeting_temp.png';
 
 // =============== actions ===============
 export enum RoomActionType {
-  EnterRoom /*.*/ = 'Room#EnterRoom',
-  ExitRoom /*..*/ = 'Room#ExitRoom',
+  EnterRoom /*...............*/ = 'Room#EnterRoom',
+  ExitRoom /*................*/ = 'Room#ExitRoom',
+  ToggleMeetingRoomLock /*...*/ = 'Room#ToggleMeetingRoomLock',
+  PersistTempMeetingAction /**/ = 'Room#PersistTempMeetingAction',
 }
 
 export interface EnterRoomParams {
   room: RoomData;
   followee?: string; // target userId
 }
+
 export const enterRoomAction = (
   params: EnterRoomParams,
 ): CommonAction<RoomActionType> => {
@@ -40,6 +44,22 @@ export const exitRoomAction = (
   };
 };
 
+export const toggleMeetingRoomLockAction = (
+  roomId: string,
+): CommonAction<RoomActionType> => {
+  return {
+    type: RoomActionType.ToggleMeetingRoomLock,
+    payload: roomId,
+  };
+};
+
+export const persistTempMeetingAction = (roomId: string) => {
+  return {
+    type: RoomActionType.PersistTempMeetingAction,
+    payload: roomId,
+  };
+};
+
 // =============== type ===============
 export enum RoomType {
   Office = 'office', // 办公室
@@ -54,6 +74,7 @@ export interface RoomData {
   type: RoomType;
   avatar?: string;
   title: string;
+  locked?: boolean;
 }
 
 export interface Room {
@@ -65,6 +86,12 @@ export interface Room {
 // =============== state ===============
 const initRoomState: Room = {
   list: [
+    {
+      id: 'room-12',
+      type: RoomType.TempMeeting,
+      avatar: meetingTempAvatar,
+      title: 'Temporary meeting rooms',
+    },
     {
       id: 'room-0',
       type: RoomType.Office,
@@ -82,6 +109,7 @@ const initRoomState: Room = {
       type: RoomType.Meeting,
       avatar: meetingAvatar,
       title: 'Meeting Room 1',
+      locked: false,
     },
     {
       id: 'room-3',
@@ -112,6 +140,7 @@ const initRoomState: Room = {
       type: RoomType.Meeting,
       avatar: meetingAvatar,
       title: 'Design Office 2',
+      locked: false,
     },
   ],
   selected: 'room-0',
@@ -129,6 +158,57 @@ const enterRoom = (
   };
 };
 
+const toggleMeetingRoomLock = (prevState: Room, roomId: string): Room => {
+  const prevRooms = prevState.list;
+  const targetRoomIndex = prevRooms.findIndex((room) => room.id === roomId);
+  // check if room exists
+  if (targetRoomIndex < 0) {
+    return prevState;
+  }
+  const targetRoom = prevRooms[targetRoomIndex];
+  // assert room type is Meeting
+  if (targetRoom.type !== RoomType.Meeting) {
+    return prevState;
+  }
+  return {
+    ...prevState,
+    list: [
+      ...prevRooms.slice(0, targetRoomIndex),
+      {
+        ...targetRoom,
+        locked: !targetRoom.locked,
+      },
+      ...prevRooms.slice(targetRoomIndex + 1),
+    ],
+  };
+};
+
+const persistTempMeeting = (prevState: Room, roomId: string): Room => {
+  const prevRooms = prevState.list;
+  const targetRoomIndex = prevRooms.findIndex((room) => room.id === roomId);
+  // check if room exists
+  if (targetRoomIndex < 0) {
+    return prevState;
+  }
+  const targetRoom = prevRooms[targetRoomIndex];
+  // assert room type is TempMeeting
+  if (targetRoom.type !== RoomType.TempMeeting) {
+    return prevState;
+  }
+  return {
+    ...prevState,
+    list: [
+      ...prevRooms.slice(0, targetRoomIndex),
+      {
+        ...targetRoom,
+        avatar: meetingAvatar,
+        type: RoomType.Meeting,
+      },
+      ...prevRooms.slice(targetRoomIndex + 1),
+    ],
+  };
+};
+
 const roomReducer: Reducer<
   Room,
   CommonAction<RoomActionType | TeamActionType>
@@ -139,6 +219,12 @@ const roomReducer: Reducer<
 
     case RoomActionType.ExitRoom:
       return { ...prevState, selected: '' };
+
+    case RoomActionType.ToggleMeetingRoomLock:
+      return toggleMeetingRoomLock(prevState, action.payload);
+
+    case RoomActionType.PersistTempMeetingAction:
+      return persistTempMeeting(prevState, action.payload);
 
     default:
       return prevState;
