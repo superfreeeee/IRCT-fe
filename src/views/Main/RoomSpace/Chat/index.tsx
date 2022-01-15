@@ -6,7 +6,7 @@ import classNames from 'classnames';
 import BoxIcon, { BoxIconType } from '@components/BoxIcon';
 import { AppState } from '@store/reducers';
 import { sendChatMessageAction } from '@store/reducers/space';
-import { scrollToBottom } from '@utils';
+import { getCurrentTime, scrollToBottom } from '@utils';
 import { useEnterListener, useInput } from './hooks';
 import ChatRecordEl from './ChatRecordEl';
 import {
@@ -24,12 +24,12 @@ interface ChatProps {
 
 const Chat: FC<ChatProps> = ({ isInRoom = false, onSend }) => {
   const { id: userId, avatar: selfAvatar } = useSelector(
-    (state: AppState) => state.user
+    (state: AppState) => state.user,
   );
 
   const space = useSelector((state: AppState) => state.space);
   const { selected: selectedTeam, list: userList } = useSelector(
-    (state: AppState) => state.team
+    (state: AppState) => state.team,
   );
   const selectedRoom = useSelector((state: AppState) => state.room.selected);
 
@@ -54,7 +54,7 @@ const Chat: FC<ChatProps> = ({ isInRoom = false, onSend }) => {
       // only send when input not empty
       const sendChatMessage = bindActionCreators(
         sendChatMessageAction,
-        dispatch
+        dispatch,
       );
       sendChatMessage({
         spaceId: selected,
@@ -62,6 +62,7 @@ const Chat: FC<ChatProps> = ({ isInRoom = false, onSend }) => {
           userId,
           avatar: selfAvatar,
           text: input,
+          createTime: getCurrentTime(),
         },
       });
 

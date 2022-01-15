@@ -20,6 +20,7 @@ export interface TooltipPosition {
 export interface ItemExtraData {
   subtitle?: string;
   members?: number;
+  lastRecordTime?: string;
 }
 
 export const CALL_ICON_URL = callIcon;

@@ -1,4 +1,4 @@
 @font-face {
   font-family: 'PingFangSC';
-  src: url('./assets/font/PingFangSC.ttf');
+  src: url('./assets/font/PingFangSC.ttf') format('truetype');
 }

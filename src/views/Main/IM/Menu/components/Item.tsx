@@ -44,7 +44,7 @@ const Item: FC<ItemProps> = ({
   selected,
   data,
   data: { id, avatar, title },
-  extraData: { subtitle, members } = {},
+  extraData: { subtitle, members, lastRecordTime } = {},
   showTooltip,
   closeTooltip,
   onSelect,
@@ -145,7 +145,7 @@ const Item: FC<ItemProps> = ({
   };
 
   const currentSpace = useSelector(
-    (state: AppState) => state.space.currentSpace
+    (state: AppState) => state.space.currentSpace,
   );
   /**
    * 加入新房间
@@ -194,7 +194,7 @@ const Item: FC<ItemProps> = ({
         <div className="subtitle">{subtitle}</div>
       </div>
       <div className={classNames('optional', { inTeam: !isRoom })}>
-        {isRoom ? <span>{members}</span> : <span>12:00</span>}
+        {isRoom ? <span>{members}</span> : <span>{lastRecordTime}</span>}
       </div>
       {/* 未读信息 */}
       {/* // TODO posible add back in future */}

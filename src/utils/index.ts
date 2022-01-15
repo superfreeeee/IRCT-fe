@@ -40,3 +40,13 @@ export const roundBy = (target: number, min?: number, max?: number) => {
   }
   return res;
 };
+
+/**
+ * 返回当前 hh:mm 时间
+ * @returns 
+ */
+export const getCurrentTime = (): string => {
+  const date = new Date();
+  const time = `${date.getHours()}:${date.getMinutes()}`;
+  return time;
+};

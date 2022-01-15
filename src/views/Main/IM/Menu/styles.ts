@@ -53,6 +53,7 @@ export const ItemContainer = styled.li`
   .subtitle {
     font-size: 12px;
     color: rgba(255, 255, 255, 0.6);
+    user-select: none;
   }
 
   .title,
@@ -66,6 +67,7 @@ export const ItemContainer = styled.li`
     margin: 3px 0 0 5px;
     font-size: 12px;
     overflow: hidden;
+    user-select: none;
 
     &.inTeam {
       align-self: flex-start;

@@ -68,7 +68,9 @@ const config = {
       },
       {
         test: /\.(ttf|otf|eot|woff)$/,
-        use: 'file-loader',
+        // use: 'file-loader',
+        type: 'asset/resource',
+        dependency: { not: ['url'] },
       },
     ],
   },

@@ -147,6 +147,7 @@ export interface ChatRecord {
   userId: string;
   avatar?: string;
   text: string;
+  createTime: string;
 }
 
 export type ChatHistory = {
@@ -220,11 +221,13 @@ const initSpaceState: Space = {
         userId: 'user-1000',
         text: 'I want to find you to understand some of the details of the relevant PRD, it will not be too long',
         avatar: selfAvatar,
+        createTime: '12:27',
       },
       {
         userId: 'user-0',
         text: "Ok let's talk, I'm at Coffee Bar now, Plz follow me",
         avatar: user0Avatar,
+        createTime: '12:30',
       },
     ],
     'user-1': [
@@ -232,11 +235,13 @@ const initSpaceState: Space = {
         userId: 'user-1000',
         text: 'How is your design going?',
         avatar: selfAvatar,
+        createTime: '11:44',
       },
       {
         userId: 'user-1',
         text: 'Not bad, you can take a look at my recent goals on Path, and you can talk about it later',
         avatar: user1Avatar,
+        createTime: '11:45',
       },
     ],
     'user-2': [
@@ -244,11 +249,21 @@ const initSpaceState: Space = {
         userId: 'user-1000',
         text: 'Hi, are u the PM for Project A?',
         avatar: selfAvatar,
+        createTime: '11:33',
       },
       {
         userId: 'user-2',
         text: 'Yes, is there any problem?',
         avatar: user2Avatar,
+        createTime: '11:34',
+      },
+    ],
+    'user-3': [
+      {
+        userId: 'user-12',
+        text: 'Please all PM give the ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ?',
+        avatar: user12Avatar,
+        createTime: '14:01',
       },
     ],
     'user-5': [
@@ -256,11 +271,13 @@ const initSpaceState: Space = {
         userId: 'user-1000',
         text: 'This software is so much fun',
         avatar: selfAvatar,
+        createTime: '11:14',
       },
       {
         userId: 'user-5',
         text: 'Lollllll',
         avatar: user5Avatar,
+        createTime: '11:15',
       },
     ],
     'user-7': [
@@ -268,11 +285,13 @@ const initSpaceState: Space = {
         userId: 'user-1000',
         text: 'Where are you, there is a technical question you would like to ask',
         avatar: selfAvatar,
+        createTime: '10:57',
       },
       {
         userId: 'user-7',
         text: 'Something is wrong with my computer and I checked it here',
         avatar: user7Avatar,
+        createTime: '10:58',
       },
     ],
     'user-9': [
@@ -280,6 +299,7 @@ const initSpaceState: Space = {
         userId: 'user-9',
         text: 'get lunch together?',
         avatar: user9Avatar,
+        createTime: '10:23',
       },
     ],
     'user-12': [
@@ -287,11 +307,13 @@ const initSpaceState: Space = {
         userId: 'user-1000',
         text: 'I have some questions I would like to consult',
         avatar: selfAvatar,
+        createTime: '10:11',
       },
       {
         userId: 'user-12',
         text: 'We can have a conversation...',
         avatar: user12Avatar,
+        createTime: '10:12',
       },
     ],
     'user-13': [
@@ -299,11 +321,13 @@ const initSpaceState: Space = {
         userId: 'user-1000',
         text: "Sorry, I can't go to the afternoon meeting later",
         avatar: selfAvatar,
+        createTime: '09:33',
       },
       {
         userId: 'user-13',
         text: 'Ok, Thats fine',
         avatar: user13Avatar,
+        createTime: '09:34',
       },
     ],
     'user-14': [
@@ -311,11 +335,13 @@ const initSpaceState: Space = {
         userId: 'user-1000',
         text: 'Where are you, there is a technical question you would like to ask',
         avatar: selfAvatar,
+        createTime: '10:54',
       },
       {
         userId: 'user-14',
         text: 'Something is wrong with my computer and I checked it here',
         avatar: user14Avatar,
+        createTime: '10:55',
       },
     ],
     'user-15': [
@@ -323,38 +349,13 @@ const initSpaceState: Space = {
         userId: 'user-1000',
         text: "I see you this month Objective and feel like there's some place to collaborate",
         avatar: selfAvatar,
+        createTime: '13:20',
       },
       {
         userId: 'user-15',
         text: 'No problem, wait until I finish updating the code café to see',
         avatar: user15Avatar,
-      },
-    ],
-    'user-2020': [
-      {
-        userId: 'user-0',
-        text: '1 line -----------------------',
-        avatar: user0Avatar,
-      },
-      {
-        userId: 'user-1000',
-        text: '------------- 1 line',
-        avatar: selfAvatar,
-      },
-      {
-        userId: 'user-0',
-        text: '1 line ----------------------------\n2 line\n 3 line',
-        avatar: user0Avatar,
-      },
-      {
-        userId: 'user-1000',
-        text: '--------------------- 1 line',
-        avatar: selfAvatar,
-      },
-      {
-        userId: 'user-1000',
-        text: '------------------------------ 1 line\n2 line\n 3 line\n4 line',
-        avatar: selfAvatar,
+        createTime: '13:22',
       },
     ],
   },

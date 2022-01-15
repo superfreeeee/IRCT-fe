@@ -36,6 +36,7 @@ const Menu: FC<MenuProps> & { Item: FC<ItemProps> } = ({
 
   const isRoom = currentTab === TabOption.Room;
 
+  const user = useSelector((state: AppState) => state.user);
   const space = useSelector((state: AppState) => state.space);
   const subtitleMap: { [id: string]: ItemExtraData } = useMemo(() => {
     if (isRoom) {
@@ -59,12 +60,30 @@ const Menu: FC<MenuProps> & { Item: FC<ItemProps> } = ({
       // extraData for Team
       const mapper: { [id: string]: ItemExtraData } = {};
 
+      const userNameMapper = {};
+      const getUserName = (userId: string) => {
+        if (userId in userNameMapper) {
+          return userNameMapper[userId];
+        }
+        if (userId === user.id) {
+          return (userNameMapper[userId] = user.name);
+        }
+        const userName = list.filter((user) => user.id === userId)[0]?.title;
+        if (userName) {
+          return (userNameMapper[userId] = userName);
+        }
+      };
+
       const teamChats = space.teamChat;
-      (list as TeamData[]).forEach(({ id: userId }) => {
-        const records = teamChats[userId];
+      (list as TeamData[]).forEach(({ id: teamId, state }) => {
+        const isGroup = !state;
+        const records = teamChats[teamId];
         if (records) {
-          mapper[userId] = {
-            subtitle: records[records.length - 1].text,
+          const { userId, text, createTime } = records[records.length - 1];
+
+          mapper[teamId] = {
+            subtitle: isGroup ? `${getUserName(userId)}: ${text}` : text,
+            lastRecordTime: createTime,
           };
         }
       });
