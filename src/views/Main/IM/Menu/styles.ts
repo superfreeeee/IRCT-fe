@@ -88,6 +88,13 @@ export const ItemContainer = styled.li`
   }
 `;
 
+export const ItemOptionalRoom = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+`;
+
 export const ItemActions = styled.div`
   position: absolute;
   right: 0;

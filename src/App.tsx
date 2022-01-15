@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
+import { RecoilRoot } from 'recoil';
 import styled, { createGlobalStyle } from 'styled-components';
 
 import store from './store';
@@ -11,6 +12,7 @@ const GlobalStyle = createGlobalStyle`
     /* 大区域背景 */
     --main_bg: #171717;
     --container_bg: #313132;
+    --app_sidebar_bg: #1e1e1e;
     --avatar_default_bg: #777;
     /* menu tag 相关 */
     --menu_tab_text: #C7C7C7;
@@ -55,14 +57,16 @@ const AppRoot = styled.div`
 
 const App: FC = () => {
   return (
-    <Provider store={store}>
-      <BrowserRouter>
-        <AppRoot>
-          <GlobalStyle />
-          <Layout />
-        </AppRoot>
-      </BrowserRouter>
-    </Provider>
+    <RecoilRoot>
+      <Provider store={store}>
+        <BrowserRouter>
+          <AppRoot>
+            <GlobalStyle />
+            <Layout />
+          </AppRoot>
+        </BrowserRouter>
+      </Provider>
+    </RecoilRoot>
   );
 };
 

@@ -18,12 +18,14 @@ export enum BoxIconType {
   More = 'bx-dots-horizontal-rounded',
   NextPage = 'bxs-chevrons-right',
   PhoneOff = 'bxs-phone-off',
+  Plus = 'bx-plus',
   Search = 'bx-search',
   Send = 'bx-send',
   Setting = 'bx-cog',
   Video = 'bxs-video',
   VideoOff = 'bxs-video-off',
   VoiceWave = 'bx-equalizer',
+  Volume = 'bx-volume-full',
 }
 
 interface BoxIconProps {

@@ -3,14 +3,27 @@ import React from 'react';
 import { BoxIconType } from '@components/BoxIcon';
 import { FooterNavContainer } from './styles';
 import NavApp from './NavApp';
+import {
+  activeAppState,
+  AppSidebarType,
+  appSidebarVisibleState,
+} from '@views/Main/state/appSidebar';
+import { useSetRecoilState } from 'recoil';
 
 const FooterNav = () => {
+  const setAppSidebarVisible = useSetRecoilState(appSidebarVisibleState);
+  const setActiveApp = useSetRecoilState(activeAppState);
+
   const clickDate = () => {
     console.log(`[FooterNav] clickDate`);
+    setAppSidebarVisible(true);
+    setActiveApp(AppSidebarType.Date);
   };
 
   const clickDoc = () => {
     console.log(`[FooterNav] clickDoc`);
+    setAppSidebarVisible(true);
+    setActiveApp(AppSidebarType.Doc);
   };
 
   const clickPath = () => {
@@ -19,6 +32,8 @@ const FooterNav = () => {
 
   const clickTodo = () => {
     console.log(`[FooterNav] clickTodo`);
+    setAppSidebarVisible(true);
+    setActiveApp(AppSidebarType.Todo);
   };
 
   return (

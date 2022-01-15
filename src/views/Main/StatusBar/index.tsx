@@ -1,4 +1,5 @@
 import React from 'react';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { bindActionCreators } from 'redux';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
@@ -6,10 +7,7 @@ import classNames from 'classnames';
 import { AppState } from '@store/reducers';
 import { exitRoomAction } from '@store/reducers/room';
 import { switchTabAction } from '@store/reducers/im';
-import {
-  switchSpaceAction,
-  toggleExpandVideoRoomAction,
-} from '@store/reducers/space';
+import { switchSpaceAction } from '@store/reducers/space';
 import {
   toggleVideoVisibleAction,
   toggleVideoVoiceAction,
@@ -26,15 +24,17 @@ import {
   StatusBarBottom,
   StatusBarContainer,
 } from './styles';
+import { expandVideoRoomState } from '../state/roomSpace';
 
 const StatusBar = () => {
+  const [expandVideoRoom, setExpandVideoRoom] =
+    useRecoilState(expandVideoRoomState);
+
   const { state, avatar, videoVisible, videoVoice } = useSelector(
-    (state: AppState) => state.user
+    (state: AppState) => state.user,
   );
   const selectedRoomId = useSelector((state: AppState) => state.room.selected);
-  const { currentSpace, expandVideoRoom } = useSelector(
-    (state: AppState) => state.space
-  );
+  const { currentSpace } = useSelector((state: AppState) => state.space);
 
   const inMeeting = !!selectedRoomId;
   const videoRoomHidden = currentSpace !== TabOption.Room || !expandVideoRoom;
@@ -43,7 +43,7 @@ const StatusBar = () => {
   // 房间状态：屏幕 | 声音
   const toggleVideoVisible = bindActionCreators(
     toggleVideoVisibleAction,
-    dispatch
+    dispatch,
   );
   const toggleVideoVoice = bindActionCreators(toggleVideoVoiceAction, dispatch);
 
@@ -64,13 +64,9 @@ const StatusBar = () => {
     console.log(`[StatusBar] jumpToRoomSpace`);
     const switchTab = bindActionCreators(switchTabAction, dispatch);
     const switchSpace = bindActionCreators(switchSpaceAction, dispatch);
-    const toggleExpandVideoRoom = bindActionCreators(
-      toggleExpandVideoRoomAction,
-      dispatch
-    );
     switchTab(TabOption.Room);
     switchSpace(TabOption.Room);
-    toggleExpandVideoRoom(true);
+    setExpandVideoRoom(true);
   };
 
   return (

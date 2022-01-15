@@ -1,6 +1,8 @@
 import { Reducer } from 'redux';
 
 import { TabOption } from '@views/Main/IM/type';
+import { resetActiveStates } from '@views/Main/RoomSpace/SimulationArea/utils';
+import { UserState } from '@components/StatusPoint/type';
 import { CommonAction } from '../type';
 import { TeamActionType } from './team';
 import { RoomActionType } from './room';
@@ -16,15 +18,11 @@ import user13Avatar from '@assets/img/user_13.png';
 import user14Avatar from '@assets/img/user_14.png';
 import user15Avatar from '@assets/img/user_15.png';
 import selfAvatar from '@assets/img/user_1000.png';
-import { resetActiveStates } from '@views/Main/RoomSpace/SimulationArea/utils';
-import { UserState } from '@components/StatusPoint/type';
-import { UserActionType } from './user';
 
 // =============== actions ===============
 export enum SpaceActionType {
   SwitchSpace /*..........*/ = 'Space#SwitchSpace',
   ToggleSpaceVisible /*...*/ = 'Space#ToggleSpaceVisible',
-  ToggleExpandVideoRoom /**/ = 'Space#ToggleExpandVideoRoom',
   SendChatMessage /*......*/ = 'Space#SendChatMessage',
   UpdateFigurePosition /*.*/ = 'Space#UpdateFigurePosition',
   JoinRoomSpace /*........*/ = 'Space#JoinRoom',
@@ -48,15 +46,6 @@ export const toggleSpaceVisibleAction = (
   return {
     type: SpaceActionType.ToggleSpaceVisible,
     payload: visible,
-  };
-};
-
-export const toggleExpandVideoRoomAction = (
-  expand?: boolean,
-): CommonAction<SpaceActionType> => {
-  return {
-    type: SpaceActionType.ToggleExpandVideoRoom,
-    payload: expand,
   };
 };
 
@@ -202,7 +191,6 @@ export interface Space {
   roomChat: ChatHistory;
   simulationSpaces: SimulationSpaceObject;
   nearbyFigures: SpaceFigureWithVideo[];
-  expandVideoRoom: boolean;
 }
 // =============== default value creator ===============
 const createSimulationSpace = (): SimulationSpace => {
@@ -469,7 +457,6 @@ const initSpaceState: Space = {
     },
   },
   nearbyFigures: [],
-  expandVideoRoom: true,
 };
 
 const switchSpace = (prevState: Space, space: TabOption): Space => {
@@ -492,18 +479,6 @@ const toggleVisible = (prevState: Space, visible?: boolean): Space => {
   return {
     ...prevState,
     visible,
-  };
-};
-
-const toggleExpand = (prevState: Space, expand?: boolean): Space => {
-  if (expand === undefined) {
-    expand = !prevState.expandVideoRoom;
-  } else if (prevState.expandVideoRoom === expand) {
-    return prevState;
-  }
-  return {
-    ...prevState,
-    expandVideoRoom: expand,
   };
 };
 
@@ -642,11 +617,9 @@ const updateNearbyFigures = (
   prevState: Space,
   { roomId, figures }: UpdateNearbyFiguresParams,
 ): Space => {
-  console.log(`[updateNearbyFigures] roomId: ${roomId}`);
   const prevSpaces = prevState.simulationSpaces;
   const prevRoomSpace = prevSpaces[roomId];
   const newFigures = resetActiveStates(prevRoomSpace.figures);
-  console.log(`[updateNearbyFigures] newFigures`, newFigures);
   return {
     ...prevState,
     simulationSpaces: {
@@ -671,9 +644,6 @@ const spaceReducer: Reducer<
 
     case SpaceActionType.ToggleSpaceVisible:
       return toggleVisible(prevState, action.payload);
-
-    case SpaceActionType.ToggleExpandVideoRoom:
-      return toggleExpand(prevState, action.payload);
 
     case SpaceActionType.SendChatMessage:
       return appendChatMessage(prevState, action.payload);

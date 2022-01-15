@@ -6,10 +6,12 @@ export enum AppType {
   Figma = 'Figma',
   Notion = 'Notion',
   Pycharm = 'Pycharm',
+  None = 'None',
 }
 
 export const APP_ICON_URL_MAPPER: { [appName in AppType]: string } = {
   [AppType.Figma]: figmaUrl,
   [AppType.Notion]: notionUrl,
   [AppType.Pycharm]: pycharmUrl,
+  [AppType.None]: '',
 };

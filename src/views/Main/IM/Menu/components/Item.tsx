@@ -18,6 +18,7 @@ import {
   ItemActionIcon,
   ItemActions,
   ItemContainer,
+  ItemOptionalRoom,
 } from '../styles';
 import {
   CALL_ICON_URL,
@@ -28,6 +29,7 @@ import {
 } from '../type';
 
 import graphic2Avatar from '@assets/img/graphic_2.png';
+import BoxIcon, { BoxIconType } from '@components/BoxIcon';
 
 export interface ItemProps {
   currentTab: TabOption;
@@ -194,7 +196,14 @@ const Item: FC<ItemProps> = ({
         <div className="subtitle">{subtitle}</div>
       </div>
       <div className={classNames('optional', { inTeam: !isRoom })}>
-        {isRoom ? <span>{members}</span> : <span>{lastRecordTime}</span>}
+        {isRoom ? (
+          <ItemOptionalRoom>
+            <BoxIcon type={BoxIconType.Volume} size={'xs'} />
+            {members}
+          </ItemOptionalRoom>
+        ) : (
+          <span>{lastRecordTime}</span>
+        )}
       </div>
       {/* 未读信息 */}
       {/* // TODO posible add back in future */}

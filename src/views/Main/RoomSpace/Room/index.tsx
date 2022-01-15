@@ -5,7 +5,10 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import { useSelector } from 'react-redux';
 
+import { AppState } from '@store/reducers';
+import { RoomType } from '@store/reducers/room';
 import { roundBy } from '@utils';
 import Chat from '../Chat';
 import SimulationArea from '../SimulationArea';
@@ -17,6 +20,7 @@ import {
   RoomDescription,
   SimulationAreaWrapper,
 } from './styles';
+import MeetingRoomMembers from './MeetingRoomMembers';
 
 const useAreaResizer = (): [number, MouseEventHandler] => {
   const [h, setH] = useState(DEFAULT_SIMULATION_AREA_HEIGHT);
@@ -31,7 +35,7 @@ const useAreaResizer = (): [number, MouseEventHandler] => {
     const newH = roundBy(
       prevHeightRef.current + (currentY - prevY),
       MIN_SIMULATION_AREA_HEIGHT,
-      MAX_SIMULATION_AREA_HEIGHT
+      MAX_SIMULATION_AREA_HEIGHT,
     );
 
     setH(newH);
@@ -53,7 +57,7 @@ const useAreaResizer = (): [number, MouseEventHandler] => {
       document.addEventListener('mousemove', onMouseMove);
       document.addEventListener('mouseup', onMouseUp);
     },
-    [h]
+    [h],
   );
 
   const onMouseMove = useCallback((e) => {
@@ -76,6 +80,15 @@ const description = `A place to relax. If you want ☕️ coffee, please click t
 const Room = () => {
   const areaWrapperRef = useRef<HTMLDivElement>(null);
 
+  const { list: rooms, selected } = useSelector(
+    (state: AppState) => state.room,
+  );
+  const currentRoomType = rooms.filter((room) => room.id === selected)[0]?.type;
+  const isMeeting =
+    currentRoomType &&
+    (currentRoomType === RoomType.Meeting ||
+      currentRoomType === RoomType.TempMeeting);
+
   return (
     <RoomContainer>
       <RoomDescription>
@@ -84,9 +97,13 @@ const Room = () => {
         {description}
       </RoomDescription>
       {/* Room 仿真空间 */}
-      <SimulationAreaWrapper ref={areaWrapperRef}>
-        <SimulationArea areaWrapperRef={areaWrapperRef} />
-      </SimulationAreaWrapper>
+      {isMeeting ? (
+        <MeetingRoomMembers />
+      ) : (
+        <SimulationAreaWrapper ref={areaWrapperRef}>
+          <SimulationArea areaWrapperRef={areaWrapperRef} />
+        </SimulationAreaWrapper>
+      )}
       {/* 拖拽调整仿真空间高度 */}
       {/* <Divider onMouseDown={onDividerMouseDown} style={{ paddingBottom: 12 }} /> */}
       {/* 文字聊天记录 */}

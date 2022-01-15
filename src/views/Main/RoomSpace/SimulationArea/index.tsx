@@ -201,9 +201,6 @@ const SimulationArea: FC<SimulationAreaProps> = ({
     }
     const nearByFigures = calcNearbyFigures(selfFigure, figures);
 
-    // TODO clear console
-    console.log(`nearByFigures`, nearByFigures);
-
     const updateNearbyFigures = bindActionCreators(
       updateNearbyFiguresAction,
       dispatch,

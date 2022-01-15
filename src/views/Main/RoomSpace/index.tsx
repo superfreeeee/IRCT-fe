@@ -1,13 +1,13 @@
 import React, { FC, useEffect, useMemo } from 'react';
+import { useRecoilState } from 'recoil';
 import { bindActionCreators } from 'redux';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
 
 import { AppState } from '@store/reducers';
-import {
-  toggleExpandVideoRoomAction,
-  toggleSpaceVisibleAction,
-} from '@store/reducers/space';
+import { toggleSpaceVisibleAction } from '@store/reducers/space';
+import HidePage from '@components/HidePage';
+import { expandVideoRoomState } from '../state/roomSpace';
 import { TabOption } from '../IM/type';
 import Chat from './Chat';
 import Header from './Header';
@@ -21,13 +21,14 @@ import {
 } from './styles';
 import VideoRoom from './VideoRoom';
 import VideoRoomController from './VideoRoom/VideoRoomController';
-import HidePage from '@components/HidePage';
 
 interface RoomSpaceProps {}
 
 const RoomSpace: FC<RoomSpaceProps> = ({}) => {
-  const { visible, currentSpace, expandVideoRoom } = useSelector(
-    (state: AppState) => state.space
+  const [expandVideoRoom, setExpandVideoRoom] =
+    useRecoilState(expandVideoRoomState);
+  const { visible, currentSpace } = useSelector(
+    (state: AppState) => state.space,
   );
   const selectedTeam = useSelector((state: AppState) => state.team.selected);
   const selectedRoom = useSelector((state: AppState) => state.room.selected);
@@ -44,19 +45,11 @@ const RoomSpace: FC<RoomSpaceProps> = ({}) => {
     if (!!selectedSpaceId !== visible) {
       const toggleSpaceVisible = bindActionCreators(
         toggleSpaceVisibleAction,
-        dispatch
+        dispatch,
       );
       toggleSpaceVisible(!!selectedSpaceId);
     }
   }, [currentSpace]);
-
-  /**
-   *
-   */
-  const toggleExpandVideoRoom = bindActionCreators(
-    toggleExpandVideoRoomAction,
-    dispatch
-  );
 
   const isRoom = currentSpace === TabOption.Room;
 
@@ -73,7 +66,7 @@ const RoomSpace: FC<RoomSpaceProps> = ({}) => {
     >
       <RoomSpaceWrapper>
         {/* Header */}
-        <Header isRoom={isRoom} expand={expandVideoRoom}/>
+        <Header isRoom={isRoom} expand={expandVideoRoom} />
         {/* body: Room | Chat */}
         <RoomSpaceBody>
           <RoomSpaceOrigin className={classNames({ isChat: !isRoom })}>
@@ -88,7 +81,10 @@ const RoomSpace: FC<RoomSpaceProps> = ({}) => {
         </RoomSpaceBody>
       </RoomSpaceWrapper>
       {isRoom && (
-        <HidePage revert={!expandVideoRoom} onClick={toggleExpandVideoRoom} />
+        <HidePage
+          revert={!expandVideoRoom}
+          onClick={() => setExpandVideoRoom(!expandVideoRoom)}
+        />
       )}
     </RoomSpaceContainer>
   );

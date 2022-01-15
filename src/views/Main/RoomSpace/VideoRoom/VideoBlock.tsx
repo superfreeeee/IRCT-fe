@@ -15,9 +15,10 @@ import AppIcon from '@components/AppIcon';
 
 interface VideoBlockProps {
   figure: SpaceFigureWithVideo;
+  isMeeting?: boolean;
 }
 
-const VideoBlock: FC<VideoBlockProps> = ({ figure }) => {
+const VideoBlock: FC<VideoBlockProps> = ({ figure, isMeeting = false }) => {
   const {
     id: currentUserId,
     avatar: selfAvatar,
@@ -43,7 +44,10 @@ const VideoBlock: FC<VideoBlockProps> = ({ figure }) => {
 
   return (
     <VideoBlockContainer
-      className={classNames({ sm: level2 || level3, hidden: level3 })}
+      className={classNames({
+        sm: !isMeeting && (level2 || level3),
+        hidden: !isMeeting && level3,
+      })}
     >
       <VideoBlockWrapper>
         <VideoBlockContent className={classNames({ hide: hideVideo })}>
