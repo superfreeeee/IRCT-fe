@@ -13,15 +13,26 @@ import {
 import Avatar from '@components/Avatar';
 import { MeetingRoomAddBtn, MeetingRoomMembersWrapper } from './styles';
 import BoxIcon, { BoxIconType } from '@components/BoxIcon';
+import { useRecoilValue } from 'recoil';
+import { selectedRoomInfoState } from '@views/Main/state/im';
+import {
+  currentUserTeamDataState,
+  userVideoVoiceSwitchFamily,
+} from '@views/Main/state/user';
 
 const MeetingRoomMembers = () => {
-  const user = useSelector((state: AppState) => state.user);
+  const currentUser = useRecoilValue(currentUserTeamDataState);
+  const videoVoiceSwitch = useRecoilValue(
+    userVideoVoiceSwitchFamily(currentUser.id),
+  );
+
   const simulationSpaces = useSelector(
     (state: AppState) => state.space.simulationSpaces,
   );
-  const { selected: selectedRoomId, followee } = useSelector(
-    (state: AppState) => state.room,
+  const { roomId: selectedRoomId, followeeId } = useRecoilValue(
+    selectedRoomInfoState,
   );
+  const { list: rooms } = useSelector((state: AppState) => state.room);
   const space = simulationSpaces[selectedRoomId];
 
   const dispatch = useDispatch();
@@ -33,21 +44,21 @@ const MeetingRoomMembers = () => {
     joinRoomSpace({
       roomId: selectedRoomId,
       figure: {
-        userId: user.id,
-        avatar: user.avatar,
-        state: user.state,
+        userId: currentUser.id,
+        avatar: currentUser.avatar,
+        state: currentUser.state,
         position: [0, 0],
         active: false,
-        mute: !user.videoVoice,
+        mute: !videoVoiceSwitch,
       },
     });
 
     return () => {
-      leaveRoomSpace(selectedRoomId, user.id);
+      leaveRoomSpace(selectedRoomId, currentUser.id);
       // TODO clear console
       console.log(`[MeetingRoomMembers] clear currentSapce`);
     };
-  }, [selectedRoomId, followee, user.id]);
+  }, [selectedRoomId, followeeId, currentUser.id]);
 
   /**
    * update nearbyFigures
@@ -69,8 +80,10 @@ const MeetingRoomMembers = () => {
       voiceRate: VideoVoiceRate.LEVEL1,
     }));
 
+    const room = rooms.filter((room) => room.id === selectedRoomId)[0];
+
     updateNearbyFigures({
-      roomId: selectedRoomId,
+      room,
       figures,
     });
   }, [selectedRoomId, space?.figures.length]);

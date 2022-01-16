@@ -1,6 +1,6 @@
 import { Reducer } from 'redux';
 
-import { UserState } from '@components/StatusPoint/type';
+import { UserState } from '@views/Main/state/user';
 import { AppType } from '@components/AppIcon/type';
 import { CommonAction } from '../type';
 import { RoomActionType } from './room';
@@ -20,25 +20,16 @@ import graphic2Avatar from '@assets/img/graphic_2.png';
 
 // =============== actions ===============
 export enum TeamActionType {
-  EnterTeam /*.*/ = 'Team#EnterTeam',
-  ExitTeam /*..*/ = 'Team#ExitTeam',
+  UpdateUsersState /**/ = 'Team#UpdateUsersState',
 }
 
-export const enterTeamAction = (
-  team: TeamData,
+type UpdateUsersStateParams = { userId: string; active: boolean }[];
+export const updateUsersStateAction = (
+  params: UpdateUsersStateParams,
 ): CommonAction<TeamActionType> => {
   return {
-    type: TeamActionType.EnterTeam,
-    payload: team,
-  };
-};
-
-export const exitTeamAction = (
-  reserveSpace: boolean = false,
-): CommonAction<TeamActionType> => {
-  return {
-    type: TeamActionType.ExitTeam,
-    payload: reserveSpace,
+    type: TeamActionType.UpdateUsersState,
+    payload: params,
   };
 };
 
@@ -48,7 +39,6 @@ export interface TeamData {
   avatar?: string;
   title: string;
   state?: UserState;
-  unread?: number;
   usingApp?: AppType;
   currentRoom?: string;
 }
@@ -72,7 +62,7 @@ const initTeamState: Team = {
       id: 'user-1',
       avatar: user1Avatar,
       title: 'Tingting',
-      state: UserState.Work,
+      state: UserState.Talking,
       currentRoom: 'room-5',
       usingApp: AppType.Figma,
     },
@@ -155,7 +145,7 @@ const initTeamState: Team = {
       id: 'user-11',
       avatar: graphic2Avatar,
       title: 'Test 3 - Noise User with LongLongLongLongNmae',
-      state: UserState.Work,
+      state: UserState.Talking,
     },
   ],
   // TODO recover mock
@@ -163,19 +153,21 @@ const initTeamState: Team = {
   // selected: 'user-0',
 };
 
+const updateUsersState = (
+  prevState: Team,
+  usersActiveStates: UpdateUsersStateParams,
+) => {
+  console.log(`usersActiveStates`, usersActiveStates);
+  return prevState;
+};
+
 const teamReducer: Reducer<
   Team,
   CommonAction<TeamActionType | RoomActionType>
 > = (prevState = initTeamState, action): Team => {
   switch (action.type) {
-    case TeamActionType.EnterTeam:
-      return {
-        ...prevState,
-        selected: (action.payload as TeamData).id,
-      };
-
-    case TeamActionType.ExitTeam:
-      return { ...prevState, selected: '' };
+    case TeamActionType.UpdateUsersState:
+      return updateUsersState(prevState, action.payload);
 
     default:
       return prevState;

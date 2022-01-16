@@ -8,8 +8,8 @@ import React, {
 import { useSelector } from 'react-redux';
 
 import { AppState } from '@store/reducers';
-import { RoomType } from '@store/reducers/room';
 import { roundBy } from '@utils';
+import { RoomType } from '@views/Main/state/room';
 import Chat from '../Chat';
 import SimulationArea from '../SimulationArea';
 import {

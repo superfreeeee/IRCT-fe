@@ -27,6 +27,12 @@ import Figure from './Figure';
 import { SimulationBoard } from './styles';
 import { calcNearbyFigures, calcInitPosition } from './utils';
 import { SIMULATION_AREA_SHRINK } from './config';
+import { selectedRoomInfoState } from '@views/Main/state/im';
+import { useRecoilValue } from 'recoil';
+import {
+  currentUserTeamDataState,
+  userVideoVoiceSwitchFamily,
+} from '@views/Main/state/user';
 
 interface UseBoardDraggerOptions {
   roomId: string;
@@ -117,11 +123,17 @@ const SimulationArea: FC<SimulationAreaProps> = ({
   const simulationSpaces = useSelector(
     (state: AppState) => state.space.simulationSpaces,
   );
-  const { selected: selectedRoomId, followee } = useSelector(
-    (state: AppState) => state.room,
+  const { roomId: selectedRoomId, followeeId } = useRecoilValue(
+    selectedRoomInfoState,
   );
+  const { list: rooms } = useSelector((state: AppState) => state.room);
   const selectedRoomIdRef = useClosestRef(selectedRoomId);
-  const user = useSelector((state: AppState) => state.user);
+  const roomsRef = useClosestRef(rooms);
+
+  const currentUser = useRecoilValue(currentUserTeamDataState);
+  const currentUserVideoVoiceSwitch = useRecoilValue(
+    userVideoVoiceSwitchFamily(currentUser.id),
+  );
 
   const space = simulationSpaces[selectedRoomId];
 
@@ -151,7 +163,7 @@ const SimulationArea: FC<SimulationAreaProps> = ({
   // mount 时加入房间, unmount 时离开房间
   useEffect(() => {
     // 未选择房间 or 未登入  => 不加入房间
-    if (!selectedRoomId || !user.id) {
+    if (!selectedRoomId || !currentUser.id) {
       return;
     }
     const joinRoomSpace = bindActionCreators(joinRoomSpaceAction, dispatch);
@@ -171,12 +183,12 @@ const SimulationArea: FC<SimulationAreaProps> = ({
       joinRoomSpace({
         roomId: selectedRoomId,
         figure: {
-          userId: user.id,
-          avatar: user.avatar,
-          state: user.state,
-          position: calcInitPosition(figures, width, height, followee),
+          userId: currentUser.id,
+          avatar: currentUser.avatar,
+          state: currentUser.state,
+          position: calcInitPosition(figures, width, height, followeeId),
           active: false,
-          mute: !user.videoVoice,
+          mute: !currentUserVideoVoiceSwitch,
         },
       });
       // TODO clear console
@@ -184,18 +196,20 @@ const SimulationArea: FC<SimulationAreaProps> = ({
     });
 
     return () => {
-      leaveRoomSpace(selectedRoomId, user.id);
+      leaveRoomSpace(selectedRoomId, currentUser.id);
       // TODO clear console
       console.log(`[SimulationArea] clear currentSapce`);
     };
-  }, [selectedRoomId, followee, user.id]);
+  }, [selectedRoomId, followeeId, currentUser.id]);
 
   // 重新计算临近人物
   const figuresRef = useClosestRef(figures);
   const resetNearbyFigures = useCallback(() => {
     const figures = figuresRef.current;
 
-    const [selfFigure] = figures.filter((figure) => figure.userId === user.id);
+    const [selfFigure] = figures.filter(
+      (figure) => figure.userId === currentUser.id,
+    );
     if (!selfFigure) {
       return;
     }
@@ -205,8 +219,12 @@ const SimulationArea: FC<SimulationAreaProps> = ({
       updateNearbyFiguresAction,
       dispatch,
     );
+
+    const room = roomsRef.current.filter(
+      (room) => room.id === selectedRoomIdRef.current,
+    )[0];
     updateNearbyFigures({
-      roomId: selectedRoomIdRef.current,
+      room,
       figures: nearByFigures,
     });
   }, []);
@@ -214,7 +232,7 @@ const SimulationArea: FC<SimulationAreaProps> = ({
   useEffect(() => {
     // update nearby figure whenever room change
     setTimeout(resetNearbyFigures);
-  }, [selectedRoomId, followee]);
+  }, [selectedRoomId, followeeId]);
 
   return (
     <SimulationBoard

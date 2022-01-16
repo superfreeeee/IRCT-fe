@@ -1,5 +1,6 @@
 import { Reducer } from 'redux';
 
+import { RoomType } from '@views/Main/state/room';
 import { CommonAction } from '../type';
 import { TeamActionType } from './team';
 
@@ -15,8 +16,6 @@ import meetingTempAvatar from '@assets/img/meeting_temp.png';
 
 // =============== actions ===============
 export enum RoomActionType {
-  EnterRoom /*...............*/ = 'Room#EnterRoom',
-  ExitRoom /*................*/ = 'Room#ExitRoom',
   ToggleMeetingRoomLock /*...*/ = 'Room#ToggleMeetingRoomLock',
   PersistTempMeetingAction /**/ = 'Room#PersistTempMeetingAction',
 }
@@ -25,24 +24,6 @@ export interface EnterRoomParams {
   room: RoomData;
   followee?: string; // target userId
 }
-
-export const enterRoomAction = (
-  params: EnterRoomParams,
-): CommonAction<RoomActionType> => {
-  return {
-    type: RoomActionType.EnterRoom,
-    payload: params,
-  };
-};
-
-export const exitRoomAction = (
-  reserveSpace: boolean = false,
-): CommonAction<RoomActionType> => {
-  return {
-    type: RoomActionType.ExitRoom,
-    payload: reserveSpace,
-  };
-};
 
 export const toggleMeetingRoomLockAction = (
   roomId: string,
@@ -61,14 +42,6 @@ export const persistTempMeetingAction = (roomId: string) => {
 };
 
 // =============== type ===============
-export enum RoomType {
-  Office = 'office', // 办公室
-  Coffee = 'coffee', // 咖啡间
-  Meeting = 'meeting', // 视频会议
-  TempMeeting = 'temp-meeting', // 暂时会议
-  None = 'none',
-}
-
 export interface RoomData {
   id: string;
   type: RoomType;
@@ -147,17 +120,6 @@ const initRoomState: Room = {
   followee: '',
 };
 
-const enterRoom = (
-  prevState: Room,
-  { room: { id }, followee = '' }: EnterRoomParams,
-): Room => {
-  return {
-    ...prevState,
-    selected: id,
-    followee,
-  };
-};
-
 const toggleMeetingRoomLock = (prevState: Room, roomId: string): Room => {
   const prevRooms = prevState.list;
   const targetRoomIndex = prevRooms.findIndex((room) => room.id === roomId);
@@ -214,12 +176,6 @@ const roomReducer: Reducer<
   CommonAction<RoomActionType | TeamActionType>
 > = (prevState = initRoomState, action): Room => {
   switch (action.type) {
-    case RoomActionType.EnterRoom:
-      return enterRoom(prevState, action.payload);
-
-    case RoomActionType.ExitRoom:
-      return { ...prevState, selected: '' };
-
     case RoomActionType.ToggleMeetingRoomLock:
       return toggleMeetingRoomLock(prevState, action.payload);
 

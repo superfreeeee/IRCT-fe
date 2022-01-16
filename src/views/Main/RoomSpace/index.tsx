@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useMemo } from 'react';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { bindActionCreators } from 'redux';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
@@ -8,7 +8,7 @@ import { AppState } from '@store/reducers';
 import { toggleSpaceVisibleAction } from '@store/reducers/space';
 import HidePage from '@components/HidePage';
 import { expandVideoRoomState } from '../state/roomSpace';
-import { TabOption } from '../IM/type';
+import { selectedRoomIdState, selectedTeamIdState, TabOption } from '@views/Main/state/im';
 import Chat from './Chat';
 import Header from './Header';
 import Room from './Room';
@@ -30,8 +30,10 @@ const RoomSpace: FC<RoomSpaceProps> = ({}) => {
   const { visible, currentSpace } = useSelector(
     (state: AppState) => state.space,
   );
-  const selectedTeam = useSelector((state: AppState) => state.team.selected);
-  const selectedRoom = useSelector((state: AppState) => state.room.selected);
+  const selectedTeamId = useRecoilValue(selectedTeamIdState);
+  const selectedRoomId = useRecoilValue(selectedRoomIdState);
+  // const selectedTeamId = useSelector((state: AppState) => state.team.selected);
+  // const selectedRoomId = useSelector((state: AppState) => state.room.selected);
 
   const dispatch = useDispatch();
   /**
@@ -40,7 +42,7 @@ const RoomSpace: FC<RoomSpaceProps> = ({}) => {
    */
   useEffect(() => {
     const selectedSpaceId =
-      currentSpace === TabOption.Room ? selectedRoom : selectedTeam;
+      currentSpace === TabOption.Room ? selectedRoomId : selectedTeamId;
 
     if (!!selectedSpaceId !== visible) {
       const toggleSpaceVisible = bindActionCreators(

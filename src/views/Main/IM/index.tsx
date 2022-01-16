@@ -10,7 +10,7 @@ import StateTooltip from './StateTooltip';
 
 const IM = () => {
   const [tab, onTabClick] = useTab();
-  const { menuList, selected, onItemClick } = useMenu(tab);
+  const { menuList, selected, onItemClick } = useMenu();
 
   return (
     <IMContainer>
@@ -24,9 +24,8 @@ const IM = () => {
           />
         </label>
       </SearchBar>
-      <Tabs current={tab} onTabClick={onTabClick} />
+      <Tabs onTabClick={onTabClick} />
       <Menu
-        currentTab={tab}
         list={menuList}
         selected={selected}
         onItemClick={onItemClick}

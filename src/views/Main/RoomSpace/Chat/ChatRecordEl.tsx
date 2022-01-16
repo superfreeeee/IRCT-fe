@@ -8,6 +8,8 @@ import { AvatarUsage } from '@components/Avatar/type';
 import { ChatRecordWrapper } from './styles';
 import BoxIcon, { BoxIconType } from '@components/BoxIcon';
 import classNames from 'classnames';
+import { useRecoilValue } from 'recoil';
+import { currentUserTeamDataState } from '@views/Main/state/user';
 
 interface ChatRecordElProps {
   isInRoom: boolean;
@@ -19,8 +21,8 @@ const ChatRecordEl: FC<ChatRecordElProps> = ({
   record: { userId, text, avatar },
 }) => {
   const userList = useSelector((state: AppState) => state.team.list);
-  const { id: currentUserId, name: selfName } = useSelector(
-    (state: AppState) => state.user
+  const { id: currentUserId, name: selfName } = useRecoilValue(
+    currentUserTeamDataState,
   );
 
   const isSelf = currentUserId === userId;

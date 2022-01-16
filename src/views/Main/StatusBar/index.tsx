@@ -1,20 +1,18 @@
 import React from 'react';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { bindActionCreators } from 'redux';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
 
 import { AppState } from '@store/reducers';
-import { exitRoomAction } from '@store/reducers/room';
-import { switchTabAction } from '@store/reducers/im';
 import { switchSpaceAction } from '@store/reducers/space';
-import {
-  toggleVideoVisibleAction,
-  toggleVideoVoiceAction,
-} from '@store/reducers/user';
 import Avatar from '@components/Avatar';
 import BoxIcon, { BoxIconType } from '@components/BoxIcon';
-import { TabOption } from '../IM/type';
+import {
+  currentTabState,
+  selectedRoomInfoState,
+  TabOption,
+} from '@views/Main/state/im';
 import {
   AvatarBlock,
   InMeetingIcon,
@@ -25,46 +23,64 @@ import {
   StatusBarContainer,
 } from './styles';
 import { expandVideoRoomState } from '../state/roomSpace';
+import {
+  currentUserTeamDataState,
+  userVideoRoomSettingFamily,
+  userVideoVisibleFamily,
+  userVideoVoiceSwitchFamily,
+} from '../state/user';
 
 const StatusBar = () => {
   const [expandVideoRoom, setExpandVideoRoom] =
     useRecoilState(expandVideoRoomState);
 
-  const { state, avatar, videoVisible, videoVoice } = useSelector(
-    (state: AppState) => state.user,
+  /**
+   * 当前用户基本信息
+   */
+  const { id, state, avatar } = useRecoilValue(currentUserTeamDataState);
+  const [{ roomId: selectedRoomId }, setSelectedRoomInfo] = useRecoilState(
+    selectedRoomInfoState,
   );
-  const selectedRoomId = useSelector((state: AppState) => state.room.selected);
+
   const { currentSpace } = useSelector((state: AppState) => state.space);
 
   const inMeeting = !!selectedRoomId;
   const videoRoomHidden = currentSpace !== TabOption.Room || !expandVideoRoom;
 
-  const dispatch = useDispatch();
-  // 房间状态：屏幕 | 声音
-  const toggleVideoVisible = bindActionCreators(
-    toggleVideoVisibleAction,
-    dispatch,
+  /**
+   * 当前用户视频设定
+   */
+  const { videoVisible, videoVoiceSwitch } = useRecoilValue(
+    userVideoRoomSettingFamily(id),
   );
-  const toggleVideoVoice = bindActionCreators(toggleVideoVoiceAction, dispatch);
+
+  // 更新用户视频设定
+  const setUserVideoVisible = useSetRecoilState(userVideoVisibleFamily(id));
+  const setUserVideoVoiceSwitch = useSetRecoilState(
+    userVideoVoiceSwitchFamily(id),
+  );
+
+  const toggleVideoVisible = () => setUserVideoVisible(!videoVisible);
+  const toggleVideoVoiceSwitch = () =>
+    setUserVideoVoiceSwitch(!videoVoiceSwitch);
 
   /**
    * 离开房间
    */
   const exitVideoRoom = () => {
     console.log(`[StatusBar] exitVideoRoom`);
-    const exitRoom = bindActionCreators(exitRoomAction, dispatch);
-    const reserveSpace = currentSpace === TabOption.Team;
-    exitRoom(reserveSpace);
+    setSelectedRoomInfo({ roomId: '', followeeId: '' });
   };
 
+  const dispatch = useDispatch();
   /**
    * 跳转到所在房间
    */
+  const setCurrentTab = useSetRecoilState(currentTabState);
   const jumpAndExpandRoomSpace = () => {
     console.log(`[StatusBar] jumpToRoomSpace`);
-    const switchTab = bindActionCreators(switchTabAction, dispatch);
     const switchSpace = bindActionCreators(switchSpaceAction, dispatch);
-    switchTab(TabOption.Room);
+    setCurrentTab(TabOption.Room);
     switchSpace(TabOption.Room);
     setExpandVideoRoom(true);
   };
@@ -95,12 +111,12 @@ const StatusBar = () => {
                   />
                 </MeetingActionBtn>
                 <MeetingActionBtn
-                  className={classNames({ off: !videoVoice })}
-                  onClick={toggleVideoVoice}
+                  className={classNames({ off: !videoVoiceSwitch })}
+                  onClick={toggleVideoVoiceSwitch}
                 >
                   <BoxIcon
                     type={
-                      videoVoice
+                      videoVoiceSwitch
                         ? BoxIconType.Microphone
                         : BoxIconType.MicrophoneOffFill
                     }

@@ -3,16 +3,19 @@ import { bindActionCreators } from 'redux';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
 
-import Avatar from '@components/Avatar';
-import BoxIcon, { BoxIconType } from '@components/BoxIcon';
 import { AppState } from '@store/reducers';
 import { TeamData } from '@store/reducers/team';
 import {
   persistTempMeetingAction,
   RoomData,
-  RoomType,
   toggleMeetingRoomLockAction,
 } from '@store/reducers/room';
+import { RoomType } from '@views/Main/state/room';
+import { UserState } from '@views/Main/state/user';
+import Avatar from '@components/Avatar';
+import BoxIcon, { BoxIconType } from '@components/BoxIcon';
+import AppIcon from '@components/AppIcon';
+import StatusPoint from '@components/StatusPoint';
 import {
   HeaderMain,
   HeaderSide,
@@ -24,9 +27,6 @@ import defaultTeamAvatar from '@assets/img/graphic_2.png';
 import newMeetingUrl from '@assets/img/room_action_new_meeting.png';
 import lockedUrl from '@assets/img/room_action_lock.png';
 import unlockedUrl from '@assets/img/room_action_unlock.png';
-import AppIcon from '@components/AppIcon';
-import { UserState } from '@components/StatusPoint/type';
-import StatusPoint from '@components/StatusPoint';
 
 const DEFAULT_SELECTED_DATA = {
   id: '',
@@ -70,7 +70,7 @@ const Header: FC<HeaderProps> = ({ isRoom, expand }) => {
       const stateText = {
         [UserState.Idle]: 'Now free',
         [UserState.Busy]: 'Now busy',
-        [UserState.Work]: 'Now work',
+        [UserState.Talking]: 'Now talking',
       }[state];
 
       const reasonUsingApp = usingApp && (

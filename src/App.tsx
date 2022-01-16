@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
+import { RecoilRoot } from 'recoil';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
-import { RecoilRoot } from 'recoil';
 import styled, { createGlobalStyle } from 'styled-components';
 
 import store from './store';

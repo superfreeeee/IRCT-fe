@@ -1,5 +1,12 @@
 import React, { FC } from 'react';
+import { useRecoilValue } from 'recoil';
+import { useSelector } from 'react-redux';
+import classNames from 'classnames';
 
+import {
+  currentUserTeamDataState,
+  userVideoVisibleFamily,
+} from '@views/Main/state/user';
 import { SpaceFigureWithVideo, VideoVoiceRate } from '@store/reducers/space';
 import {
   VideoBlockContainer,
@@ -7,8 +14,6 @@ import {
   VideoBlockTitle,
   VideoBlockWrapper,
 } from './styles';
-import classNames from 'classnames';
-import { useSelector } from 'react-redux';
 import { AppState } from '@store/reducers';
 import Avatar from '@components/Avatar';
 import AppIcon from '@components/AppIcon';
@@ -21,10 +26,11 @@ interface VideoBlockProps {
 const VideoBlock: FC<VideoBlockProps> = ({ figure, isMeeting = false }) => {
   const {
     id: currentUserId,
-    avatar: selfAvatar,
     name,
-    videoVisible,
-  } = useSelector((state: AppState) => state.user);
+    avatar: selfAvatar,
+  } = useRecoilValue(currentUserTeamDataState);
+  const videoVisible = useRecoilValue(userVideoVisibleFamily(currentUserId));
+
   const userList = useSelector((state: AppState) => state.team.list);
   const getUser = (userId: string) => {
     return userList.filter((user) => user.id === userId)[0];

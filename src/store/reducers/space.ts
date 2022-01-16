@@ -1,23 +1,23 @@
 import { Reducer } from 'redux';
 
-import { TabOption } from '@views/Main/IM/type';
+import { TabOption } from '@views/Main/state/im';
 import { resetActiveStates } from '@views/Main/RoomSpace/SimulationArea/utils';
-import { UserState } from '@components/StatusPoint/type';
+import { UserState } from '@views/Main/state/user';
 import { CommonAction } from '../type';
-import { TeamActionType } from './team';
-import { RoomActionType } from './room';
+import { TeamActionType, updateUsersStateAction } from './team';
+import { RoomActionType, RoomData } from './room';
 
 import user0Avatar from '@assets/img/user_0.png';
 import user1Avatar from '@assets/img/user_1.png';
 import user2Avatar from '@assets/img/user_2.png';
 import user5Avatar from '@assets/img/user_5.png';
-import user7Avatar from '@assets/img/user_7.png';
 import user9Avatar from '@assets/img/user_9.png';
 import user12Avatar from '@assets/img/user_12.png';
 import user13Avatar from '@assets/img/user_13.png';
 import user14Avatar from '@assets/img/user_14.png';
 import user15Avatar from '@assets/img/user_15.png';
 import selfAvatar from '@assets/img/user_1000.png';
+import store from '@store';
 
 // =============== actions ===============
 export enum SpaceActionType {
@@ -117,7 +117,7 @@ export const leaveRoomSpaceAction = (
 };
 
 interface UpdateNearbyFiguresParams {
-  roomId: string;
+  room: RoomData;
   figures: SpaceFigureWithVideo[];
 }
 export const updateNearbyFiguresAction = (
@@ -362,7 +362,7 @@ const initSpaceState: Space = {
         {
           userId: 'user-1',
           avatar: user1Avatar,
-          state: UserState.Work,
+          state: UserState.Talking,
           position: [80, 80],
           active: true,
           mute: false,
@@ -593,11 +593,20 @@ const leaveRoomSpace = (prevState: Space, { roomId, userId }): Space => {
 
 const updateNearbyFigures = (
   prevState: Space,
-  { roomId, figures }: UpdateNearbyFiguresParams,
+  { room: { id: roomId }, figures }: UpdateNearbyFiguresParams,
 ): Space => {
   const prevSpaces = prevState.simulationSpaces;
   const prevRoomSpace = prevSpaces[roomId];
   const newFigures = resetActiveStates(prevRoomSpace.figures);
+  // ! hack logic: update users states
+
+  setTimeout(() => {
+    const params = newFigures.map((figure) => ({
+      userId: figure.userId,
+      active: figure.active,
+    }));
+    store.dispatch(updateUsersStateAction(params));
+  });
   return {
     ...prevState,
     simulationSpaces: {

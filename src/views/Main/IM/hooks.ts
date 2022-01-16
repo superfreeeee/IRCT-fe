@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo } from 'react';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { bindActionCreators } from 'redux';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -7,21 +8,21 @@ import {
   switchSpaceAction,
   toggleSpaceVisibleAction,
 } from '@store/reducers/space';
+import { TeamData } from '@store/reducers/team';
 import {
-  enterTeamAction,
-  exitTeamAction,
-  TeamData,
-} from '@store/reducers/team';
-import { switchTabAction } from '@store/reducers/im';
-import { TabOption } from './type';
+  selectedRoomIdState,
+  selectedTeamIdState,
+  TabOption,
+} from '@views/Main/state/im';
 import { MenuData } from './Menu/type';
+import { currentTabState } from '../state/im';
 
 /**
  * Tabs
  * @returns
  */
 export const useTab = (): [TabOption, (option: TabOption) => void] => {
-  const tab = useSelector((state: AppState) => state.im.currentTab);
+  const [tab, setTab] = useRecoilState(currentTabState);
 
   const dispatch = useDispatch();
   // 初始化
@@ -30,22 +31,23 @@ export const useTab = (): [TabOption, (option: TabOption) => void] => {
     switchSpace(tab);
   }, []);
 
-  const selectedTeam = useSelector((state: AppState) => state.team.selected);
-  const selectedRoom = useSelector((state: AppState) => state.room.selected);
+  const selectedTeamId = useRecoilValue(selectedTeamIdState);
+  const selectedRoomId = useRecoilValue(selectedRoomIdState);
+  // const selectedTeam = useSelector((state: AppState) => state.team.selected);
+  // const selectedRoomId = useSelector((state: AppState) => state.room.selected);
 
   const onTabClick = useCallback(
     (option: TabOption) => {
-      const switchTab = bindActionCreators(switchTabAction, dispatch);
-      switchTab(option);
+      setTab(option);
 
-      const newTabSelected =
-        option === TabOption.Team ? selectedTeam : selectedRoom;
-      if (newTabSelected) {
+      const selectedId =
+        option === TabOption.Team ? selectedTeamId : selectedRoomId;
+      if (selectedId) {
         const switchSpace = bindActionCreators(switchSpaceAction, dispatch);
         switchSpace(option);
       }
     },
-    [selectedTeam, selectedRoom]
+    [selectedTeamId, selectedRoomId],
   );
 
   return [tab, onTabClick];
@@ -53,45 +55,44 @@ export const useTab = (): [TabOption, (option: TabOption) => void] => {
 
 /**
  * 列表用数据
- * @param tab
- * @returns
  */
-export const useMenu = (tab: TabOption) => {
+export const useMenu = () => {
   const team = useSelector((state: AppState) => state.team);
   const room = useSelector((state: AppState) => state.room);
 
-  const isRoom = tab === TabOption.Room;
+  const currentTab = useRecoilValue(currentTabState);
+
+  const isRoom = currentTab === TabOption.Room;
 
   const menuList = useMemo(() => {
     return isRoom ? room.list : team.list;
-  }, [tab, team.list, room.list]);
+  }, [currentTab, team.list, room.list]);
 
   const selected = useMemo(() => {
     return isRoom ? room.selected : team.selected;
-  }, [tab, team.selected, room.selected]);
+  }, [currentTab, team.selected, room.selected]);
 
   const dispatch = useDispatch();
+  const setSelectedTeamId = useSetRecoilState(selectedTeamIdState);
   /**
    * 点击目录切换
    */
   const onItemClick = useMemo(() => {
-    const enterTeam = bindActionCreators(enterTeamAction, dispatch);
-    const exitTeam = bindActionCreators(exitTeamAction, dispatch);
     const switchSpace = bindActionCreators(switchSpaceAction, dispatch);
 
     //  spaceId: string
     return (data: MenuData) => {
       const { id: spaceId } = data;
-      if (tab === TabOption.Team) {
+      if (currentTab === TabOption.Team) {
         if (spaceId === selected) {
-          exitTeam();
+          setSelectedTeamId('');
         } else {
-          enterTeam(data as TeamData);
+          setSelectedTeamId((data as TeamData).id);
         }
-        switchSpace(tab);
+        switchSpace(currentTab);
       }
     };
-  }, [tab, selected]);
+  }, [currentTab, selected]);
 
   return {
     menuList,
@@ -110,7 +111,7 @@ export const useHidePage = (): [boolean, () => void] => {
   const dispatch = useDispatch();
   const toggleSpaceVisible = bindActionCreators(
     toggleSpaceVisibleAction,
-    dispatch
+    dispatch,
   );
 
   return [visible, toggleSpaceVisible];

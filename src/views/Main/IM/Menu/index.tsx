@@ -4,10 +4,12 @@ import { useSelector } from 'react-redux';
 import { AppState } from '@store/reducers';
 import { RoomData } from '@store/reducers/room';
 import { TeamData } from '@store/reducers/team';
-import { TabOption } from '../type';
+import { currentTabState, TabOption } from '@views/Main/state/im';
 import Item, { ItemProps } from './Item';
 import { MenuContainer, MenuSepContainer } from './styles';
 import { ItemExtraData, MenuData } from './type';
+import { useRecoilValue } from 'recoil';
+import { currentUserTeamDataState } from '@views/Main/state/user';
 
 /**
  * IM - Menu 列表
@@ -17,21 +19,21 @@ import { ItemExtraData, MenuData } from './type';
  * @returns
  */
 interface MenuProps {
-  currentTab: TabOption;
   list: MenuData[];
   selected: string;
   onItemClick: (data: MenuData) => void;
 }
 
 const Menu: FC<MenuProps> & { Item: FC<ItemProps> } = ({
-  currentTab,
   list,
   selected,
   onItemClick,
 }) => {
+  const currentTab = useRecoilValue(currentTabState);
+
   const isRoom = currentTab === TabOption.Room;
 
-  const user = useSelector((state: AppState) => state.user);
+  const currentUser = useRecoilValue(currentUserTeamDataState);
   const space = useSelector((state: AppState) => state.space);
   const subtitleMap: { [id: string]: ItemExtraData } = useMemo(() => {
     if (isRoom) {
@@ -60,8 +62,8 @@ const Menu: FC<MenuProps> & { Item: FC<ItemProps> } = ({
         if (userId in userNameMapper) {
           return userNameMapper[userId];
         }
-        if (userId === user.id) {
-          return (userNameMapper[userId] = user.name);
+        if (userId === currentUser.id) {
+          return (userNameMapper[userId] = currentUser.name);
         }
         const userName = list.filter((user) => user.id === userId)[0]?.title;
         if (userName) {

@@ -16,6 +16,9 @@ import {
   Input,
   SendButton,
 } from './styles';
+import { selectedRoomIdState, selectedTeamIdState } from '@views/Main/state/im';
+import { useRecoilValue } from 'recoil';
+import { currentUserTeamDataState } from '@views/Main/state/user';
 
 interface ChatProps {
   isInRoom?: boolean;
@@ -23,19 +26,22 @@ interface ChatProps {
 }
 
 const Chat: FC<ChatProps> = ({ isInRoom = false, onSend }) => {
-  const { id: userId, avatar: selfAvatar } = useSelector(
-    (state: AppState) => state.user,
+  const { id: userId, avatar: selfAvatar } = useRecoilValue(
+    currentUserTeamDataState,
   );
 
   const space = useSelector((state: AppState) => state.space);
-  const { selected: selectedTeam, list: userList } = useSelector(
-    (state: AppState) => state.team,
-  );
-  const selectedRoom = useSelector((state: AppState) => state.room.selected);
+
+  const selectedTeamId = useRecoilValue(selectedTeamIdState);
+  const selectedRoomId = useRecoilValue(selectedRoomIdState);
+  // const { selected: selectedTeam } = useSelector(
+  //   (state: AppState) => state.team,
+  // );
+  // const selectedRoom = useSelector((state: AppState) => state.room.selected);
 
   const chatHistory = isInRoom ? space.roomChat : space.teamChat;
-  const selected = isInRoom ? selectedRoom : selectedTeam;
-  const records = chatHistory[selected] || [];
+  const selectedId = isInRoom ? selectedRoomId : selectedTeamId;
+  const records = chatHistory[selectedId] || [];
 
   // 输入框
   const [input, onInputChange, { resetInput }] = useInput();
@@ -57,7 +63,7 @@ const Chat: FC<ChatProps> = ({ isInRoom = false, onSend }) => {
         dispatch,
       );
       sendChatMessage({
-        spaceId: selected,
+        spaceId: selectedId,
         record: {
           userId,
           avatar: selfAvatar,

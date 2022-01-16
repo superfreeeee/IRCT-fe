@@ -5,19 +5,21 @@ import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
 
 import {
+  currentTabState,
+  selectedRoomInfoState,
   stateTooltipInfoState,
   stateTooltipVisibleState,
 } from '@views/Main/state/im';
 import { AppState } from '@store/reducers';
-import { enterRoomAction, RoomData, RoomType } from '@store/reducers/room';
+import { RoomType } from '@views/Main/state/room';
+import { RoomData } from '@store/reducers/room';
 import { TeamData } from '@store/reducers/team';
-import { switchTabAction } from '@store/reducers/im';
 import { switchSpaceAction } from '@store/reducers/space';
 import Avatar from '@components/Avatar';
 import StatusPoint from '@components/StatusPoint';
 import AppIcon from '@components/AppIcon';
 import BoxIcon, { BoxIconType } from '@components/BoxIcon';
-import { TabOption } from '../type';
+import { TabOption } from '@views/Main/state/im';
 import {
   ItemActionBtn,
   ItemActionDivider,
@@ -175,19 +177,18 @@ const Item: FC<ItemProps> = ({
   };
 
   const dispatch = useDispatch();
-
+  const setCurrentTab = useSetRecoilState(currentTabState);
+  const setSelectedRoomInfo = useSetRecoilState(selectedRoomInfoState);
   const userActionFollow = (e) => {
     e.stopPropagation();
     const roomId = (data as TeamData).currentRoom;
     const room = rooms.filter((room) => room.id === roomId)[0];
     if (room) {
       console.log(`[Menu.Item] userActionFollow`, room);
-      const enterRoom = bindActionCreators(enterRoomAction, dispatch);
-      enterRoom({ room, followee: id });
+      setSelectedRoomInfo({ roomId: room.id, followeeId: id });
       if (currentTab === TabOption.Team) {
-        const switchTab = bindActionCreators(switchTabAction, dispatch);
         const switchSpace = bindActionCreators(switchSpaceAction, dispatch);
-        switchTab(TabOption.Room);
+        setCurrentTab(TabOption.Room);
         switchSpace(TabOption.Room);
       }
     } else {
@@ -207,8 +208,7 @@ const Item: FC<ItemProps> = ({
    * 加入新房间
    */
   const joinNewRoom = () => {
-    const enterRoom = bindActionCreators(enterRoomAction, dispatch);
-    enterRoom({ room: data as RoomData });
+    setSelectedRoomInfo({ roomId: (data as RoomData).id, followeeId: '' });
     if (currentSpace === TabOption.Team) {
       const switchSpace = bindActionCreators(switchSpaceAction, dispatch);
       switchSpace(TabOption.Room);

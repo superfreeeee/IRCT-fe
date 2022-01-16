@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { UserState } from './type';
+import { UserState } from '@views/Main/state/user';
 
 const overrideSize = (size?: number) =>
   size

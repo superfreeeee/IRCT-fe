@@ -1,7 +1,7 @@
 import React from 'react';
 
 import StatusPoint from '@components/StatusPoint';
-import { UserState } from '@components/StatusPoint/type';
+import { UserState } from '@views/Main/state/user';
 import { StateTooltipWrapper } from './styles';
 import {
   stateTooltipInfoState,
@@ -20,7 +20,7 @@ const StateTooltip = () => {
   const stateText = {
     [UserState.Idle]: 'Now free',
     [UserState.Busy]: 'Now busy',
-    [UserState.Work]: 'Now work',
+    [UserState.Talking]: 'Now talking',
   }[state];
 
   const reasonUsingApp = usingApp && (

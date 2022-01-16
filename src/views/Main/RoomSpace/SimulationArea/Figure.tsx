@@ -21,6 +21,11 @@ import {
 import classNames from 'classnames';
 import BoxIcon, { BoxIconType } from '@components/BoxIcon';
 import StatusPoint from '@components/StatusPoint';
+import { useRecoilValue } from 'recoil';
+import {
+  currentUserIdState,
+  userVideoVoiceSwitchFamily,
+} from '@views/Main/state/user';
 
 const MicroOff = () => {
   return (
@@ -85,14 +90,15 @@ const Figure: FC<FigureProps> = ({ figure, boardRef, onFigureMove }) => {
     }
   });
 
-  const { id: currentUserId, videoVoice } = useSelector(
-    (state: AppState) => state.user,
+  const currentUserId = useRecoilValue(currentUserIdState);
+  const videoVoiceSwitch = useRecoilValue(
+    userVideoVoiceSwitchFamily(currentUserId),
   );
 
   const isSelf = figure.userId === currentUserId;
 
   const inactive = !figure.active;
-  const isMute = isSelf ? !videoVoice : figure.mute;
+  const isMute = isSelf ? !videoVoiceSwitch : figure.mute;
   const activeButMute = figure.active && isMute;
 
   return (

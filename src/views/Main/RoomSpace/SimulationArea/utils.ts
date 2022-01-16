@@ -23,11 +23,11 @@ export const calcInitPosition = (
   figures: SpaceFigure[],
   width: number = SIMULATION_BOARD_WIDTH,
   height: number = SIMULATION_BOARD_HEIGHT,
-  followee?: string,
+  followeeId?: string,
 ): SpaceFigurePosition => {
-  if (followee) {
+  if (followeeId) {
     const followingFigure = figures.filter(
-      (figure) => figure.userId === followee,
+      (figure) => figure.userId === followeeId,
     )[0];
     if (followingFigure) {
       const [x0, y0] = followingFigure.position;

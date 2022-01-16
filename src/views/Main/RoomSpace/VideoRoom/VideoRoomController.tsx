@@ -1,39 +1,42 @@
 import React from 'react';
-import { bindActionCreators } from 'redux';
-import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
 
 import { MeetingActionBtn } from '@views/Main/StatusBar/styles';
-import { AppState } from '@store/reducers';
 import BoxIcon, { BoxIconType } from '@components/BoxIcon';
 import { VideoRoomControllerContainer } from './styles';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { selectedRoomInfoState } from '@views/Main/state/im';
 import {
-  toggleVideoVisibleAction,
-  toggleVideoVoiceAction,
-} from '@store/reducers/user';
-import { exitRoomAction } from '@store/reducers/room';
-import { TabOption } from '@views/Main/IM/type';
+  currentUserIdState,
+  userVideoRoomSettingFamily,
+  userVideoVisibleFamily,
+  userVideoVoiceSwitchFamily,
+} from '@views/Main/state/user';
 
 const VideoRoomController = () => {
-  const { videoVisible, videoVoice } = useSelector(
-    (state: AppState) => state.user
+  const id = useRecoilValue(currentUserIdState);
+  // 房间状态：屏幕 | 声音
+  const { videoVisible, videoVoiceSwitch } = useRecoilValue(
+    userVideoRoomSettingFamily(id),
   );
 
-  const dispatch = useDispatch();
-  // 房间状态：屏幕 | 声音
-  const toggleVideoVisible = bindActionCreators(
-    toggleVideoVisibleAction,
-    dispatch
+  const setUserVideoVisible = useSetRecoilState(userVideoVisibleFamily(id));
+  const setUserVideoVoiceSwitch = useSetRecoilState(
+    userVideoVoiceSwitchFamily(id),
   );
-  const toggleVideoVoice = bindActionCreators(toggleVideoVoiceAction, dispatch);
+
+  // 更新状态
+  const toggleVideoVisible = () => setUserVideoVisible(!videoVisible);
+  const toggleVideoVoiceSwitch = () =>
+    setUserVideoVoiceSwitch(!videoVoiceSwitch);
 
   /**
    * 离开房间
    */
+  const setSelectedRoomInfo = useSetRecoilState(selectedRoomInfoState);
   const exitVideoRoom = () => {
     console.log(`[StatusBar] exitVideoRoom`);
-    const exitRoom = bindActionCreators(exitRoomAction, dispatch);
-    exitRoom();
+    setSelectedRoomInfo({ roomId: '', followeeId: '' });
   };
 
   return (
@@ -47,12 +50,14 @@ const VideoRoomController = () => {
         />
       </MeetingActionBtn>
       <MeetingActionBtn
-        className={classNames({ off: !videoVoice })}
-        onClick={toggleVideoVoice}
+        className={classNames({ off: !videoVoiceSwitch })}
+        onClick={toggleVideoVoiceSwitch}
       >
         <BoxIcon
           type={
-            videoVoice ? BoxIconType.Microphone : BoxIconType.MicrophoneOffFill
+            videoVoiceSwitch
+              ? BoxIconType.Microphone
+              : BoxIconType.MicrophoneOffFill
           }
         />
       </MeetingActionBtn>
