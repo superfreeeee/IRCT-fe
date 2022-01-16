@@ -2,8 +2,8 @@ import React, { FC, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 
 import { AppState } from '@store/reducers';
-import { RoomData } from '@store/reducers/room';
-import { TeamData } from '@store/reducers/team';
+import { RoomData } from '@views/Main/state/room';
+import { TeamData } from '@views/Main/state/team';
 import { currentTabState, TabOption } from '@views/Main/state/im';
 import Item, { ItemProps } from './Item';
 import { MenuContainer, MenuSepContainer } from './styles';
@@ -65,7 +65,9 @@ const Menu: FC<MenuProps> & { Item: FC<ItemProps> } = ({
         if (userId === currentUser.id) {
           return (userNameMapper[userId] = currentUser.name);
         }
-        const userName = list.filter((user) => user.id === userId)[0]?.title;
+        const userName = (list as TeamData[]).filter(
+          (user) => user.id === userId,
+        )[0]?.name;
         if (userName) {
           return (userNameMapper[userId] = userName);
         }

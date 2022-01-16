@@ -1,13 +1,9 @@
 import { useCallback, useEffect, useMemo } from 'react';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { bindActionCreators } from 'redux';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
-import { AppState } from '@store/reducers';
-import {
-  switchSpaceAction,
-  toggleSpaceVisibleAction,
-} from '@store/reducers/space';
+import { switchSpaceAction } from '@store/reducers/space';
 import { TeamData } from '@store/reducers/team';
 import {
   selectedRoomIdState,
@@ -16,6 +12,8 @@ import {
 } from '@views/Main/state/im';
 import { MenuData } from './Menu/type';
 import { currentTabState } from '../state/im';
+import { teamDataListState } from '../state/team';
+import { roomDataListState } from '../state/room';
 
 /**
  * Tabs
@@ -57,23 +55,29 @@ export const useTab = (): [TabOption, (option: TabOption) => void] => {
  * 列表用数据
  */
 export const useMenu = () => {
-  const team = useSelector((state: AppState) => state.team);
-  const room = useSelector((state: AppState) => state.room);
+  // 当前选中 Team/Room Id
+  const [selectedTeamId, setSelectedTeamId] =
+    useRecoilState(selectedTeamIdState);
+  const [selectedRoomId] = useRecoilState(selectedRoomIdState);
 
+  // Team/Room 列表
+  const teamDataList = useRecoilValue(teamDataListState);
+  const roomDataList = useRecoilValue(roomDataListState);
+
+  // 当前 tab
   const currentTab = useRecoilValue(currentTabState);
 
   const isRoom = currentTab === TabOption.Room;
 
   const menuList = useMemo(() => {
-    return isRoom ? room.list : team.list;
-  }, [currentTab, team.list, room.list]);
+    return isRoom ? roomDataList : teamDataList;
+  }, [currentTab, teamDataList, roomDataList]);
 
   const selected = useMemo(() => {
-    return isRoom ? room.selected : team.selected;
-  }, [currentTab, team.selected, room.selected]);
+    return isRoom ? selectedRoomId : selectedTeamId;
+  }, [currentTab, selectedTeamId, selectedRoomId]);
 
   const dispatch = useDispatch();
-  const setSelectedTeamId = useSetRecoilState(selectedTeamIdState);
   /**
    * 点击目录切换
    */
@@ -99,20 +103,4 @@ export const useMenu = () => {
     selected,
     onItemClick,
   };
-};
-
-/**
- * 隐藏 RoomSpace 按钮
- * @returns
- */
-export const useHidePage = (): [boolean, () => void] => {
-  const { visible } = useSelector((state: AppState) => state.space);
-
-  const dispatch = useDispatch();
-  const toggleSpaceVisible = bindActionCreators(
-    toggleSpaceVisibleAction,
-    dispatch,
-  );
-
-  return [visible, toggleSpaceVisible];
 };

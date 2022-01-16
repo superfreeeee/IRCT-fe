@@ -650,15 +650,6 @@ const spaceReducer: Reducer<
     case SpaceActionType.UpdateNearbyFigures:
       return updateNearbyFigures(prevState, action.payload);
 
-    // TeamActionType, RoomActionType
-    case TeamActionType.EnterTeam:
-    case RoomActionType.EnterRoom:
-      return toggleVisible(prevState, true);
-
-    case TeamActionType.ExitTeam:
-    case RoomActionType.ExitRoom:
-      return toggleVisible(prevState, action.payload);
-
     default:
       return prevState;
   }

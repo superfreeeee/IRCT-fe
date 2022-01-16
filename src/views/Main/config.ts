@@ -20,10 +20,11 @@ import coffeeGymAvatar from '@assets/img/coffee_gym.png';
 import meetingAvatar from '@assets/img/meeting.png';
 import meetingTempAvatar from '@assets/img/meeting_temp.png';
 
-import { UserState } from '@views/Main/state/user';
 import { AppType } from '@components/AppIcon/type';
+import { UserState } from './state/user';
 import { TeamData } from './state/team';
 import { RoomData, RoomType } from './state/room';
+import { AllChatRecords } from './state/roomSpace';
 
 export const initTeamDataList: TeamData[] = [
   {
@@ -31,6 +32,7 @@ export const initTeamDataList: TeamData[] = [
     avatar: user1000Avatar,
     name: 'San',
     state: UserState.Idle,
+    currentRoomId: 'room-0',
     isGroup: false,
   },
   {
@@ -203,3 +205,116 @@ export const initRoomDataList: RoomData[] = [
     locked: true,
   },
 ];
+
+export const initAllChatRecords: AllChatRecords = {
+  'user-0': [
+    {
+      userId: 'user-1000',
+      text: 'I want to find you to understand some of the details of the relevant PRD, it will not be too long',
+      createTime: '12:27',
+    },
+    {
+      userId: 'user-0',
+      text: "Ok let's talk, I'm at Coffee Bar now, Plz follow me",
+      createTime: '12:30',
+    },
+  ],
+  'user-1': [
+    {
+      userId: 'user-1000',
+      text: 'How is your design going?',
+      createTime: '11:44',
+    },
+    {
+      userId: 'user-1',
+      text: 'Not bad, you can take a look at my recent goals on Path, and you can talk about it later',
+      createTime: '11:45',
+    },
+  ],
+  'user-2': [
+    {
+      userId: 'user-1000',
+      text: 'Hi, are u the PM for Project A?',
+      createTime: '11:33',
+    },
+    {
+      userId: 'user-2',
+      text: 'Yes, is there any problem?',
+      createTime: '11:34',
+    },
+  ],
+  'user-3': [
+    {
+      userId: 'user-12',
+      text: 'Please all PM give the ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ?',
+      createTime: '14:01',
+    },
+  ],
+  'user-5': [
+    {
+      userId: 'user-1000',
+      text: 'This software is so much fun',
+      createTime: '11:14',
+    },
+    {
+      userId: 'user-5',
+      text: 'Lollllll',
+      createTime: '11:15',
+    },
+  ],
+  'user-9': [
+    {
+      userId: 'user-9',
+      text: 'get lunch together?',
+      createTime: '10:23',
+    },
+  ],
+  'user-12': [
+    {
+      userId: 'user-1000',
+      text: 'I have some questions I would like to consult',
+      createTime: '10:11',
+    },
+    {
+      userId: 'user-12',
+      text: 'We can have a conversation...',
+      createTime: '10:12',
+    },
+  ],
+  'user-13': [
+    {
+      userId: 'user-1000',
+      text: "Sorry, I can't go to the afternoon meeting later",
+      createTime: '09:33',
+    },
+    {
+      userId: 'user-13',
+      text: 'Ok, Thats fine',
+      createTime: '09:34',
+    },
+  ],
+  'user-14': [
+    {
+      userId: 'user-1000',
+      text: 'Where are you, there is a technical question you would like to ask',
+      createTime: '10:54',
+    },
+    {
+      userId: 'user-14',
+      text: 'Something is wrong with my computer and I checked it here',
+      createTime: '10:55',
+    },
+  ],
+  'user-15': [
+    {
+      userId: 'user-1000',
+      text: "I see you this month Objective and feel like there's some place to collaborate",
+      createTime: '13:20',
+    },
+    {
+      userId: 'user-15',
+      text: 'No problem, wait until I finish updating the code café to see',
+      createTime: '13:22',
+    },
+  ],
+};

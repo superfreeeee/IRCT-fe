@@ -1,5 +1,5 @@
 import React, { FC, useMemo, useRef } from 'react';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { bindActionCreators } from 'redux';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
@@ -9,17 +9,21 @@ import {
   selectedRoomInfoState,
   stateTooltipInfoState,
   stateTooltipVisibleState,
+  TabOption,
 } from '@views/Main/state/im';
+import {
+  roomBasicInfoFamily,
+  RoomData,
+  RoomType,
+} from '@views/Main/state/room';
+import { TeamData } from '@views/Main/state/team';
+
 import { AppState } from '@store/reducers';
-import { RoomType } from '@views/Main/state/room';
-import { RoomData } from '@store/reducers/room';
-import { TeamData } from '@store/reducers/team';
 import { switchSpaceAction } from '@store/reducers/space';
 import Avatar from '@components/Avatar';
 import StatusPoint from '@components/StatusPoint';
 import AppIcon from '@components/AppIcon';
 import BoxIcon, { BoxIconType } from '@components/BoxIcon';
-import { TabOption } from '@views/Main/state/im';
 import {
   ItemActionBtn,
   ItemActionDivider,
@@ -28,13 +32,7 @@ import {
   ItemContainer,
   ItemOptionalRoom,
 } from './styles';
-import {
-  CALL_ICON_URL,
-  COLLABORATE_ICON_URL,
-  FOLLOR_ICON_URL,
-  ItemExtraData,
-  MenuData,
-} from './type';
+import { ItemExtraData, MenuData } from './type';
 
 import graphic2Avatar from '@assets/img/graphic_2.png';
 import lockedUrl from '@assets/img/room_action_lock.png';
@@ -43,7 +41,16 @@ import {
   callModalVisibleState,
 } from '@views/Main/state/callModal';
 
-const useTooltip = (data: TeamData, room: string) => {
+import CALL_ICON_URL from '@assets/img/team_action_call.png';
+import FOLLOR_ICON_URL from '@assets/img/team_action_follow.png';
+import COLLABORATE_ICON_URL from '@assets/img/team_action_collaborate.png';
+import {
+  userCustomBusyFamily,
+  userTalkingStateFamily,
+  userVideoVoiceSwitchFamily,
+} from '@views/Main/state/user';
+
+const useTooltip = (data: TeamData, roomName: string) => {
   const setStateTooltipVisible = useSetRecoilState(stateTooltipVisibleState);
   const setStateTooltipInfo = useSetRecoilState(stateTooltipInfoState);
 
@@ -57,7 +64,7 @@ const useTooltip = (data: TeamData, room: string) => {
     setStateTooltipInfo({
       position: { left, top },
       state: data.state,
-      room,
+      room: roomName,
       usingApp: data.usingApp,
     });
     setStateTooltipVisible(true);
@@ -90,86 +97,67 @@ const Item: FC<ItemProps> = ({
   currentTab,
   selected,
   data,
-  data: { id, avatar, title },
+  data: { id, avatar },
   extraData: { subtitle, members, lastRecordTime } = {},
   onSelect,
 }) => {
   const isRoom = currentTab === TabOption.Room;
-  const isMeeting = isRoom && (data as RoomData).type === RoomType.Meeting;
-  const meetingLocked = isMeeting && (data as RoomData).locked;
 
-  const containerRef = useRef<HTMLDivElement>(null);
+  // for RoomData
+  const currentRoom = data as RoomData;
 
-  const rooms = useSelector((state: AppState) => state.room.list);
-  const currentRoomName = rooms.filter(
-    (room) => room.id === (data as TeamData).currentRoom,
-  )[0]?.title;
+  const isMeeting = isRoom && currentRoom.type === RoomType.Meeting;
+  const meetingLocked = isMeeting && currentRoom.locked;
 
-  const { onMouseEnter, onMouseLeave } = useTooltip(data, currentRoomName);
+  // for TeamData
+  const currentTeam = data as TeamData;
+  const roomOfcurrentTeam = useRecoilValue(
+    roomBasicInfoFamily(currentTeam.currentRoomId),
+  );
 
-  /**
-   * Team 列表下状态判断
-   */
-  const { isUser, canCall, askCall, canFollow, canCollaborate } =
-    useMemo(() => {
-      const { state, currentRoom, usingApp } = data as TeamData;
+  const isUser = !isRoom && !currentTeam.isGroup;
+  const isUserInRoom = isUser && roomOfcurrentTeam;
+  const isInIdelRoom =
+    isUserInRoom && roomOfcurrentTeam.type === RoomType.Coffee;
+  const isUserUsingApp = isUser && currentTeam.usingApp;
+  const isUserCustomBusy = useRecoilValue(userCustomBusyFamily(currentTeam.id));
+  const isUserTalking = useRecoilValue(userTalkingStateFamily(currentTeam.id));
 
-      const isUser = !isRoom && !!state;
-      if (!isUser) {
-        return {
-          isUser,
-          canCall: false,
-          askCall: false,
-          canFollow: false,
-          canCollaborate: false,
-        };
-      }
+  const canCall =
+    (!isUserInRoom && !isUserUsingApp && !isUserCustomBusy) ||
+    (isUserInRoom && isUserTalking && isInIdelRoom);
+  const askCall =
+    (!isUserInRoom && (isUserUsingApp || isUserCustomBusy)) ||
+    (isUserInRoom && !isUserTalking && !isUserUsingApp && !isUserCustomBusy);
+  const canFollow = isUserInRoom;
+  const canCollaborate = isUserUsingApp;
 
-      const currentRoomType =
-        rooms.filter((room) => room.id === currentRoom)[0]?.type || RoomType;
-      const isCoffe = currentRoomType === RoomType.Coffee;
-
-      // 二段状态
-      const isUserInRoom = isUser && !!currentRoom;
-      const isUsingApp = isUser && !!usingApp;
-      const isCustomBusy = false;
-
-      const openMicrophone = true;
-
-      // 最终按钮选择
-      const canCall =
-        (!isUserInRoom && !isUsingApp && !isCustomBusy) ||
-        (isUserInRoom && openMicrophone && isCoffe);
-      const askCall =
-        (!isUserInRoom && (isUsingApp || isCustomBusy)) ||
-        (isUserInRoom && !openMicrophone && !isUsingApp && !isCustomBusy);
-      const canFollow = isUserInRoom;
-      const canCollaborate = isUsingApp;
-
-      return {
-        isUser,
-        canCall,
-        askCall,
-        canFollow,
-        canCollaborate,
-      };
-    }, [data]);
+  // for render (cross team & room)
+  const title = isRoom ? currentRoom.title : currentTeam.name;
 
   /**
-   * 列表右侧展开操作
-   * @param e
+   * 用户状态 tooltip
    */
+  const { onMouseEnter, onMouseLeave } = useTooltip(
+    data as TeamData,
+    currentRoom.title,
+  );
+
+  // for Team Actions
   const setCallModalVisible = useSetRecoilState(callModalVisibleState);
   const setCallModalInfo = useSetRecoilState(callModalInfoState);
+  /**
+   * 1 - 语音通话
+   */
   const userActionCall = (e) => {
     e.stopPropagation();
     console.log(`[Menu.Item] userActionCall(shouldAsk = ${askCall})`);
 
-    const { id, title, avatar } = data as TeamData;
+    const { id, name, avatar } = currentTeam;
     setCallModalInfo({
       avatar,
       userId: id,
-      userName: title,
+      userName: name,
       responsed: false,
       accept: false,
     });
@@ -179,23 +167,30 @@ const Item: FC<ItemProps> = ({
   const dispatch = useDispatch();
   const setCurrentTab = useSetRecoilState(currentTabState);
   const setSelectedRoomInfo = useSetRecoilState(selectedRoomInfoState);
+  /**
+   * 2 - 跟随
+   */
   const userActionFollow = (e) => {
     e.stopPropagation();
-    const roomId = (data as TeamData).currentRoom;
-    const room = rooms.filter((room) => room.id === roomId)[0];
-    if (room) {
-      console.log(`[Menu.Item] userActionFollow`, room);
-      setSelectedRoomInfo({ roomId: room.id, followeeId: id });
+    if (roomOfcurrentTeam) {
+      console.log(`[Menu.Item] userActionFollow`, roomOfcurrentTeam);
+      setSelectedRoomInfo({ roomId: roomOfcurrentTeam.id, followeeId: id });
       if (currentTab === TabOption.Team) {
-        const switchSpace = bindActionCreators(switchSpaceAction, dispatch);
         setCurrentTab(TabOption.Room);
+
+        const switchSpace = bindActionCreators(switchSpaceAction, dispatch);
         switchSpace(TabOption.Room);
       }
     } else {
-      console.error(`[Menu.Item] userActionFollow: unknown roomId = ${roomId}`);
+      console.error(
+        `[Menu.Item] userActionFollow: unknown roomId = ${currentTeam.currentRoomId}`,
+      );
     }
   };
 
+  /**
+   * 3 - 协作
+   */
   const userActionCollaborate = (e) => {
     e.stopPropagation();
     console.log(`[Menu.Item] userActionCollaborate`);
@@ -204,11 +199,13 @@ const Item: FC<ItemProps> = ({
   const currentSpace = useSelector(
     (state: AppState) => state.space.currentSpace,
   );
+
+  // for Room Actions
   /**
    * 加入新房间
    */
   const joinNewRoom = () => {
-    setSelectedRoomInfo({ roomId: (data as RoomData).id, followeeId: '' });
+    setSelectedRoomInfo({ roomId: currentRoom.id, followeeId: '' });
     if (currentSpace === TabOption.Team) {
       const switchSpace = bindActionCreators(switchSpaceAction, dispatch);
       switchSpace(TabOption.Room);
@@ -220,8 +217,6 @@ const Item: FC<ItemProps> = ({
   return (
     <ItemContainer
       className={classNames({ selected, isRoom, isGroup: !isUser })}
-      // @ts-ignore
-      ref={containerRef}
       onClick={() => onSelect(data)}
     >
       <div className="avatar">
@@ -232,9 +227,7 @@ const Item: FC<ItemProps> = ({
             alt={'wrong url'}
           />
         </Avatar>
-        {isUser && (data as TeamData).usingApp && (
-          <AppIcon type={(data as TeamData).usingApp} size={20} />
-        )}
+        {isUserUsingApp && <AppIcon type={currentTeam.usingApp} size={20} />}
       </div>
       <div className="content">
         <div className="title">
@@ -245,7 +238,7 @@ const Item: FC<ItemProps> = ({
               onMouseEnter={onMouseEnter}
               onMouseLeave={onMouseLeave}
             >
-              <StatusPoint state={(data as TeamData).state} size={8} />
+              <StatusPoint state={currentTeam.state} size={8} />
             </span>
           )}
         </div>
@@ -270,15 +263,14 @@ const Item: FC<ItemProps> = ({
       {/* 未读信息 */}
       {/* // TODO posible add back in future */}
       {/* {unread && <UnreadPin num={unread} />} */}
-      {/* 状态点 */}
-      {/* {state && <StatusPoint state={state} style={{ right: 11, bottom: 18 }} />} */}
+      {/* 更多操作 */}
       {showActions && (
         <ItemActions>
           {isRoom ? (
-            // Room Actions
+            // Room Actions: join
             <ItemActionBtn onClick={joinNewRoom}>join</ItemActionBtn>
           ) : isUser ? (
-            // Team Actions
+            // Team Actions: 语音、跟随、协作
             <>
               {(canCall || askCall) && (
                 <ItemActionIcon onClick={userActionCall} title="发起语音通话">

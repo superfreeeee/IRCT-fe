@@ -41,6 +41,9 @@ export const roomDataListState = selector<RoomData[]>({
     const roomIds = get(roomIdsState);
     const roomDataList = roomIds.map((roomId): RoomData => {
       const basicInfo = get(roomBasicInfoFamily(roomId));
+      if (!basicInfo) {
+        throw new Error(`missing room: ${roomId}`);
+      }
       const locked = get(roomLockedFamily(roomId));
       return {
         ...basicInfo,

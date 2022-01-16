@@ -7,8 +7,15 @@ import classNames from 'classnames';
 import { AppState } from '@store/reducers';
 import { toggleSpaceVisibleAction } from '@store/reducers/space';
 import HidePage from '@components/HidePage';
-import { expandVideoRoomState } from '../state/roomSpace';
-import { selectedRoomIdState, selectedTeamIdState, TabOption } from '@views/Main/state/im';
+import {
+  currentSpaceTypeState,
+  expandVideoRoomState,
+} from '../state/roomSpace';
+import {
+  selectedRoomIdState,
+  selectedTeamIdState,
+  TabOption,
+} from '@views/Main/state/im';
 import Chat from './Chat';
 import Header from './Header';
 import Room from './Room';
@@ -27,13 +34,14 @@ interface RoomSpaceProps {}
 const RoomSpace: FC<RoomSpaceProps> = ({}) => {
   const [expandVideoRoom, setExpandVideoRoom] =
     useRecoilState(expandVideoRoomState);
-  const { visible, currentSpace } = useSelector(
-    (state: AppState) => state.space,
-  );
+
+  const currentSpaceType = useRecoilValue(currentSpaceTypeState);
+  const { visible } = useSelector((state: AppState) => state.space);
+
+  const isRoom = currentSpaceType === TabOption.Room;
+
   const selectedTeamId = useRecoilValue(selectedTeamIdState);
   const selectedRoomId = useRecoilValue(selectedRoomIdState);
-  // const selectedTeamId = useSelector((state: AppState) => state.team.selected);
-  // const selectedRoomId = useSelector((state: AppState) => state.room.selected);
 
   const dispatch = useDispatch();
   /**
@@ -42,7 +50,7 @@ const RoomSpace: FC<RoomSpaceProps> = ({}) => {
    */
   useEffect(() => {
     const selectedSpaceId =
-      currentSpace === TabOption.Room ? selectedRoomId : selectedTeamId;
+      currentSpaceType === TabOption.Room ? selectedRoomId : selectedTeamId;
 
     if (!!selectedSpaceId !== visible) {
       const toggleSpaceVisible = bindActionCreators(
@@ -51,9 +59,7 @@ const RoomSpace: FC<RoomSpaceProps> = ({}) => {
       );
       toggleSpaceVisible(!!selectedSpaceId);
     }
-  }, [currentSpace]);
-
-  const isRoom = currentSpace === TabOption.Room;
+  }, [currentSpaceType]);
 
   const BodyEl = useMemo(() => {
     return isRoom ? <Room /> : <Chat />;
