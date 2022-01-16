@@ -1,16 +1,17 @@
 import React, { FC, useMemo } from 'react';
 import { bindActionCreators } from 'redux';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import classNames from 'classnames';
 
-import { AppState } from '@store/reducers';
-import { TeamData } from '@store/reducers/team';
 import {
   persistTempMeetingAction,
-  RoomData,
   toggleMeetingRoomLockAction,
 } from '@store/reducers/room';
-import { RoomType } from '@views/Main/state/room';
+import {
+  roomBasicInfoFamily,
+  roomDataFamily,
+  RoomType,
+} from '@views/Main/state/room';
 import { UserState } from '@views/Main/state/user';
 import Avatar from '@components/Avatar';
 import BoxIcon, { BoxIconType } from '@components/BoxIcon';
@@ -27,11 +28,9 @@ import defaultTeamAvatar from '@assets/img/graphic_2.png';
 import newMeetingUrl from '@assets/img/room_action_new_meeting.png';
 import lockedUrl from '@assets/img/room_action_lock.png';
 import unlockedUrl from '@assets/img/room_action_unlock.png';
-
-const DEFAULT_SELECTED_DATA = {
-  id: '',
-  title: '',
-};
+import { useRecoilValue } from 'recoil';
+import { currentSpaceIdState } from '@views/Main/state/roomSpace';
+import { teamDataFamily } from '@views/Main/state/team';
 
 interface HeaderProps {
   isRoom: boolean;
@@ -39,33 +38,27 @@ interface HeaderProps {
 }
 
 const Header: FC<HeaderProps> = ({ isRoom, expand }) => {
-  const team = useSelector((state: AppState) => state.team);
-  const room = useSelector((state: AppState) => state.room);
+  const spaceId = useRecoilValue(currentSpaceIdState);
 
-  let data: TeamData | RoomData = DEFAULT_SELECTED_DATA;
-  if (isRoom) {
-    const currentRoom = room.list.filter(
-      (roomData) => roomData.id === room.selected,
-    )[0];
-    if (currentRoom) {
-      data = currentRoom;
-    }
-  } else {
-    const currentTeam = team.list.filter(
-      (teamData) => teamData.id === team.selected,
-    )[0];
-    if (currentTeam) {
-      data = currentTeam;
-    }
-  }
+  // for TeamData
+  const teamData = useRecoilValue(teamDataFamily(spaceId));
+  const isUser = !isRoom && !teamData.isGroup;
+  const roomOfUser = useRecoilValue(
+    roomBasicInfoFamily(teamData.currentRoomId),
+  );
 
-  const isUser = !isRoom && !!(data as TeamData).state;
-  const rooms = room.list;
+  // for RoomData
+  const roomData = useRecoilValue(roomDataFamily(spaceId));
+
+  // for render
+  const data = isRoom ? roomData : teamData;
+  const title = isRoom ? roomData.title : teamData.name;
+  const avatar = data.avatar;
+
   const UserSubtitleEl = useMemo(() => {
     if (isUser) {
-      const { state, usingApp, currentRoom } = data as TeamData;
-      const currentRoomName = rooms.filter((room) => room.id === currentRoom)[0]
-        ?.title;
+      const { state, usingApp } = teamData;
+      const currentRoomName = roomOfUser?.title;
 
       const stateText = {
         [UserState.Idle]: 'Now free',
@@ -91,11 +84,11 @@ const Header: FC<HeaderProps> = ({ isRoom, expand }) => {
     } else {
       return null;
     }
-  }, [isUser, data]);
+  }, [isUser, teamData]);
 
   const dispatch = useDispatch();
   const HeaderSideActionsEl = useMemo(() => {
-    const { id: roomId, type, locked } = isRoom && (data as RoomData);
+    const { id: roomId, type, locked } = roomData;
     const isMeeting = type === RoomType.Meeting;
     const isTempMeeting = type === RoomType.TempMeeting;
 
@@ -173,16 +166,16 @@ const Header: FC<HeaderProps> = ({ isRoom, expand }) => {
         {MoreActionEl}
       </>
     );
-  }, [isRoom, data]);
+  }, [isRoom, roomData]);
 
   return (
     <RoomSpaceHeader className={classNames({ isRoom, expand })}>
       <HeaderMain>
         <Avatar>
-          <img src={data.avatar || defaultTeamAvatar} width={'100%'} />
+          <img src={avatar || defaultTeamAvatar} width={'100%'} />
         </Avatar>
         <div className="content">
-          <div className="title">{data.title}</div>
+          <div className="title">{title}</div>
           {isUser && UserSubtitleEl}
         </div>
       </HeaderMain>

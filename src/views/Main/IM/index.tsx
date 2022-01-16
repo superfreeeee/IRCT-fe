@@ -10,7 +10,7 @@ import StateTooltip from './StateTooltip';
 
 const IM = () => {
   const [tab, onTabClick] = useTab();
-  const { menuList, selected, onItemClick } = useMenu();
+  const { menuList, selectedId, onItemClick } = useMenu();
 
   return (
     <IMContainer>
@@ -27,7 +27,7 @@ const IM = () => {
       <Tabs onTabClick={onTabClick} />
       <Menu
         list={menuList}
-        selected={selected}
+        selectedId={selectedId}
         onItemClick={onItemClick}
       ></Menu>
       <FooterNav />

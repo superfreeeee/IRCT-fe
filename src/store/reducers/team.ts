@@ -157,7 +157,8 @@ const updateUsersState = (
   prevState: Team,
   usersActiveStates: UpdateUsersStateParams,
 ) => {
-  console.log(`usersActiveStates`, usersActiveStates);
+  // TODO clear console
+  // console.log(`usersActiveStates`, usersActiveStates);
   return prevState;
 };
 

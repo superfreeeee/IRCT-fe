@@ -4,7 +4,8 @@ import { useSelector } from 'react-redux';
 import { AppState } from '@store/reducers';
 import { RoomData } from '@views/Main/state/room';
 import { TeamData } from '@views/Main/state/team';
-import { currentTabState, TabOption } from '@views/Main/state/im';
+import { TabOption } from '@views/Main/state/type';
+import { currentTabState } from '@views/Main/state/im';
 import Item, { ItemProps } from './Item';
 import { MenuContainer, MenuSepContainer } from './styles';
 import { ItemExtraData, MenuData } from './type';
@@ -20,13 +21,13 @@ import { currentUserTeamDataState } from '@views/Main/state/user';
  */
 interface MenuProps {
   list: MenuData[];
-  selected: string;
+  selectedId: string;
   onItemClick: (data: MenuData) => void;
 }
 
 const Menu: FC<MenuProps> & { Item: FC<ItemProps> } = ({
   list,
-  selected,
+  selectedId,
   onItemClick,
 }) => {
   const currentTab = useRecoilValue(currentTabState);
@@ -99,7 +100,7 @@ const Menu: FC<MenuProps> & { Item: FC<ItemProps> } = ({
             <Item
               key={data.id}
               currentTab={currentTab}
-              selected={selected === data.id}
+              selected={selectedId === data.id}
               data={data}
               extraData={subtitleMap[data.id]}
               onSelect={onItemClick}

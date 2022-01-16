@@ -1,4 +1,4 @@
-import { atom, atomFamily, selector } from 'recoil';
+import { atom, atomFamily, selector, selectorFamily } from 'recoil';
 
 export enum RoomType {
   Office = 'office', // 办公室
@@ -35,6 +35,22 @@ export const roomIdsState = atom<string[]>({
 export interface RoomData extends RoomBasicInfo {
   locked?: boolean;
 }
+
+// roomId => RoomData
+export const roomDataFamily = selectorFamily<RoomData, string>({
+  key: 'room_roomData',
+  get:
+    (roomId) =>
+    ({ get }) => {
+      const basicInfo = get(roomBasicInfoFamily(roomId));
+      const locked = get(roomLockedFamily(roomId));
+      return {
+        ...basicInfo,
+        locked,
+      };
+    },
+});
+
 export const roomDataListState = selector<RoomData[]>({
   key: 'room_roomDataList',
   get: ({ get }) => {

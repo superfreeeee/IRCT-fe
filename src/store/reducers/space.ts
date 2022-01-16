@@ -1,6 +1,6 @@
 import { Reducer } from 'redux';
 
-import { TabOption } from '@views/Main/state/im';
+import { TabOption } from '@views/Main/state/type';
 import { resetActiveStates } from '@views/Main/RoomSpace/SimulationArea/utils';
 import { UserState } from '@views/Main/state/user';
 import { CommonAction } from '../type';

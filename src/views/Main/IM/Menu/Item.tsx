@@ -4,12 +4,12 @@ import { bindActionCreators } from 'redux';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
 
+import { TabOption } from '@views/Main/state/type';
 import {
   currentTabState,
   selectedRoomInfoState,
   stateTooltipInfoState,
   stateTooltipVisibleState,
-  TabOption,
 } from '@views/Main/state/im';
 import {
   roomBasicInfoFamily,
@@ -17,6 +17,15 @@ import {
   RoomType,
 } from '@views/Main/state/room';
 import { TeamData } from '@views/Main/state/team';
+import {
+  callModalInfoState,
+  callModalVisibleState,
+} from '@views/Main/state/callModal';
+import {
+  userCustomBusyFamily,
+  userTalkingStateFamily,
+} from '@views/Main/state/user';
+import { currentSpaceIdState } from '@views/Main/state/roomSpace';
 
 import { AppState } from '@store/reducers';
 import { switchSpaceAction } from '@store/reducers/space';
@@ -36,19 +45,9 @@ import { ItemExtraData, MenuData } from './type';
 
 import graphic2Avatar from '@assets/img/graphic_2.png';
 import lockedUrl from '@assets/img/room_action_lock.png';
-import {
-  callModalInfoState,
-  callModalVisibleState,
-} from '@views/Main/state/callModal';
-
 import CALL_ICON_URL from '@assets/img/team_action_call.png';
 import FOLLOR_ICON_URL from '@assets/img/team_action_follow.png';
 import COLLABORATE_ICON_URL from '@assets/img/team_action_collaborate.png';
-import {
-  userCustomBusyFamily,
-  userTalkingStateFamily,
-  userVideoVoiceSwitchFamily,
-} from '@views/Main/state/user';
 
 const useTooltip = (data: TeamData, roomName: string) => {
   const setStateTooltipVisible = useSetRecoilState(stateTooltipVisibleState);
@@ -167,6 +166,7 @@ const Item: FC<ItemProps> = ({
   const dispatch = useDispatch();
   const setCurrentTab = useSetRecoilState(currentTabState);
   const setSelectedRoomInfo = useSetRecoilState(selectedRoomInfoState);
+  const setCurrentSpaceId = useSetRecoilState(currentSpaceIdState);
   /**
    * 2 - 跟随
    */
@@ -177,6 +177,7 @@ const Item: FC<ItemProps> = ({
       setSelectedRoomInfo({ roomId: roomOfcurrentTeam.id, followeeId: id });
       if (currentTab === TabOption.Team) {
         setCurrentTab(TabOption.Room);
+        setCurrentSpaceId(roomOfcurrentTeam.id);
 
         const switchSpace = bindActionCreators(switchSpaceAction, dispatch);
         switchSpace(TabOption.Room);
@@ -205,7 +206,9 @@ const Item: FC<ItemProps> = ({
    * 加入新房间
    */
   const joinNewRoom = () => {
-    setSelectedRoomInfo({ roomId: currentRoom.id, followeeId: '' });
+    const roomId = currentRoom.id;
+    setCurrentSpaceId(roomId);
+    setSelectedRoomInfo({ roomId, followeeId: '' });
     if (currentSpace === TabOption.Team) {
       const switchSpace = bindActionCreators(switchSpaceAction, dispatch);
       switchSpace(TabOption.Room);

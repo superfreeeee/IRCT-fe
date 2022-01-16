@@ -1,24 +1,19 @@
 import React, { FC, useEffect, useMemo } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { bindActionCreators } from 'redux';
-import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
 
-import { AppState } from '@store/reducers';
-import { toggleSpaceVisibleAction } from '@store/reducers/space';
 import HidePage from '@components/HidePage';
+import { TabOption } from '@views/Main/state/type';
 import {
   currentSpaceTypeState,
   expandVideoRoomState,
+  roomSpaceVisibleState,
 } from '../state/roomSpace';
-import {
-  selectedRoomIdState,
-  selectedTeamIdState,
-  TabOption,
-} from '@views/Main/state/im';
 import Chat from './Chat';
 import Header from './Header';
 import Room from './Room';
+import VideoRoom from './VideoRoom';
+import VideoRoomController from './VideoRoom/VideoRoomController';
 import {
   RoomSpaceBody,
   RoomSpaceContainer,
@@ -26,40 +21,21 @@ import {
   RoomSpaceVideo,
   RoomSpaceWrapper,
 } from './styles';
-import VideoRoom from './VideoRoom';
-import VideoRoomController from './VideoRoom/VideoRoomController';
 
 interface RoomSpaceProps {}
 
 const RoomSpace: FC<RoomSpaceProps> = ({}) => {
+  /**
+   * 展开 RoomSpace
+   */
   const [expandVideoRoom, setExpandVideoRoom] =
     useRecoilState(expandVideoRoomState);
+  const toggleExpandVideoRoom = () => setExpandVideoRoom(!expandVideoRoom);
 
   const currentSpaceType = useRecoilValue(currentSpaceTypeState);
-  const { visible } = useSelector((state: AppState) => state.space);
+  const visible = useRecoilValue(roomSpaceVisibleState);
 
   const isRoom = currentSpaceType === TabOption.Room;
-
-  const selectedTeamId = useRecoilValue(selectedTeamIdState);
-  const selectedRoomId = useRecoilValue(selectedRoomIdState);
-
-  const dispatch = useDispatch();
-  /**
-   * RoomSpace 展示与否
-   *   space.visible
-   */
-  useEffect(() => {
-    const selectedSpaceId =
-      currentSpaceType === TabOption.Room ? selectedRoomId : selectedTeamId;
-
-    if (!!selectedSpaceId !== visible) {
-      const toggleSpaceVisible = bindActionCreators(
-        toggleSpaceVisibleAction,
-        dispatch,
-      );
-      toggleSpaceVisible(!!selectedSpaceId);
-    }
-  }, [currentSpaceType]);
 
   const BodyEl = useMemo(() => {
     return isRoom ? <Room /> : <Chat />;
@@ -89,10 +65,7 @@ const RoomSpace: FC<RoomSpaceProps> = ({}) => {
         </RoomSpaceBody>
       </RoomSpaceWrapper>
       {isRoom && (
-        <HidePage
-          revert={!expandVideoRoom}
-          onClick={() => setExpandVideoRoom(!expandVideoRoom)}
-        />
+        <HidePage revert={!expandVideoRoom} onClick={toggleExpandVideoRoom} />
       )}
     </RoomSpaceContainer>
   );

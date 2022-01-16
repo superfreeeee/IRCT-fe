@@ -1,19 +1,22 @@
 import { useCallback, useEffect, useMemo } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { bindActionCreators } from 'redux';
 import { useDispatch } from 'react-redux';
 
 import { switchSpaceAction } from '@store/reducers/space';
 import { TeamData } from '@store/reducers/team';
+import { TabOption } from '@views/Main/state/type';
 import {
   selectedRoomIdState,
   selectedTeamIdState,
-  TabOption,
+  
 } from '@views/Main/state/im';
 import { MenuData } from './Menu/type';
 import { currentTabState } from '../state/im';
 import { teamDataListState } from '../state/team';
 import { roomDataListState } from '../state/room';
+import { currentUserIdState } from '../state/user';
+import { currentSpaceIdState } from '../state/roomSpace';
 
 /**
  * Tabs
@@ -33,6 +36,7 @@ export const useTab = (): [TabOption, (option: TabOption) => void] => {
   const selectedRoomId = useRecoilValue(selectedRoomIdState);
   // const selectedTeam = useSelector((state: AppState) => state.team.selected);
   // const selectedRoomId = useSelector((state: AppState) => state.room.selected);
+  const setCurrentSpaceId = useSetRecoilState(currentSpaceIdState);
 
   const onTabClick = useCallback(
     (option: TabOption) => {
@@ -41,6 +45,8 @@ export const useTab = (): [TabOption, (option: TabOption) => void] => {
       const selectedId =
         option === TabOption.Team ? selectedTeamId : selectedRoomId;
       if (selectedId) {
+        setCurrentSpaceId(selectedId);
+
         const switchSpace = bindActionCreators(switchSpaceAction, dispatch);
         switchSpace(option);
       }
@@ -55,10 +61,11 @@ export const useTab = (): [TabOption, (option: TabOption) => void] => {
  * 列表用数据
  */
 export const useMenu = () => {
+  const currentUid = useRecoilValue(currentUserIdState);
   // 当前选中 Team/Room Id
   const [selectedTeamId, setSelectedTeamId] =
     useRecoilState(selectedTeamIdState);
-  const [selectedRoomId] = useRecoilState(selectedRoomIdState);
+  const selectedRoomId = useRecoilValue(selectedRoomIdState);
 
   // Team/Room 列表
   const teamDataList = useRecoilValue(teamDataListState);
@@ -70,10 +77,12 @@ export const useMenu = () => {
   const isRoom = currentTab === TabOption.Room;
 
   const menuList = useMemo(() => {
-    return isRoom ? roomDataList : teamDataList;
+    return isRoom
+      ? roomDataList
+      : teamDataList.filter((data) => data.id !== currentUid);
   }, [currentTab, teamDataList, roomDataList]);
 
-  const selected = useMemo(() => {
+  const selectedId = useMemo(() => {
     return isRoom ? selectedRoomId : selectedTeamId;
   }, [currentTab, selectedTeamId, selectedRoomId]);
 
@@ -81,26 +90,31 @@ export const useMenu = () => {
   /**
    * 点击目录切换
    */
+  const setCurrentSpaceId = useSetRecoilState(currentSpaceIdState);
   const onItemClick = useMemo(() => {
     const switchSpace = bindActionCreators(switchSpaceAction, dispatch);
 
     //  spaceId: string
     return (data: MenuData) => {
       const { id: spaceId } = data;
+      // 点击 MenuItem 只对 Team 有效
       if (currentTab === TabOption.Team) {
-        if (spaceId === selected) {
+        if (spaceId === selectedId) {
           setSelectedTeamId('');
+          setCurrentSpaceId('');
         } else {
-          setSelectedTeamId((data as TeamData).id);
+          const teamId = (data as TeamData).id;
+          setSelectedTeamId(teamId);
+          setCurrentSpaceId(teamId);
         }
         switchSpace(currentTab);
       }
     };
-  }, [currentTab, selected]);
+  }, [currentTab, selectedId]);
 
   return {
     menuList,
-    selected,
+    selectedId,
     onItemClick,
   };
 };

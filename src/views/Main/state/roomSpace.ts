@@ -1,8 +1,10 @@
 import { atom, atomFamily, selector, selectorFamily } from 'recoil';
-import { TabOption } from './im';
+
+import { TabOption } from './type';
 import { roomBasicInfoFamily, roomIdsState } from './room';
-import { teamDataFamily, teamIdsState } from './team';
+import { teamIdsState } from './team';
 import { userBasicInfoFamily } from './user';
+import { DEFAULT_SPACE_ID } from './defaults';
 
 /**
  * 是否展开 RoomSpace
@@ -70,7 +72,7 @@ export const chatHistoryFamily = selectorFamily<ChatHistoryRecord[], string>({
  */
 export const currentSpaceIdState = atom<string>({
   key: 'roomSpace_currentSpaceType',
-  default: '',
+  default: DEFAULT_SPACE_ID,
 });
 
 export const roomSpaceVisibleState = selector<boolean>({
@@ -97,6 +99,7 @@ export const currentSpaceTypeState = selector<TabOption>({
       return TabOption.Room;
     }
 
-    throw new Error(`spaceId: ${spaceId} belongs to no one`);
+    return TabOption.None;
+    // throw new Error(`spaceId: ${spaceId} belongs to no one`);
   },
 });

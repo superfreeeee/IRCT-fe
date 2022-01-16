@@ -18,23 +18,10 @@ import {
 } from './config';
 
 const useInit = () => {
-  // const setTeamDataList = useSetRecoilState(teamDataListState);
-  // const setTeamDataList = useSetRecoilState(teamDataListState);
-  const [teamList, setTeamDataList] = useRecoilState(teamDataListState);
-  const [roomList, setRoomDataList] = useRecoilState(roomDataListState);
-  // const setAllChatRecords = useSetRecoilState(allChatRecordsState);
-  const [allChatRecords, setAllChatRecords] =
-    useRecoilState(allChatRecordsState);
-
-  useEffect(() => {
-    console.log(`teamList`, teamList);
-  }, [teamList]);
-  useEffect(() => {
-    console.log(`roomList`, roomList);
-  }, [roomList]);
-  useEffect(() => {
-    console.log(`allChatRecords`, allChatRecords);
-  }, [allChatRecords]);
+  const setTeamDataList = useSetRecoilState(teamDataListState);
+  const setRoomDataList = useSetRecoilState(roomDataListState);
+  const setAllChatRecords = useSetRecoilState(allChatRecordsState);
+  useRecoilState(allChatRecordsState);
 
   useEffect(() => {
     // init data

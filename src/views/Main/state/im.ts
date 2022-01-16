@@ -2,19 +2,19 @@ import { atom, selector } from 'recoil';
 
 import { AppType } from '@components/AppIcon/type';
 import { UserState } from './user';
-
-export enum TabOption {
-  Room = 'Room',
-  Team = 'Team',
-  None = 'None',
-}
+import {
+  DEFAULT_IM_TAB,
+  DEFAULT_SELECTED_ROOM_ID,
+  DEFAULT_SELECTED_TEAM_ID,
+} from './defaults';
+import { TabOption } from './type';
 
 /**
  * 当前 im tab
  */
 export const currentTabState = atom<TabOption>({
   key: 'im_currentTab',
-  default: TabOption.Room,
+  default: DEFAULT_IM_TAB,
 });
 
 /**
@@ -22,7 +22,7 @@ export const currentTabState = atom<TabOption>({
  */
 export const selectedTeamIdState = atom<string>({
   key: 'im_selectedTeamId',
-  default: '',
+  default: DEFAULT_SELECTED_TEAM_ID,
 });
 
 /**
@@ -30,7 +30,7 @@ export const selectedTeamIdState = atom<string>({
  */
 export const selectedRoomIdState = atom<string>({
   key: 'im_selectedRoomId',
-  default: '',
+  default: DEFAULT_SELECTED_ROOM_ID,
 });
 
 /**

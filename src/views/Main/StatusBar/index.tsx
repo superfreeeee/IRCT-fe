@@ -8,11 +8,8 @@ import { AppState } from '@store/reducers';
 import { switchSpaceAction } from '@store/reducers/space';
 import Avatar from '@components/Avatar';
 import BoxIcon, { BoxIconType } from '@components/BoxIcon';
-import {
-  currentTabState,
-  selectedRoomInfoState,
-  TabOption,
-} from '@views/Main/state/im';
+import { TabOption } from '@views/Main/state/type';
+import { currentTabState, selectedRoomInfoState } from '@views/Main/state/im';
 import {
   AvatarBlock,
   InMeetingIcon,
@@ -22,7 +19,7 @@ import {
   StatusBarBottom,
   StatusBarContainer,
 } from './styles';
-import { expandVideoRoomState } from '../state/roomSpace';
+import { currentSpaceIdState, expandVideoRoomState } from '../state/roomSpace';
 import {
   currentUserTeamDataState,
   userVideoRoomSettingFamily,
@@ -77,10 +74,12 @@ const StatusBar = () => {
    * 跳转到所在房间
    */
   const setCurrentTab = useSetRecoilState(currentTabState);
+  const setCurrentSpaceId = useSetRecoilState(currentSpaceIdState);
   const jumpAndExpandRoomSpace = () => {
     console.log(`[StatusBar] jumpToRoomSpace`);
     const switchSpace = bindActionCreators(switchSpaceAction, dispatch);
     setCurrentTab(TabOption.Room);
+    setCurrentSpaceId(selectedRoomId);
     switchSpace(TabOption.Room);
     setExpandVideoRoom(true);
   };
