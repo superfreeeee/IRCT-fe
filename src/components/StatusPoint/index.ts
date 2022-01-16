@@ -16,6 +16,8 @@ interface StatusPointProps {
 }
 
 const StatusPoint = styled.span<StatusPointProps>`
+  position: relative;
+
   &::after {
     content: '';
     display: inline-block;

@@ -269,20 +269,6 @@ const initSpaceState: Space = {
         createTime: '11:15',
       },
     ],
-    'user-7': [
-      {
-        userId: 'user-1000',
-        text: 'Where are you, there is a technical question you would like to ask',
-        avatar: selfAvatar,
-        createTime: '10:57',
-      },
-      {
-        userId: 'user-7',
-        text: 'Something is wrong with my computer and I checked it here',
-        avatar: user7Avatar,
-        createTime: '10:58',
-      },
-    ],
     'user-9': [
       {
         userId: 'user-9',
@@ -415,14 +401,6 @@ const initSpaceState: Space = {
     },
     'room-4': {
       figures: [
-        {
-          userId: 'user-7',
-          avatar: user7Avatar,
-          state: UserState.Busy,
-          position: [80, 80],
-          active: true,
-          mute: false,
-        },
         {
           userId: 'user-14',
           avatar: user14Avatar,

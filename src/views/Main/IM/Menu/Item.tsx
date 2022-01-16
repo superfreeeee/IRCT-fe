@@ -1,8 +1,13 @@
-import React, { FC, useCallback, useMemo, useRef } from 'react';
+import React, { FC, useMemo, useRef } from 'react';
+import { useSetRecoilState } from 'recoil';
 import { bindActionCreators } from 'redux';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
 
+import {
+  stateTooltipInfoState,
+  stateTooltipVisibleState,
+} from '@views/Main/state/im';
 import { AppState } from '@store/reducers';
 import { enterRoomAction, RoomData, RoomType } from '@store/reducers/room';
 import { TeamData } from '@store/reducers/team';
@@ -11,7 +16,8 @@ import { switchSpaceAction } from '@store/reducers/space';
 import Avatar from '@components/Avatar';
 import StatusPoint from '@components/StatusPoint';
 import AppIcon from '@components/AppIcon';
-import { TabOption } from '../../type';
+import BoxIcon, { BoxIconType } from '@components/BoxIcon';
+import { TabOption } from '../type';
 import {
   ItemActionBtn,
   ItemActionDivider,
@@ -19,26 +25,58 @@ import {
   ItemActions,
   ItemContainer,
   ItemOptionalRoom,
-} from '../styles';
+} from './styles';
 import {
   CALL_ICON_URL,
   COLLABORATE_ICON_URL,
   FOLLOR_ICON_URL,
   ItemExtraData,
   MenuData,
-} from '../type';
+} from './type';
 
 import graphic2Avatar from '@assets/img/graphic_2.png';
 import lockedUrl from '@assets/img/room_action_lock.png';
-import BoxIcon, { BoxIconType } from '@components/BoxIcon';
+
+const useTooltip = (data: TeamData, room: string) => {
+  const setStateTooltipVisible = useSetRecoilState(stateTooltipVisibleState);
+  const setStateTooltipInfo = useSetRecoilState(stateTooltipInfoState);
+
+  const debounceLock = useRef(false);
+  const onMouseEnter = (e) => {
+    if (debounceLock.current) {
+      return;
+    }
+    const el = e.target as HTMLElement;
+    const { left, top } = el.getBoundingClientRect();
+    setStateTooltipInfo({
+      position: { left, top },
+      state: data.state,
+      room,
+      usingApp: data.usingApp,
+    });
+    setStateTooltipVisible(true);
+  };
+
+  const onMouseLeave = (e) => {
+    debounceLock.current = true;
+
+    setTimeout(() => {
+      setStateTooltipVisible(false);
+      debounceLock.current = false;
+    }, 100);
+  };
+
+  return {
+    onMouseEnter,
+    onMouseLeave,
+  };
+};
 
 export interface ItemProps {
   currentTab: TabOption;
   selected: boolean;
   data: MenuData;
   extraData?: ItemExtraData;
-  showTooltip: (content: string, position) => void;
-  closeTooltip: () => void;
   onSelect: (data: MenuData) => void;
 }
 
@@ -48,8 +86,6 @@ const Item: FC<ItemProps> = ({
   data,
   data: { id, avatar, title },
   extraData: { subtitle, members, lastRecordTime } = {},
-  showTooltip,
-  closeTooltip,
   onSelect,
 }) => {
   const isRoom = currentTab === TabOption.Room;
@@ -58,17 +94,12 @@ const Item: FC<ItemProps> = ({
 
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const onMouseOver = useCallback(() => {
-    const rect = containerRef.current.getBoundingClientRect();
-    const pos = {
-      bottom: window.innerHeight - rect.top + 12,
-      left: (rect.left + rect.right) / 2,
-    };
-    // TODO fix tooltip
-    showTooltip('Hello Tooltip' as string, pos);
-  }, [showTooltip]);
-
   const rooms = useSelector((state: AppState) => state.room.list);
+  const currentRoomName = rooms.filter(
+    (room) => room.id === (data as TeamData).currentRoom,
+  )[0]?.title;
+
+  const { onMouseEnter, onMouseLeave } = useTooltip(data, currentRoomName);
 
   /**
    * Team 列表下状态判断
@@ -118,6 +149,10 @@ const Item: FC<ItemProps> = ({
       };
     }, [data]);
 
+  /**
+   * 列表右侧展开操作
+   * @param e
+   */
   const userActionCall = (e) => {
     e.stopPropagation();
     console.log(`[Menu.Item] userActionCall(shouldAsk = ${askCall})`);
@@ -188,13 +223,15 @@ const Item: FC<ItemProps> = ({
       <div className="content">
         <div className="title">
           <span>{title}</span>
-          <StatusPoint
-            state={(data as TeamData).state}
-            size={8}
-            onMouseOver={onMouseOver}
-            onMouseLeave={closeTooltip}
-            style={{ margin: 5 }}
-          />
+          {isUser && (
+            <span
+              style={{ padding: 3, marginLeft: 2 }}
+              onMouseEnter={onMouseEnter}
+              onMouseLeave={onMouseLeave}
+            >
+              <StatusPoint state={(data as TeamData).state} size={8} />
+            </span>
+          )}
         </div>
         <div className="subtitle">{subtitle}</div>
       </div>
@@ -228,19 +265,19 @@ const Item: FC<ItemProps> = ({
             // Team Actions
             <>
               {(canCall || askCall) && (
-                <ItemActionIcon onClick={userActionCall}>
+                <ItemActionIcon onClick={userActionCall} title="发起语音通话">
                   <img src={CALL_ICON_URL} width={'100%'} />
                 </ItemActionIcon>
               )}
               {(canCall || askCall) && canFollow && <ItemActionDivider />}
               {canFollow && (
-                <ItemActionIcon onClick={userActionFollow}>
+                <ItemActionIcon onClick={userActionFollow} title="跟随">
                   <img src={FOLLOR_ICON_URL} width={'100%'} />
                 </ItemActionIcon>
               )}
               {canFollow && canCollaborate && <ItemActionDivider />}
               {canCollaborate && (
-                <ItemActionIcon onClick={userActionCollaborate}>
+                <ItemActionIcon onClick={userActionCollaborate} title="协作">
                   <img src={COLLABORATE_ICON_URL} width={'100%'} />
                 </ItemActionIcon>
               )}

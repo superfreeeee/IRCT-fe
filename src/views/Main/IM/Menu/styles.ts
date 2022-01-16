@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 import Avatar from '@components/Avatar';
 import { AppIconWrapper } from '@components/AppIcon';
+import StatusPoint from '@components/StatusPoint';
 
 // ========== Menu Item ==========
 export const ItemContainer = styled.li`
@@ -48,6 +49,10 @@ export const ItemContainer = styled.li`
   .title {
     font-size: 14px;
     font-weight: 500;
+
+    .status {
+      
+    }
   }
 
   .subtitle {
@@ -157,41 +162,6 @@ export const ItemActionBtn = styled.button`
 
   &:hover {
     box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.16);
-  }
-`;
-
-export const ItemTooltip = styled.div`
-  display: none;
-  position: absolute;
-  min-width: 240px;
-  padding: 14px 12px;
-  border-radius: 10px;
-  font-size: 12px;
-  color: #fff;
-  transform: translateX(-50%);
-  transition: all 0.2s;
-  z-index: 1000;
-
-  &::after {
-    content: '';
-    display: inline-block;
-    position: absolute;
-    left: 50%;
-    top: calc(100% - 5px);
-    width: 0;
-    height: 0;
-    border: 8px solid transparent;
-    transform: translateX(-50%);
-    transition: all 0.2s;
-  }
-
-  &.active {
-    display: block;
-    background-color: var(--menu_item_tip_bg);
-  }
-
-  &.active::after {
-    border-top: 12px solid var(--menu_item_tip_bg);
   }
 `;
 

@@ -1,16 +1,13 @@
 import React, { FC, useMemo } from 'react';
-
-import Item, { ItemProps } from './components/Item';
-import Tooltip from './components/Tooltip';
-import { MenuContainer, MenuSepContainer } from './styles';
-import { useTooltip } from './hooks';
-import { ItemExtraData, MenuData } from './type';
-import { TabOption } from '../type';
 import { useSelector } from 'react-redux';
+
 import { AppState } from '@store/reducers';
 import { RoomData } from '@store/reducers/room';
-import useLog from '@hooks/useLog';
 import { TeamData } from '@store/reducers/team';
+import { TabOption } from '../type';
+import Item, { ItemProps } from './Item';
+import { MenuContainer, MenuSepContainer } from './styles';
+import { ItemExtraData, MenuData } from './type';
 
 /**
  * IM - Menu 列表
@@ -32,8 +29,6 @@ const Menu: FC<MenuProps> & { Item: FC<ItemProps> } = ({
   selected,
   onItemClick,
 }) => {
-  const [tooltipState, { showTooltip, closeTooltip }] = useTooltip();
-
   const isRoom = currentTab === TabOption.Room;
 
   const user = useSelector((state: AppState) => state.user);
@@ -103,15 +98,11 @@ const Menu: FC<MenuProps> & { Item: FC<ItemProps> } = ({
               selected={selected === data.id}
               data={data}
               extraData={subtitleMap[data.id]}
-              showTooltip={showTooltip}
-              closeTooltip={closeTooltip}
               onSelect={onItemClick}
             ></Item>
           );
         })}
       </MenuSepContainer>
-      {/* hover 文字 */}
-      <Tooltip state={tooltipState} />
     </MenuContainer>
   );
 };

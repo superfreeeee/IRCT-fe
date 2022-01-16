@@ -24,6 +24,9 @@ import defaultTeamAvatar from '@assets/img/graphic_2.png';
 import newMeetingUrl from '@assets/img/room_action_new_meeting.png';
 import lockedUrl from '@assets/img/room_action_lock.png';
 import unlockedUrl from '@assets/img/room_action_unlock.png';
+import AppIcon from '@components/AppIcon';
+import { UserState } from '@components/StatusPoint/type';
+import StatusPoint from '@components/StatusPoint';
 
 const DEFAULT_SELECTED_DATA = {
   id: '',
@@ -39,7 +42,7 @@ const Header: FC<HeaderProps> = ({ isRoom, expand }) => {
   const team = useSelector((state: AppState) => state.team);
   const room = useSelector((state: AppState) => state.room);
 
-  let data: TeamData | RoomData = null;
+  let data: TeamData | RoomData = DEFAULT_SELECTED_DATA;
   if (isRoom) {
     const currentRoom = room.list.filter(
       (roomData) => roomData.id === room.selected,
@@ -56,7 +59,39 @@ const Header: FC<HeaderProps> = ({ isRoom, expand }) => {
     }
   }
 
-  data = data || DEFAULT_SELECTED_DATA;
+  const isUser = !isRoom && !!(data as TeamData).state;
+  const rooms = room.list;
+  const UserSubtitleEl = useMemo(() => {
+    if (isUser) {
+      const { state, usingApp, currentRoom } = data as TeamData;
+      const currentRoomName = rooms.filter((room) => room.id === currentRoom)[0]
+        ?.title;
+
+      const stateText = {
+        [UserState.Idle]: 'Now free',
+        [UserState.Busy]: 'Now busy',
+        [UserState.Work]: 'Now work',
+      }[state];
+
+      const reasonUsingApp = usingApp && (
+        <>
+          Now using
+          <AppIcon type={usingApp} size={20} />
+          {usingApp}
+        </>
+      );
+
+      const room = currentRoomName && `${stateText} in ${currentRoomName}`;
+      return (
+        <div className="subtitle">
+          <StatusPoint state={state} />
+          {reasonUsingApp || room || stateText}
+        </div>
+      );
+    } else {
+      return null;
+    }
+  }, [isUser, data]);
 
   const dispatch = useDispatch();
   const HeaderSideActionsEl = useMemo(() => {
@@ -146,7 +181,10 @@ const Header: FC<HeaderProps> = ({ isRoom, expand }) => {
         <Avatar>
           <img src={data.avatar || defaultTeamAvatar} width={'100%'} />
         </Avatar>
-        <span className="title">{data.title}</span>
+        <div className="content">
+          <div className="title">{data.title}</div>
+          {isUser && UserSubtitleEl}
+        </div>
       </HeaderMain>
       <HeaderSide>{HeaderSideActionsEl}</HeaderSide>
     </RoomSpaceHeader>

@@ -3,13 +3,13 @@ import { Reducer } from 'redux';
 import { UserState } from '@components/StatusPoint/type';
 import { AppType } from '@components/AppIcon/type';
 import { CommonAction } from '../type';
+import { RoomActionType } from './room';
 
 // img url
 import user0Avatar from '@assets/img/user_0.png';
 import user1Avatar from '@assets/img/user_1.png';
 import user2Avatar from '@assets/img/user_2.png';
 import user5Avatar from '@assets/img/user_5.png';
-import user7Avatar from '@assets/img/user_7.png';
 import user9Avatar from '@assets/img/user_9.png';
 import user12Avatar from '@assets/img/user_12.png';
 import user13Avatar from '@assets/img/user_13.png';
@@ -17,7 +17,6 @@ import user14Avatar from '@assets/img/user_14.png';
 import user15Avatar from '@assets/img/user_15.png';
 import graphic1Avatar from '@assets/img/graphic_1.png';
 import graphic2Avatar from '@assets/img/graphic_2.png';
-import { RoomActionType } from './room';
 
 // =============== actions ===============
 export enum TeamActionType {
@@ -102,14 +101,6 @@ const initTeamState: Team = {
       id: 'user-4',
       avatar: graphic2Avatar,
       title: 'Project Alpha Group',
-    },
-    {
-      id: 'user-7',
-      avatar: user7Avatar,
-      title: 'Tian Xie',
-      state: UserState.Busy,
-      currentRoom: 'room-4',
-      usingApp: AppType.Pycharm,
     },
     {
       id: 'user-9',

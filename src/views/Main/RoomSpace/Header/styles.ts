@@ -2,6 +2,8 @@ import styled from 'styled-components';
 
 import Avatar from '@components/Avatar';
 import { ROOM_SPACE_WIDTH, ROOM_SPACE_WIDTH_WIDE } from '../styles';
+import StatusPoint from '@components/StatusPoint';
+import { AppIconWrapper } from '@components/AppIcon';
 
 export const RoomSpaceHeader = styled.div`
   position: relative;
@@ -38,10 +40,30 @@ export const HeaderMain = styled.div`
     margin-right: 15px;
   }
 
-  span {
+  .content {
+    color: #fff;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+
+  .title {
+    font-size: 16px;
+  }
+
+  .subtitle {
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+
+    ${StatusPoint} {
+      margin-right: 9px;
+    }
+
+    ${AppIconWrapper} {
+      position: relative;
+      margin: 0 5px 3px 3px;
+    }
   }
 `;
 

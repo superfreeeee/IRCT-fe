@@ -8,16 +8,17 @@
 - [x] 房间声波更新
 - [x] IM 跟随功能
 - [x] Date、Doc、Path 展开图片实现
-- [ ] 状态点 tooltip
-- [ ] RoomSpace Team header 详情
+- [x] 状态点 tooltip
+- [x] RoomSpace Team header 详情
 - [ ] 临时会议发起
-- [ ] IM 合作功能？
 - [x] RoomSpace 房间头像
 - [ ] RoomSpace header action
   - [x] 锁定
-  - [ ] IM 锁定同步
+  - [x] IM 锁定同步
+  - [ ] 请求创建固定会议
 - [x] RoomSpace Meeting Room 实现
 - [x] VideoRoom 平滑移入
+- [ ] IM 合作功能？
 
 ## 问题
 

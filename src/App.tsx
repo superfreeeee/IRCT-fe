@@ -19,7 +19,7 @@ const GlobalStyle = createGlobalStyle`
     /* menu item 相关 */
     --menu_item_bg_hover: rgba(71, 72, 73, 0.3);
     --menu_item_bg_active: rgb(71, 72, 73);
-    --menu_item_tip_bg: #2E2E2E;
+    --menu_item_tip_bg: #242424;
     --menu_item_option_bg: #C4C4C4;
     --menu_item_unread_bg: #FF8989;
     /* room space 相关 */
