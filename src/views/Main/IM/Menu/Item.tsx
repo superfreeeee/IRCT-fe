@@ -36,6 +36,10 @@ import {
 
 import graphic2Avatar from '@assets/img/graphic_2.png';
 import lockedUrl from '@assets/img/room_action_lock.png';
+import {
+  callModalInfoState,
+  callModalVisibleState,
+} from '@views/Main/state/callModal';
 
 const useTooltip = (data: TeamData, room: string) => {
   const setStateTooltipVisible = useSetRecoilState(stateTooltipVisibleState);
@@ -153,9 +157,21 @@ const Item: FC<ItemProps> = ({
    * 列表右侧展开操作
    * @param e
    */
+  const setCallModalVisible = useSetRecoilState(callModalVisibleState);
+  const setCallModalInfo = useSetRecoilState(callModalInfoState);
   const userActionCall = (e) => {
     e.stopPropagation();
     console.log(`[Menu.Item] userActionCall(shouldAsk = ${askCall})`);
+
+    const { id, title, avatar } = data as TeamData;
+    setCallModalInfo({
+      avatar,
+      userId: id,
+      userName: title,
+      responsed: false,
+      accept: false,
+    });
+    setCallModalVisible(true);
   };
 
   const dispatch = useDispatch();

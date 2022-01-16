@@ -140,7 +140,7 @@ const initRoomState: Room = {
       type: RoomType.Meeting,
       avatar: meetingAvatar,
       title: 'Design Office 2',
-      locked: false,
+      locked: true,
     },
   ],
   selected: 'room-0',

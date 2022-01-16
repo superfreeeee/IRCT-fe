@@ -63,7 +63,8 @@ export const MeetingActionBtn = styled.div`
   font-size: 22px;
   color: #474849;
   background-color: #f1f1f1;
-  transition: all 0.15s;
+  transition: background-color 0.2s;
+  user-select: none;
 
   &.off {
     color: #fff;
@@ -77,6 +78,10 @@ export const MeetingActionBtn = styled.div`
     &:active {
       background-color: #d79a8e;
     }
+  }
+
+  &.disabled {
+    background-color: #c4c4c4;
   }
 `;
 

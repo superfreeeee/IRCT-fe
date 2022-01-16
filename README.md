@@ -12,12 +12,15 @@
 - [x] RoomSpace Team header 详情
 - [ ] 临时会议发起
 - [x] RoomSpace 房间头像
+  - [ ] 选人加入列表
 - [ ] RoomSpace header action
   - [x] 锁定
   - [x] IM 锁定同步
   - [ ] 请求创建固定会议
+  - [ ] 选人组件列表
 - [x] RoomSpace Meeting Room 实现
 - [x] VideoRoom 平滑移入
+- [ ] VideoRoom 加入视频
 - [ ] IM 合作功能？
 
 ## 问题

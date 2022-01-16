@@ -214,7 +214,7 @@ const SimulationArea: FC<SimulationAreaProps> = ({
   useEffect(() => {
     // update nearby figure whenever room change
     setTimeout(resetNearbyFigures);
-  }, [selectedRoomId]);
+  }, [selectedRoomId, followee]);
 
   return (
     <SimulationBoard

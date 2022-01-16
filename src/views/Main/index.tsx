@@ -5,6 +5,7 @@ import IM from './IM';
 import RoomSpace from './RoomSpace';
 import { MainContainer } from './styles';
 import AppSidebar from './AppSidebar';
+import CallModal from './CallModal';
 
 const Main = () => {
   return (
@@ -13,6 +14,7 @@ const Main = () => {
       <IM />
       <RoomSpace />
       <AppSidebar />
+      <CallModal />
     </MainContainer>
   );
 };
