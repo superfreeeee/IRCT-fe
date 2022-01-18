@@ -26,6 +26,10 @@ import meetingAvatar from '@assets/img/meeting.png';
 import newMeetingUrl from '@assets/img/room_action_new_meeting.png';
 import lockedUrl from '@assets/img/room_action_lock.png';
 import unlockedUrl from '@assets/img/room_action_unlock.png';
+import {
+  createMeetingModalInfoState,
+  createMeetingModalVisibleState,
+} from '@views/Main/state/createMeetingModal';
 
 interface HeaderProps {
   isRoom: boolean;
@@ -82,6 +86,12 @@ const Header: FC<HeaderProps> = ({ isRoom, expand }) => {
     }
   }, [isUser, teamData]);
 
+  const setCreateMeetingModalVisible = useSetRecoilState(
+    createMeetingModalVisibleState,
+  );
+  const setCreateMeetingModalInfo = useSetRecoilState(
+    createMeetingModalInfoState,
+  );
   const HeaderSideActionsEl = useMemo(() => {
     const { id: roomId, type, title, locked } = roomData;
     const isMeeting = type === RoomType.Meeting;
@@ -110,19 +120,15 @@ const Header: FC<HeaderProps> = ({ isRoom, expand }) => {
 
     if (isTempMeeting) {
       // 2. RoomSpace Header for TempMeeting
-      const persistTempMeeting = () => {
-        setRoomData({
-          id: roomId,
-          type: RoomType.Meeting,
-          avatar: meetingAvatar,
-          title,
-          locked: false,
-        });
+      const openCreateModal = () => {
+        console.log(`[RoomSpace.Header] openCreateModal(roomId = ${roomId})`);
+        setCreateMeetingModalVisible(true);
+        setCreateMeetingModalInfo({ roomId });
       };
 
       return (
         <>
-          <HeaderSideBtn title="新增永久会议室" onClick={persistTempMeeting}>
+          <HeaderSideBtn title="新增永久会议室" onClick={openCreateModal}>
             <img src={newMeetingUrl} width={24} />
           </HeaderSideBtn>
           {MoreActionEl}

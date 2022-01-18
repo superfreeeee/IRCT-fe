@@ -5,14 +5,13 @@ import { MeetingActionBtn } from '@views/Main/StatusBar/styles';
 import BoxIcon, { BoxIconType } from '@components/BoxIcon';
 import { VideoRoomControllerContainer } from './styles';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { selectedRoomInfoState } from '@views/Main/state/im';
 import {
   currentUserIdState,
   userVideoRoomSettingFamily,
   userVideoVisibleFamily,
   userVideoVoiceSwitchFamily,
 } from '@views/Main/state/user';
-import { currentSpaceIdState } from '@views/Main/state/roomSpace';
+import { useExitRoom } from '@views/Main/state/hooks';
 
 const VideoRoomController = () => {
   const id = useRecoilValue(currentUserIdState);
@@ -34,12 +33,10 @@ const VideoRoomController = () => {
   /**
    * 离开房间
    */
-  const setSelectedRoomInfo = useSetRecoilState(selectedRoomInfoState);
-  const setCurrentSpaceId = useSetRecoilState(currentSpaceIdState);
+  const exitRoom = useExitRoom();
   const exitVideoRoom = () => {
     console.log(`[StatusBar] exitVideoRoom`);
-    setSelectedRoomInfo({ roomId: '', followeeId: '' });
-    setCurrentSpaceId('');
+    exitRoom();
   };
 
   return (

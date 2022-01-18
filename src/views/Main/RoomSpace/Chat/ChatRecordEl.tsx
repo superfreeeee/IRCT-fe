@@ -6,7 +6,7 @@ import {
   currentUserTeamDataState,
   userBasicInfoFamily,
 } from '@views/Main/state/user';
-import { ChatRecord } from '@store/reducers/space';
+import { ChatHistoryRecord } from '@views/Main/state/roomSpace';
 import Avatar from '@components/Avatar';
 import { AvatarUsage } from '@components/Avatar/type';
 import BoxIcon, { BoxIconType } from '@components/BoxIcon';
@@ -14,7 +14,7 @@ import { ChatRecordWrapper } from './styles';
 
 interface ChatRecordElProps {
   isInRoom: boolean;
-  record: ChatRecord;
+  record: ChatHistoryRecord;
 }
 
 const ChatRecordEl: FC<ChatRecordElProps> = ({

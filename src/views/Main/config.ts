@@ -18,7 +18,6 @@ import officeGitlabAvatar from '@assets/img/office_gitlab.png';
 import coffeeAvatar from '@assets/img/coffee.png';
 import coffeeGymAvatar from '@assets/img/coffee_gym.png';
 import meetingAvatar from '@assets/img/meeting.png';
-import meetingTempAvatar from '@assets/img/meeting_temp.png';
 
 import { AppType } from '@components/AppIcon/type';
 import { UserState, RoomType } from './state/type';
@@ -97,7 +96,7 @@ export const initTeamDataList: TeamData[] = [
     name: 'JiaJia',
     state: UserState.Busy,
     currentRoomId: 'room-0',
-    // usingApp: AppType.Notion,
+    usingApp: AppType.Notion,
     isGroup: false,
   },
   {
@@ -148,12 +147,12 @@ export const initTeamDataList: TeamData[] = [
 ];
 
 export const initRoomDataList: RoomData[] = [
-  {
-    id: 'room-12',
-    type: RoomType.TempMeeting,
-    avatar: meetingTempAvatar,
-    title: 'Temporary meeting rooms',
-  },
+  // {
+  //   id: 'room-12',
+  //   type: RoomType.TempMeeting,
+  //   avatar: meetingTempAvatar,
+  //   title: 'Temporary meeting rooms',
+  // },
   {
     id: 'room-0',
     type: RoomType.Office,
@@ -400,4 +399,18 @@ export const initAllRoomSpaceInfo: AllRoomSpaceInfo = {
       mute: false,
     },
   ],
+};
+
+export const invitationAcceptList: string[] = [
+  'user-2', // Xin Liu
+  'user-9', // Shu ting
+];
+
+export const collaborateOuterLinkMap: { [type in AppType]: string } = {
+  [AppType.Figma]:
+    'https://www.figma.com/file/mw5cRyNECoNhYC7HpeAoJ0/%E5%8D%8F%E5%90%8C%E5%B7%A5%E5%85%B7-%E5%81%A5%E5%B0%86',
+  [AppType.Notion]:
+    'https://joezhao.notion.site/joezhao/Joe-s-Graduation-project-8a539bf4feae4e1eabf778869b2d6033',
+  [AppType.Pycharm]: 'https://www.jetbrains.com/pycharm/',
+  [AppType.None]: '',
 };

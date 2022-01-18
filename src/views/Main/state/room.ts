@@ -1,7 +1,14 @@
 import { atom, atomFamily, selector, selectorFamily } from 'recoil';
+import { resetTalkingState } from '../RoomSpace/SimulationArea/utils';
+import { roomSpaceUserFigureListFamily } from './roomSpace';
 import { RoomType } from './type';
+import {
+  userCurrentRoomIdFamily,
+  userTalkingListState,
+  userTalkingStateFamily,
+} from './user';
 
-interface RoomBasicInfo {
+export interface RoomBasicInfo {
   id: string;
   type: RoomType;
   avatar: string;
@@ -19,10 +26,34 @@ export const roomLockedFamily = atomFamily<boolean, string>({
   default: false,
 });
 
-// 当前所有空间
-export const roomIdsState = atom<string[]>({
-  key: 'room_roomIds',
+export const roomIdsBaseState = atom({
+  key: 'room_roomIdsBase',
   default: [],
+});
+
+/**
+ * get: 获取当前所有空间 Id
+ * set: 移除/添加房间
+ *   移除房间：修改 user 状态
+ */
+export const roomIdsState = selector<string[]>({
+  key: 'room_roomIds',
+  get: ({ get }) => get(roomIdsBaseState),
+  set: ({ set, get }, roomIds: string[]) => {
+    set(roomIdsBaseState, roomIds);
+
+    // removed rooms
+    const originRoomIds = get(roomIdsBaseState);
+    const removedRoomIds = originRoomIds.filter(
+      (roomId) => !roomIds.includes(roomId),
+    );
+    removedRoomIds.forEach((roomId) => {
+      const userIds = get(roomUserIdsFamily(roomId));
+      userIds.forEach((userId) => {
+        set(userCurrentRoomIdFamily(userId), '');
+      });
+    });
+  },
 });
 
 export interface RoomData extends RoomBasicInfo {
@@ -85,7 +116,49 @@ export const roomDataListState = selector<RoomData[]>({
  * 当前房间所有用户
  *   roomId => userId[]
  */
-export const roomUserIdsFamily = atomFamily<string[], string>({
-  key: 'roomSpace_roomUserIds',
+export const roomUserIdsBaseFamily = atomFamily<string[], string>({
+  key: 'roomSpace_roomUserIdsBase',
   default: [],
+});
+
+/**
+ * 更新房间用户信息
+ */
+export const roomUserIdsFamily = selectorFamily<string[], string>({
+  key: 'roomSpace_roomUserIds',
+  get:
+    (roomId) =>
+    ({ get }) =>
+      get(roomUserIdsBaseFamily(roomId)),
+  set:
+    (roomId) =>
+    ({ set, get }, userIds: string[]) => {
+      // userIds.
+      const originUserIds = get(roomUserIdsBaseFamily(roomId));
+      const removedUserIds = originUserIds.filter(
+        (userId) => !userIds.includes(userId),
+      );
+
+      // 离开房间的 isTalking = false
+      removedUserIds.forEach((userId) => {
+        set(userTalkingStateFamily(userId), false);
+      });
+
+      // 剩余角色重新计算 talking
+      const figures = get(roomSpaceUserFigureListFamily(roomId));
+      const restFigures = figures.filter((figure) =>
+        userIds.includes(figure.id),
+      );
+
+      const userUpdates = resetTalkingState(restFigures).map(
+        ({ id, isTalking }) => ({
+          userId: id,
+          isTalking,
+        }),
+      );
+      set(userTalkingListState, userUpdates);
+
+      // 更新房间人员信息
+      set(roomUserIdsBaseFamily(roomId), userIds);
+    },
 });

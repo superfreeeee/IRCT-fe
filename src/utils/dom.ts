@@ -1,10 +1,10 @@
-import { EventHandler, SyntheticEvent } from 'react';
+import { SyntheticEvent } from 'react';
 
 import { ObserveMouseActionsOptions, UnObserveMouseActions } from './type';
 
 const setListener = (
   event: keyof DocumentEventMap,
-  callback: (e: Event) => void
+  callback: (e: Event) => void,
 ): (() => void) => {
   document.body.addEventListener(event, callback);
 
@@ -24,7 +24,7 @@ const setListener = (
  * @returns
  */
 export const observeMouseActions = (
-  options: ObserveMouseActionsOptions
+  options: ObserveMouseActionsOptions,
 ): UnObserveMouseActions => {
   const removeObj: UnObserveMouseActions = {};
 

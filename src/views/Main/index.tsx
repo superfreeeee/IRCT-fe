@@ -17,6 +17,7 @@ import {
   initRoomDataList,
   initTeamDataList,
 } from './config';
+import CreateMeetingModal from './CreateMeetingModal';
 
 const useInit = () => {
   const setTeamDataList = useSetRecoilState(teamDataListState);
@@ -48,7 +49,10 @@ const Main = () => {
       <IM />
       <RoomSpace />
       <AppSidebar />
+      {/* 请求语音 Modal */}
       <CallModal />
+      {/* 创建永久会议室 Modal */}
+      <CreateMeetingModal />
     </MainContainer>
   );
 };

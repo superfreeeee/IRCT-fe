@@ -1,5 +1,4 @@
 import { VideoRoomFigure, VideoVoiceRate } from '@views/Main/state/type';
-import { SpaceFigure } from '@store/reducers/space';
 import { SIMULATION_BOARD_HEIGHT, SIMULATION_BOARD_WIDTH } from './styles';
 import {
   FIGURE_DISTANCE_LEVEL1,
@@ -21,7 +20,6 @@ export const calcInitPosition = (
   followeePosition?: RoomSpacePosition,
 ): RoomSpacePosition => {
   if (followeePosition) {
-    console.log(`following`, followeePosition);
     // 如果跟随某人
     const [x0, y0] = followeePosition;
     const offset = SIMULATION_FIGURE_SIZE + SIMULATION_FIGURE_SIZE_INNER / 2;

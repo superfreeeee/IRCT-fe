@@ -2,9 +2,6 @@ import Avatar from '@components/Avatar';
 import styled from 'styled-components';
 
 export const CallModalContainer = styled.div`
-  position: fixed;
-  left: 50%;
-  top: 50%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -13,14 +10,8 @@ export const CallModalContainer = styled.div`
   padding: 22px 22px 24px;
   border-radius: 10px;
   color: #fff;
-  background-color: rgba(102, 103, 104, 0.7);
+  background-color: var(--modal_bg);
   backdrop-filter: blur(2px);
-  transform: translate(-50%, -50%);
-  z-index: 2000;
-
-  &.hide {
-    display: none;
-  }
 
   ${Avatar} {
     width: 70px;
@@ -43,10 +34,18 @@ export const CallModalContainer = styled.div`
   }
 
   @keyframes loading {
-    0% { content: '' }
-    25% { content: '.' }
-    50% { content: '..' }
-    75% { content: '...' }
+    0% {
+      content: '';
+    }
+    25% {
+      content: '.';
+    }
+    50% {
+      content: '..';
+    }
+    75% {
+      content: '...';
+    }
   }
 `;
 

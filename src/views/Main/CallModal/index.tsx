@@ -7,8 +7,9 @@ import Avatar from '@components/Avatar';
 import { callModalInfoState, callModalVisibleState } from '../state/callModal';
 import { MeetingActionBtn } from '../StatusBar/styles';
 import { CallModalContainer, CallModalOptions } from './styles';
-
-const invitationAcceptMap = {};
+import { invitationAcceptList } from '../config';
+import Modal from '@components/Modal';
+import { useCreateTempMeeting } from '../state/hooks';
 
 const CallModal = () => {
   const [{ avatar, userId, userName, responsed, accept }, setCallModalInfo] =
@@ -18,9 +19,10 @@ const CallModal = () => {
     callModalVisibleState,
   );
 
-  const description = responsed
-    ? `The ${userName} has refused the invitation`
-    : `Inviting into the temporary meeting room`;
+  const description =
+    responsed && !accept
+      ? `The ${userName} has refused the invitation`
+      : `Inviting into the temporary meeting room`;
 
   const response = useCallback(
     (accept: boolean) => {
@@ -35,55 +37,67 @@ const CallModal = () => {
     [avatar, userId, userName],
   );
 
+  const createTempMeeting = useCreateTempMeeting(userId);
   useEffect(() => {
     if (callModalVisible) {
-      // ! mock invitation acception
-      const accept = invitationAcceptMap[userId];
-      if (accept) {
-      } else {
-        // if refused
-        //   auto cancel after 3s
-        //   and close after 2s
-        let timer = setTimeout(() => {
-          response(false);
-          if (!accept) {
-            timer = setTimeout(() => {
-              setCallModalVisible(false);
-            }, 2000);
-          }
-        }, 3000);
+      // 请求语音后自动流程
 
-        return () => {
-          clearTimeout(timer);
-        };
-      }
+      // ! mock invitation acception
+      const accept = invitationAcceptList.includes(userId);
+      // 3s 后自动响应
+      let timer = setTimeout(() => {
+        if (accept) {
+          // 1. 接受语音
+          console.log(`[CallModal] accept = ${userId}`);
+          response(true);
+          setCallModalVisible(false);
+          createTempMeeting();
+        } else {
+          // 2. 拒绝语音
+          console.log(`[CallModal] refused = ${userId}`);
+          response(false);
+          timer = setTimeout(() => {
+            // 2s 后自动关闭
+            setCallModalVisible(false);
+          }, 2000);
+        }
+      }, 3000);
+
+      return () => {
+        clearTimeout(timer);
+      };
     }
   }, [callModalVisible, userId]);
 
   const cancelCall = () => {
+    if (responsed) {
+      return;
+    }
     console.log(`[CallModal] cancelCall`);
     response(false);
     setCallModalVisible(false); // close immediately
   };
 
   return (
-    <CallModalContainer className={classNames({ hide: !callModalVisible })}>
-      <Avatar>
-        <img src={avatar} width={'100%'} />
-      </Avatar>
-      <div className="title">{userName}</div>
-      <div className={classNames('description', { loading: !responsed })}>
-        {description}
-      </div>
-      <CallModalOptions>
-        <MeetingActionBtn
-          className={classNames('hangUp', { disabled: responsed && !accept })}
-          onClick={cancelCall}
-        >
-          <BoxIcon type={BoxIconType.PhoneOff} />
-        </MeetingActionBtn>
-      </CallModalOptions>
-    </CallModalContainer>
+    <Modal visible={callModalVisible}>
+      <CallModalContainer>
+        <Avatar>
+          <img src={avatar} width={'100%'} />
+        </Avatar>
+        <div className="title">{userName}</div>
+        <div className={classNames('description', { loading: !responsed })}>
+          {description}
+        </div>
+        <CallModalOptions>
+          <MeetingActionBtn
+            className={classNames('hangUp', { disabled: responsed && !accept })}
+            onClick={cancelCall}
+          >
+            <BoxIcon type={BoxIconType.PhoneOff} />
+          </MeetingActionBtn>
+        </CallModalOptions>
+      </CallModalContainer>
+    </Modal>
   );
 };
 

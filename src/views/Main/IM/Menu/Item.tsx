@@ -2,7 +2,7 @@ import React, { FC, useRef } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import classNames from 'classnames';
 
-import { TabOption, UserState } from '@views/Main/state/type';
+import { TabOption, UserState, RoomType } from '@views/Main/state/type';
 import {
   currentTabState,
   stateTooltipInfoState,
@@ -13,18 +13,19 @@ import {
   RoomData,
   roomUserIdsFamily,
 } from '@views/Main/state/room';
-import { RoomType } from '@views/Main/state/type';
 import { TeamData } from '@views/Main/state/team';
 import {
   callModalInfoState,
   callModalVisibleState,
 } from '@views/Main/state/callModal';
-import {
-  userCustomBusyFamily,
-  userTalkingStateFamily,
-} from '@views/Main/state/user';
 import { lastChatRecordFamily } from '@views/Main/state/roomSpace';
-
+import { useCreateTempMeeting, useEnterRoom } from '@views/Main/state/hooks';
+import {
+  collaborateOuterLinkMap,
+  invitationAcceptList,
+} from '@views/Main/config';
+import { openNewPage } from '@utils';
+import { AppType } from '@components/AppIcon/type';
 import Avatar from '@components/Avatar';
 import StatusPoint from '@components/StatusPoint';
 import AppIcon from '@components/AppIcon';
@@ -44,8 +45,13 @@ import lockedUrl from '@assets/img/room_action_lock.png';
 import CALL_ICON_URL from '@assets/img/team_action_call.png';
 import FOLLOR_ICON_URL from '@assets/img/team_action_follow.png';
 import COLLABORATE_ICON_URL from '@assets/img/team_action_collaborate.png';
-import { useEnterRoom } from '@views/Main/state/hooks';
 
+/**
+ * 状态点 hover 展示用户状态
+ * @param data
+ * @param roomName
+ * @returns
+ */
 const useTooltip = (data: TeamData, roomName: string) => {
   const setStateTooltipVisible = useSetRecoilState(stateTooltipVisibleState);
   const setStateTooltipInfo = useSetRecoilState(stateTooltipInfoState);
@@ -66,7 +72,7 @@ const useTooltip = (data: TeamData, roomName: string) => {
     setStateTooltipVisible(true);
   };
 
-  const onMouseLeave = (e) => {
+  const onMouseLeave = () => {
     debounceLock.current = true;
 
     setTimeout(() => {
@@ -129,31 +135,39 @@ const Item: FC<ItemProps> = ({ currentTab, selected, data, onSelect }) => {
   );
 
   // for Team Actions
-  const setCallModalVisible = useSetRecoilState(callModalVisibleState);
-  const setCallModalInfo = useSetRecoilState(callModalInfoState);
   /**
    * 1 - 语音通话
    */
+  const setCallModalVisible = useSetRecoilState(callModalVisibleState);
+  const setCallModalInfo = useSetRecoilState(callModalInfoState);
+  const createTempMeeting = useCreateTempMeeting(currentTeam.id);
   const userActionCall = (e) => {
     e.stopPropagation();
-    console.log(`[Menu.Item] userActionCall(shouldAsk = ${askCall})`);
+    console.log(`[Menu.Item] userActionCall(ask = ${askCall})`);
 
     const { id, name, avatar } = currentTeam;
-    setCallModalInfo({
-      avatar,
-      userId: id,
-      userName: name,
-      responsed: false,
-      accept: false,
-    });
-    setCallModalVisible(true);
+    if (askCall || !invitationAcceptList.includes(id)) {
+      // 1. 请求语音
+      setCallModalInfo({
+        avatar,
+        userId: id,
+        userName: name,
+        responsed: false,
+        accept: false,
+      });
+      setCallModalVisible(true);
+    } else {
+      // 2. 直接语音
+      console.log('direct call');
+      createTempMeeting();
+    }
   };
 
-  const setCurrentTab = useSetRecoilState(currentTabState);
-  const enterRoom = useEnterRoom(roomOfcurrentTeam?.id, currentTeam.id);
   /**
    * 2 - 跟随
    */
+  const setCurrentTab = useSetRecoilState(currentTabState);
+  const enterRoom = useEnterRoom(roomOfcurrentTeam?.id, currentTeam.id);
   const userActionFollow = (e) => {
     e.stopPropagation();
 
@@ -168,7 +182,12 @@ const Item: FC<ItemProps> = ({ currentTab, selected, data, onSelect }) => {
    */
   const userActionCollaborate = (e) => {
     e.stopPropagation();
-    console.log(`[Menu.Item] userActionCollaborate`);
+    const appType = currentTeam.usingApp;
+    if (appType == AppType.None) {
+      console.warn(`collaborate with AppType.None, something went wrong...`);
+    }
+    const link = collaborateOuterLinkMap[appType];
+    openNewPage(link);
   };
 
   // for Room Actions
@@ -185,7 +204,13 @@ const Item: FC<ItemProps> = ({ currentTab, selected, data, onSelect }) => {
     }
   };
 
-  const showActions = (!isRoom && isUser) || (isRoom && !selected);
+  /**
+   * 是否存在可选操作
+   *   Team(!isRoom) => 普通用户
+   *   Room(isRoom)  => 未选中 && 未上锁
+   */
+  const showActions =
+    (!isRoom && isUser) || (isRoom && !selected && !meetingLocked);
 
   return (
     <ItemContainer
@@ -241,7 +266,9 @@ const Item: FC<ItemProps> = ({ currentTab, selected, data, onSelect }) => {
         <ItemActions>
           {isRoom ? (
             // Room Actions: join
-            <ItemActionBtn onClick={joinNewRoom}>join</ItemActionBtn>
+            !meetingLocked && (
+              <ItemActionBtn onClick={joinNewRoom}>join</ItemActionBtn>
+            )
           ) : isUser ? (
             // Team Actions: 语音、跟随、协作
             <>

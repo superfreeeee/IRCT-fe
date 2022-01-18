@@ -9,7 +9,7 @@ import {
 } from './defaults';
 import { TabOption } from './type';
 import { roomBasicInfoFamily } from './room';
-import { RoomType } from "./type";
+import { RoomType } from './type';
 
 /**
  * 当前 im tab
@@ -33,36 +33,6 @@ export const selectedTeamIdState = atom<string>({
 export const selectedRoomIdState = atom<string>({
   key: 'im_selectedRoomId',
   default: DEFAULT_SELECTED_ROOM_ID,
-});
-
-/**
- * 加入 Room 时跟踪对象
- */
-export const selectedRoomFolloweeIdState = atom<string>({
-  key: 'im_selectedRoomFollowee',
-  default: '',
-});
-
-interface SelectedRoomInfo {
-  roomId: string;
-  followeeId: string;
-}
-/**
- * 当前选中 Room = roomId + followeeId
- *   dep: selectedRoomIdState
- *        selectedRoomFolloweeIdState
- */
-export const selectedRoomInfoState = selector<SelectedRoomInfo>({
-  key: 'im_selectedRoomInfo',
-  get: ({ get }) => {
-    const roomId = get(selectedRoomIdState);
-    const followeeId = get(selectedRoomFolloweeIdState);
-    return { roomId, followeeId };
-  },
-  set: ({ set }, { roomId, followeeId }: SelectedRoomInfo) => {
-    set(selectedRoomIdState, roomId);
-    set(selectedRoomFolloweeIdState, followeeId);
-  },
 });
 
 /**

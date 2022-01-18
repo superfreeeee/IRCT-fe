@@ -35,10 +35,8 @@ export const SearchBar = styled.div`
 
     input {
       flex: 1;
-      border: 0;
-      outline: 0;
       color: rgba(255, 255, 255, 0.5);
-      background-color: unset;
+      background-color: transparent;
     }
   }
 `;

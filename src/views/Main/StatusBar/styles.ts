@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { UserState } from "@views/Main/state/type";
+import { UserState } from '@views/Main/state/type';
 import Avatar from '@components/Avatar';
 
 export const StatusBarContainer = styled.div`
@@ -74,13 +74,14 @@ export const MeetingActionBtn = styled.div`
   &.hangUp {
     color: #fff;
     background-color: #ed5538;
-
-    &:active {
-      background-color: #d79a8e;
-    }
   }
 
-  &.disabled {
+  &.hangUp:active {
+    background-color: #d79a8e;
+  }
+
+  &.disabled,
+  &.disabled:active {
     background-color: #c4c4c4;
   }
 `;

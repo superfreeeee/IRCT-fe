@@ -12,6 +12,7 @@ const GlobalStyle = createGlobalStyle`
     --container_bg: #313132;
     --app_sidebar_bg: #1e1e1e;
     --avatar_default_bg: #777;
+    --modal_bg: rgba(102, 103, 104, 0.7);
     /* menu tag 相关 */
     --menu_tab_text: #C7C7C7;
     /* menu item 相关 */
@@ -45,6 +46,12 @@ const GlobalStyle = createGlobalStyle`
   body {
     min-width: 100vw;
     height: 100vh;
+  }
+
+  /* clear default element style */
+  input {
+    border: 0;
+    outline: 0;
   }
 `;
 
