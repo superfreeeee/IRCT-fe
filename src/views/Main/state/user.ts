@@ -1,8 +1,15 @@
 import { atomFamily, selector, selectorFamily } from 'recoil';
 
 import { AppType } from '@components/AppIcon/type';
-import { roomBasicInfoFamily, RoomType } from './room';
+import { roomBasicInfoFamily } from './room';
+import {
+  RoomType,
+  UserBasicInfo,
+  UserRoomSpaceFigure,
+  UserRoomSpaceInfo,
+} from './type';
 import { TeamData, teamDataFamily } from './team';
+import { RoomSpacePosition, UserState } from './type';
 
 // const currentUserid = 'user_1000'
 export const currentUserIdState = selector<string>({
@@ -10,12 +17,6 @@ export const currentUserIdState = selector<string>({
   get: () => 'user-1000',
 });
 
-export interface UserBasicInfo {
-  id: string;
-  avatar: string;
-  name: string;
-  isGroup: boolean;
-}
 // userId => UserBasicInfo 用户基本信息
 export const userBasicInfoFamily = atomFamily<UserBasicInfo | null, string>({
   key: 'user_userBasicInfo',
@@ -34,6 +35,21 @@ export const userTalkingStateFamily = atomFamily<boolean, string>({
   default: false,
 });
 
+// for figure move updating
+interface UserTalkingStateUpdate {
+  userId: string;
+  isTalking: boolean;
+}
+export const userTalkingListState = selector<UserTalkingStateUpdate[]>({
+  key: 'user_userTalkingList',
+  get: () => [], // shall get nothing
+  set: ({ set }, userUpdateList: UserTalkingStateUpdate[]) => {
+    userUpdateList.forEach(({ userId, isTalking }) => {
+      set(userTalkingStateFamily(userId), isTalking);
+    });
+  },
+});
+
 // userId => AppType 当前正在使用 App
 export const userUsingAppFamily = atomFamily<AppType, string>({
   key: 'user_userUsingApp',
@@ -45,13 +61,6 @@ export const userCustomBusyFamily = atomFamily({
   key: 'user_userCustomBusy',
   default: false,
 });
-
-export enum UserState {
-  Idle = 'idle',
-  Busy = 'busy',
-  Talking = 'talking',
-  Unknown = 'unknown',
-}
 
 // userid => UserState
 export const userStateFamily = selectorFamily<UserState, string>({
@@ -82,6 +91,7 @@ export const userStateFamily = selectorFamily<UserState, string>({
 
 /**
  * 获取当前用户信息
+ *   dep: teamDataFamily
  */
 export const currentUserTeamDataState = selector<TeamData>({
   key: 'user_currentUserInfo',
@@ -109,6 +119,8 @@ interface UserVideoRoomSetting {
 }
 /**
  * 用户会议室设置状态
+ *   dep: userVideoVisibleFamily
+ *        userVideoVoiceSwitchFamily
  */
 export const userVideoRoomSettingFamily = selectorFamily<
   UserVideoRoomSetting,
@@ -121,5 +133,68 @@ export const userVideoRoomSettingFamily = selectorFamily<
       const videoVisible = get(userVideoVisibleFamily(userId));
       const videoVoiceSwitch = get(userVideoVoiceSwitchFamily(userId));
       return { videoVisible, videoVoiceSwitch };
+    },
+});
+
+/**
+ * 空间中所处位置信息
+ */
+export const userRoomSpacePositionFamily = atomFamily<
+  RoomSpacePosition,
+  string
+>({
+  key: 'user_userRoomPosition',
+  default: [0, 0],
+});
+
+// userId => UserRoomSpaceInfo
+export const userRoomSpaceInfoFamily = selectorFamily<
+  UserRoomSpaceInfo,
+  string
+>({
+  key: 'user_userRoomSpaceInfo',
+  get:
+    (userId) =>
+    ({ get }) => {
+      const basicInfo = get(userBasicInfoFamily(userId));
+      const state = get(userStateFamily(userId));
+      const position = get(userRoomSpacePositionFamily(userId));
+      const isTalking = get(userTalkingStateFamily(userId));
+      const mute = get(userVideoVoiceSwitchFamily(userId));
+      const info: UserRoomSpaceInfo = {
+        id: basicInfo.id,
+        state,
+        position,
+        isTalking,
+        mute,
+      };
+      return info;
+    },
+  set:
+    (userId) =>
+    ({ set }, { position, isTalking, mute }: UserRoomSpaceInfo) => {
+      set(userRoomSpacePositionFamily(userId), position);
+      set(userTalkingStateFamily(userId), isTalking);
+      set(userVideoVoiceSwitchFamily(userId), !mute);
+    },
+});
+
+// userId => UserRoomSpaceFigure
+export const userRoomSpaceFigureFamily = selectorFamily<
+  UserRoomSpaceFigure,
+  string
+>({
+  key: 'user_userRoomSpaceFigure',
+  get:
+    (userId) =>
+    ({ get }) => {
+      const basicInfo = get(userBasicInfoFamily(userId));
+      const spaceInfo = get(userRoomSpaceInfoFamily(userId));
+
+      const figureInfo: UserRoomSpaceFigure = {
+        ...basicInfo,
+        ...spaceInfo,
+      };
+      return figureInfo;
     },
 });

@@ -1,15 +1,23 @@
 import React from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { bindActionCreators } from 'redux';
-import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
 
-import { AppState } from '@store/reducers';
-import { switchSpaceAction } from '@store/reducers/space';
+import { TabOption } from '../state/type';
+import { currentTabState, selectedRoomIdState } from '../state/im';
+import {
+  currentSpaceIdState,
+  currentSpaceTypeState,
+  expandVideoRoomState,
+} from '../state/roomSpace';
+import {
+  currentUserTeamDataState,
+  userVideoRoomSettingFamily,
+  userVideoVisibleFamily,
+  userVideoVoiceSwitchFamily,
+} from '../state/user';
+import { useExitRoom } from '../state/hooks';
 import Avatar from '@components/Avatar';
 import BoxIcon, { BoxIconType } from '@components/BoxIcon';
-import { TabOption } from '@views/Main/state/type';
-import { currentTabState, selectedRoomInfoState } from '@views/Main/state/im';
 import {
   AvatarBlock,
   InMeetingIcon,
@@ -19,13 +27,6 @@ import {
   StatusBarBottom,
   StatusBarContainer,
 } from './styles';
-import { currentSpaceIdState, expandVideoRoomState } from '../state/roomSpace';
-import {
-  currentUserTeamDataState,
-  userVideoRoomSettingFamily,
-  userVideoVisibleFamily,
-  userVideoVoiceSwitchFamily,
-} from '../state/user';
 
 const StatusBar = () => {
   const [expandVideoRoom, setExpandVideoRoom] =
@@ -35,14 +36,13 @@ const StatusBar = () => {
    * 当前用户基本信息
    */
   const { id, state, avatar } = useRecoilValue(currentUserTeamDataState);
-  const [{ roomId: selectedRoomId }, setSelectedRoomInfo] = useRecoilState(
-    selectedRoomInfoState,
-  );
+  const selectedRoomId = useRecoilValue(selectedRoomIdState);
 
-  const { currentSpace } = useSelector((state: AppState) => state.space);
+  const currentSpaceType = useRecoilValue(currentSpaceTypeState);
 
   const inMeeting = !!selectedRoomId;
-  const videoRoomHidden = currentSpace !== TabOption.Room || !expandVideoRoom;
+  const videoRoomHidden =
+    currentSpaceType === TabOption.Team || !expandVideoRoom;
 
   /**
    * 当前用户视频设定
@@ -64,12 +64,13 @@ const StatusBar = () => {
   /**
    * 离开房间
    */
+  const exitRoom = useExitRoom();
   const exitVideoRoom = () => {
     console.log(`[StatusBar] exitVideoRoom`);
-    setSelectedRoomInfo({ roomId: '', followeeId: '' });
+
+    exitRoom();
   };
 
-  const dispatch = useDispatch();
   /**
    * 跳转到所在房间
    */
@@ -77,10 +78,9 @@ const StatusBar = () => {
   const setCurrentSpaceId = useSetRecoilState(currentSpaceIdState);
   const jumpAndExpandRoomSpace = () => {
     console.log(`[StatusBar] jumpToRoomSpace`);
-    const switchSpace = bindActionCreators(switchSpaceAction, dispatch);
+
     setCurrentTab(TabOption.Room);
     setCurrentSpaceId(selectedRoomId);
-    switchSpace(TabOption.Room);
     setExpandVideoRoom(true);
   };
 

@@ -1,21 +1,19 @@
-import React, { FC, useMemo, useRef } from 'react';
+import React, { FC, useRef } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { bindActionCreators } from 'redux';
-import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
 
-import { TabOption } from '@views/Main/state/type';
+import { TabOption, UserState } from '@views/Main/state/type';
 import {
   currentTabState,
-  selectedRoomInfoState,
   stateTooltipInfoState,
   stateTooltipVisibleState,
 } from '@views/Main/state/im';
 import {
   roomBasicInfoFamily,
   RoomData,
-  RoomType,
+  roomUserIdsFamily,
 } from '@views/Main/state/room';
+import { RoomType } from '@views/Main/state/type';
 import { TeamData } from '@views/Main/state/team';
 import {
   callModalInfoState,
@@ -25,10 +23,8 @@ import {
   userCustomBusyFamily,
   userTalkingStateFamily,
 } from '@views/Main/state/user';
-import { currentSpaceIdState } from '@views/Main/state/roomSpace';
+import { lastChatRecordFamily } from '@views/Main/state/roomSpace';
 
-import { AppState } from '@store/reducers';
-import { switchSpaceAction } from '@store/reducers/space';
 import Avatar from '@components/Avatar';
 import StatusPoint from '@components/StatusPoint';
 import AppIcon from '@components/AppIcon';
@@ -41,13 +37,14 @@ import {
   ItemContainer,
   ItemOptionalRoom,
 } from './styles';
-import { ItemExtraData, MenuData } from './type';
+import { MenuData } from './type';
 
 import graphic2Avatar from '@assets/img/graphic_2.png';
 import lockedUrl from '@assets/img/room_action_lock.png';
 import CALL_ICON_URL from '@assets/img/team_action_call.png';
 import FOLLOR_ICON_URL from '@assets/img/team_action_follow.png';
 import COLLABORATE_ICON_URL from '@assets/img/team_action_collaborate.png';
+import { useEnterRoom } from '@views/Main/state/hooks';
 
 const useTooltip = (data: TeamData, roomName: string) => {
   const setStateTooltipVisible = useSetRecoilState(stateTooltipVisibleState);
@@ -88,18 +85,10 @@ export interface ItemProps {
   currentTab: TabOption;
   selected: boolean;
   data: MenuData;
-  extraData?: ItemExtraData;
   onSelect: (data: MenuData) => void;
 }
 
-const Item: FC<ItemProps> = ({
-  currentTab,
-  selected,
-  data,
-  data: { id, avatar },
-  extraData: { subtitle, members, lastRecordTime } = {},
-  onSelect,
-}) => {
+const Item: FC<ItemProps> = ({ currentTab, selected, data, onSelect }) => {
   const isRoom = currentTab === TabOption.Room;
 
   // for RoomData
@@ -107,32 +96,29 @@ const Item: FC<ItemProps> = ({
 
   const isMeeting = isRoom && currentRoom.type === RoomType.Meeting;
   const meetingLocked = isMeeting && currentRoom.locked;
+  const members = useRecoilValue(roomUserIdsFamily(currentRoom.id)).length;
 
   // for TeamData
   const currentTeam = data as TeamData;
   const roomOfcurrentTeam = useRecoilValue(
     roomBasicInfoFamily(currentTeam.currentRoomId),
   );
+  const lastChatRecord = useRecoilValue(lastChatRecordFamily(currentTeam.id));
 
   const isUser = !isRoom && !currentTeam.isGroup;
-  const isUserInRoom = isUser && roomOfcurrentTeam;
-  const isInIdelRoom =
-    isUserInRoom && roomOfcurrentTeam.type === RoomType.Coffee;
   const isUserUsingApp = isUser && currentTeam.usingApp;
-  const isUserCustomBusy = useRecoilValue(userCustomBusyFamily(currentTeam.id));
-  const isUserTalking = useRecoilValue(userTalkingStateFamily(currentTeam.id));
 
-  const canCall =
-    (!isUserInRoom && !isUserUsingApp && !isUserCustomBusy) ||
-    (isUserInRoom && isUserTalking && isInIdelRoom);
-  const askCall =
-    (!isUserInRoom && (isUserUsingApp || isUserCustomBusy)) ||
-    (isUserInRoom && !isUserTalking && !isUserUsingApp && !isUserCustomBusy);
-  const canFollow = isUserInRoom;
+  // TeamData 可选操作
+  const currentState = currentTeam.state;
+
+  const canCall = currentState === UserState.Idle;
+  const askCall = currentState === UserState.Busy;
+  const canFollow = currentState !== UserState.Busy;
   const canCollaborate = isUserUsingApp;
 
   // for render (cross team & room)
   const title = isRoom ? currentRoom.title : currentTeam.name;
+  const avatar = isRoom ? currentRoom.avatar : currentTeam.avatar;
 
   /**
    * 用户状态 tooltip
@@ -163,29 +149,17 @@ const Item: FC<ItemProps> = ({
     setCallModalVisible(true);
   };
 
-  const dispatch = useDispatch();
   const setCurrentTab = useSetRecoilState(currentTabState);
-  const setSelectedRoomInfo = useSetRecoilState(selectedRoomInfoState);
-  const setCurrentSpaceId = useSetRecoilState(currentSpaceIdState);
+  const enterRoom = useEnterRoom(roomOfcurrentTeam?.id, currentTeam.id);
   /**
    * 2 - 跟随
    */
   const userActionFollow = (e) => {
     e.stopPropagation();
-    if (roomOfcurrentTeam) {
-      console.log(`[Menu.Item] userActionFollow`, roomOfcurrentTeam);
-      setSelectedRoomInfo({ roomId: roomOfcurrentTeam.id, followeeId: id });
-      if (currentTab === TabOption.Team) {
-        setCurrentTab(TabOption.Room);
-        setCurrentSpaceId(roomOfcurrentTeam.id);
 
-        const switchSpace = bindActionCreators(switchSpaceAction, dispatch);
-        switchSpace(TabOption.Room);
-      }
-    } else {
-      console.error(
-        `[Menu.Item] userActionFollow: unknown roomId = ${currentTeam.currentRoomId}`,
-      );
+    enterRoom(true);
+    if (currentTab === TabOption.Team) {
+      setCurrentTab(TabOption.Room);
     }
   };
 
@@ -197,21 +171,17 @@ const Item: FC<ItemProps> = ({
     console.log(`[Menu.Item] userActionCollaborate`);
   };
 
-  const currentSpace = useSelector(
-    (state: AppState) => state.space.currentSpace,
-  );
-
   // for Room Actions
   /**
    * 加入新房间
    */
-  const joinNewRoom = () => {
-    const roomId = currentRoom.id;
-    setCurrentSpaceId(roomId);
-    setSelectedRoomInfo({ roomId, followeeId: '' });
-    if (currentSpace === TabOption.Team) {
-      const switchSpace = bindActionCreators(switchSpaceAction, dispatch);
-      switchSpace(TabOption.Room);
+  const enterNewRoom = useEnterRoom(currentRoom.id, currentTeam.id);
+  const joinNewRoom = (e) => {
+    e.stopPropagation();
+
+    enterNewRoom();
+    if (currentTab === TabOption.Team) {
+      setCurrentTab(TabOption.Room);
     }
   };
 
@@ -245,7 +215,7 @@ const Item: FC<ItemProps> = ({
             </span>
           )}
         </div>
-        <div className="subtitle">{subtitle}</div>
+        <div className="subtitle">{lastChatRecord && lastChatRecord.text}</div>
       </div>
       <div className={classNames('optional', { inTeam: !isRoom })}>
         {isRoom ? (
@@ -260,7 +230,7 @@ const Item: FC<ItemProps> = ({
             )}
           </ItemOptionalRoom>
         ) : (
-          <span>{lastRecordTime}</span>
+          <span>{lastChatRecord && lastChatRecord.createTime}</span>
         )}
       </div>
       {/* 未读信息 */}
@@ -280,7 +250,9 @@ const Item: FC<ItemProps> = ({
                   <img src={CALL_ICON_URL} width={'100%'} />
                 </ItemActionIcon>
               )}
-              {(canCall || askCall) && canFollow && <ItemActionDivider />}
+              {(canCall || askCall) && (canFollow || canCollaborate) && (
+                <ItemActionDivider />
+              )}
               {canFollow && (
                 <ItemActionIcon onClick={userActionFollow} title="跟随">
                   <img src={FOLLOR_ICON_URL} width={'100%'} />

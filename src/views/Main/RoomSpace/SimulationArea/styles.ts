@@ -7,8 +7,8 @@ import {
   SIMULATION_FIGURE_SIZE_OUTER,
 } from './config';
 
-export const SIMULATION_BOARD_WIDTH = 500;
-export const SIMULATION_BOARD_HEIGHT = 500;
+export const SIMULATION_BOARD_WIDTH = 300;
+export const SIMULATION_BOARD_HEIGHT = 300;
 export const SIMULATION_BOARD_PADDING = 25;
 
 export const SimulationBoard = styled.div`

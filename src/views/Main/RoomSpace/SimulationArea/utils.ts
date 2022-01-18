@@ -1,9 +1,5 @@
-import {
-  SpaceFigure,
-  SpaceFigurePosition,
-  SpaceFigureWithVideo,
-  VideoVoiceRate,
-} from '@store/reducers/space';
+import { VideoRoomFigure, VideoVoiceRate } from '@views/Main/state/type';
+import { SpaceFigure } from '@store/reducers/space';
 import { SIMULATION_BOARD_HEIGHT, SIMULATION_BOARD_WIDTH } from './styles';
 import {
   FIGURE_DISTANCE_LEVEL1,
@@ -12,33 +8,29 @@ import {
   SIMULATION_FIGURE_SIZE,
   SIMULATION_FIGURE_SIZE_INNER,
 } from './config';
+import {
+  RoomSpacePosition,
+  UserRoomSpaceFigure,
+  UserRoomSpaceInfo,
+} from '@views/Main/state/type';
 
 /**
  * 计算初入房间位置
- * @param width
- * @param height
- * @returns
  */
 export const calcInitPosition = (
-  figures: SpaceFigure[],
-  width: number = SIMULATION_BOARD_WIDTH,
-  height: number = SIMULATION_BOARD_HEIGHT,
-  followeeId?: string,
-): SpaceFigurePosition => {
-  if (followeeId) {
-    const followingFigure = figures.filter(
-      (figure) => figure.userId === followeeId,
-    )[0];
-    if (followingFigure) {
-      const [x0, y0] = followingFigure.position;
-      const offset = SIMULATION_FIGURE_SIZE + SIMULATION_FIGURE_SIZE_INNER / 2;
-      let [x, y] = [x0 + offset, y0 + offset];
-      x >= width && (x = x0 - offset);
-      y >= height && (y = y0 - offset);
-      return [x, y];
-    }
+  followeePosition?: RoomSpacePosition,
+): RoomSpacePosition => {
+  if (followeePosition) {
+    console.log(`following`, followeePosition);
+    // 如果跟随某人
+    const [x0, y0] = followeePosition;
+    const offset = SIMULATION_FIGURE_SIZE + SIMULATION_FIGURE_SIZE_INNER / 2;
+    let [x, y] = [x0 + offset, y0 + offset];
+    x >= SIMULATION_BOARD_WIDTH && (x = x0 - offset);
+    y >= SIMULATION_BOARD_HEIGHT && (y = y0 - offset);
+    return [x, y];
   }
-  return [width / 2, height / 2];
+  return [SIMULATION_BOARD_WIDTH / 2, SIMULATION_BOARD_HEIGHT / 2];
 };
 
 /**
@@ -48,17 +40,18 @@ export const calcInitPosition = (
  * @returns
  */
 export const calcNearbyFigures = (
-  currentFigure: SpaceFigure,
-  figures: SpaceFigure[],
-): SpaceFigureWithVideo[] => {
+  currentFigure: UserRoomSpaceFigure,
+  figures: UserRoomSpaceFigure[],
+): VideoRoomFigure[] => {
   if (figures.length <= 1) {
     return [];
   }
 
-  const nearbyFigures: SpaceFigureWithVideo[] = figures
-    .map((figure) => {
+  const nearbyFigures = figures
+    .map((figure): VideoRoomFigure => {
       // 1. calc distance
-      const _d = calcDistance(currentFigure, figure);
+      const _d = distanceBetween(currentFigure.position, figure.position);
+
       // 2. calc voice rate base on distance
       let voiceRate: VideoVoiceRate;
       if (_d <= FIGURE_DISTANCE_LEVEL1) {
@@ -83,38 +76,43 @@ export const calcNearbyFigures = (
     return [];
   }
 
-  return nearbyFigures;
+  return nearbyFigures.sort((f1, f2) => f2.voiceRate - f1.voiceRate);
 };
 
 /**
  * 计算 dx^2 + dy^2
- * @param f1
- * @param f2
- * @returns
  */
-const calcDistance = (f1: SpaceFigure, f2: SpaceFigure) => {
-  const [x0, y0] = f1.position;
-  const [x1, y1] = f2.position;
+export const distanceBetween = (
+  p1: RoomSpacePosition,
+  p2: RoomSpacePosition,
+): number => {
+  const [x1, y1] = p1;
+  const [x2, y2] = p2;
 
-  const [dx, dy] = [x1 - x0, y1 - y0];
-
+  const [dx, dy] = [x2 - x1, y2 - y1];
   return dx * dx + dy * dy;
 };
 
-export const resetActiveStates = (figures: SpaceFigure[]): SpaceFigure[] => {
-  const len = figures.length;
+/**
+ * 重新计算房间内对话状态(isTalking 状态)
+ */
+export const resetTalkingState = (users: UserRoomSpaceInfo[]) => {
+  const len = users.length;
 
   // new copy
-  figures = figures.map((figure) => ({ ...figure, active: false }));
+  const newUsers = users.map((user) => ({ ...user, isTalking: false }));
   for (let i = 0; i < len; i++) {
-    const target = figures[i];
+    const target = newUsers[i];
     for (let j = i + 1; j < len; j++) {
-      const other = figures[j];
-      if (calcDistance(target, other) <= FIGURE_DISTANCE_LEVEL3) {
-        target.active = other.active = true;
+      const other = newUsers[j];
+      if (
+        distanceBetween(target.position, other.position) <=
+        FIGURE_DISTANCE_LEVEL3
+      ) {
+        target.isTalking = other.isTalking = true;
       }
     }
   }
 
-  return figures;
+  return newUsers;
 };

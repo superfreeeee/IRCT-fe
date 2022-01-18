@@ -1,10 +1,8 @@
 import React, { FC } from 'react';
 import { RecoilRoot } from 'recoil';
-import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import styled, { createGlobalStyle } from 'styled-components';
 
-import store from './store';
 import Layout from './views/Layout';
 
 const GlobalStyle = createGlobalStyle`
@@ -31,8 +29,8 @@ const GlobalStyle = createGlobalStyle`
     --room_space_figure_radius_level3: rgba(189, 191, 193, 0.08);
     /* 状态颜色 */
     --state_idle: #5DD45A;
-    --state_work: #5ABED4;
     --state_busy: #EDD171;
+    --state_talking: #5ABED4;
     /* divider color */
     --divider_color_bg: rgba(129, 130, 132, 0.6);
   }
@@ -58,14 +56,12 @@ const AppRoot = styled.div`
 const App: FC = () => {
   return (
     <RecoilRoot>
-      <Provider store={store}>
-        <BrowserRouter>
-          <AppRoot>
-            <GlobalStyle />
-            <Layout />
-          </AppRoot>
-        </BrowserRouter>
-      </Provider>
+      <BrowserRouter>
+        <AppRoot>
+          <GlobalStyle />
+          <Layout />
+        </AppRoot>
+      </BrowserRouter>
     </RecoilRoot>
   );
 };

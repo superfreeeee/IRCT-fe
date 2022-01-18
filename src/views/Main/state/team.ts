@@ -2,13 +2,12 @@ import { atom, selector, selectorFamily } from 'recoil';
 
 import { AppType } from '@components/AppIcon/type';
 import {
-  UserBasicInfo,
   userBasicInfoFamily,
   userCurrentRoomIdFamily,
   userStateFamily,
   userUsingAppFamily,
-  UserState,
 } from './user';
+import { UserBasicInfo, UserState } from './type';
 
 export interface TeamData extends UserBasicInfo {
   state?: UserState;
@@ -37,7 +36,7 @@ export const teamDataFamily = selectorFamily<TeamData, string>({
     },
   set:
     (userId) =>
-    ({ set, get }, data: TeamData) => {
+    ({ set }, data: TeamData) => {
       const { id, avatar, name, isGroup, currentRoomId, usingApp } = data;
       set(userBasicInfoFamily(userId), { id, avatar, name, isGroup });
       set(userCurrentRoomIdFamily(userId), currentRoomId);

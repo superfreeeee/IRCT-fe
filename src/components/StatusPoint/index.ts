@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { UserState } from '@views/Main/state/user';
+import { UserState } from '@views/Main/state/type';
 
 const overrideSize = (size?: number) =>
   size
@@ -27,6 +27,7 @@ const StatusPoint = styled.span<StatusPointProps>`
     ${({ size }) => overrideSize(size)}
     border-radius: 50%;
     background-color: ${({ state }) => stateToColor(state)};
+    transition: background-color 0.3s;
   }
 `;
 

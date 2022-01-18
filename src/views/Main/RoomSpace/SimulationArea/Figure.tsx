@@ -1,14 +1,15 @@
-import React, { FC, RefObject, useMemo, useRef, useState } from 'react';
-import { bindActionCreators } from 'redux';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { FC, RefObject, useRef } from 'react';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import classNames from 'classnames';
 
-import Avatar from '@components/Avatar';
 import {
-  SpaceFigure,
-  SpaceFigurePosition,
-  updateFigurePositionAction,
-} from '@store/reducers/space';
-import { AppState } from '@store/reducers';
+  userRoomSpacePositionFamily,
+  userVideoVoiceSwitchFamily,
+} from '@views/Main/state/user';
+import { RoomSpacePosition, UserRoomSpaceFigure } from '@views/Main/state/type';
+import Avatar from '@components/Avatar';
+import BoxIcon, { BoxIconType } from '@components/BoxIcon';
+import StatusPoint from '@components/StatusPoint';
 import { roundBy } from '@utils';
 import { stopPropagationHandler } from '@utils/dom';
 import useClosestRef from '@hooks/useClosestRef';
@@ -18,14 +19,7 @@ import {
   MicroOffWrapper,
   SIMULATION_BOARD_PADDING,
 } from './styles';
-import classNames from 'classnames';
-import BoxIcon, { BoxIconType } from '@components/BoxIcon';
-import StatusPoint from '@components/StatusPoint';
-import { useRecoilValue } from 'recoil';
-import {
-  currentUserIdState,
-  userVideoVoiceSwitchFamily,
-} from '@views/Main/state/user';
+import useShadowState from '@hooks/useShadowState';
 
 const MicroOff = () => {
   return (
@@ -36,27 +30,30 @@ const MicroOff = () => {
 };
 
 interface FigureProps {
-  figure: SpaceFigure;
+  figure: UserRoomSpaceFigure;
   boardRef: RefObject<HTMLDivElement>;
-  onFigureMove: () => void;
+  onFigureMove: (userId: string, position: RoomSpacePosition) => void;
 }
 
 const Figure: FC<FigureProps> = ({ figure, boardRef, onFigureMove }) => {
-  const roomId = useSelector((state: AppState) => state.room.selected);
+  const [position, setPosition] = useShadowState(figure.position);
 
-  const [position, setPosition] = useState(figure.position);
   const positionRef = useClosestRef(position);
 
-  const dispatch = useDispatch();
-  const lastPositionRef = useRef<SpaceFigurePosition>(null);
+  const setUserRoomSpacePosition = useSetRecoilState(
+    userRoomSpacePositionFamily(figure.id),
+  );
+  const lastPositionRef = useRef<RoomSpacePosition>(null);
   const boardRectRef = useRef<DOMRect>(null); // 记忆背景板 DOMRect 对象
   const { onMouseDown } = useDragPosition((e, { type, dx, dy }) => {
     e.preventDefault();
     e.stopPropagation();
     if (type === DragEventType.Down) {
+      // MouseDown 时记录起始位置 & 初始 boardRect 状态
       lastPositionRef.current = [...positionRef.current];
       boardRectRef.current = boardRef.current.getBoundingClientRect();
     } else {
+      // MouseMove 时更新局部 position
       const { width, height } = boardRectRef.current;
       const [x, y] = lastPositionRef.current;
 
@@ -70,40 +67,26 @@ const Figure: FC<FigureProps> = ({ figure, boardRef, onFigureMove }) => {
         SIMULATION_BOARD_PADDING,
         height - SIMULATION_BOARD_PADDING,
       );
-      const newPosition: SpaceFigurePosition = [x1, y1];
+      const newPosition: RoomSpacePosition = [x1, y1];
       setPosition(newPosition);
 
-      // 释放鼠标
+      // MouseUp 时同步全局状态
       if (type === DragEventType.Up && (x !== x1 || y !== y1)) {
-        const updateFigurePosition = bindActionCreators(
-          updateFigurePositionAction,
-          dispatch,
-        );
-        updateFigurePosition({
-          roomId,
-          userId: figure.userId,
-          position: newPosition,
-        });
-
-        onFigureMove();
+        // 更新当前用户 position
+        setUserRoomSpacePosition(newPosition);
+        // 更新其他用户 talking
+        onFigureMove(figure.id, newPosition);
       }
     }
   });
 
-  const currentUserId = useRecoilValue(currentUserIdState);
-  const videoVoiceSwitch = useRecoilValue(
-    userVideoVoiceSwitchFamily(currentUserId),
-  );
-
-  const isSelf = figure.userId === currentUserId;
-
-  const inactive = !figure.active;
-  const isMute = isSelf ? !videoVoiceSwitch : figure.mute;
-  const activeButMute = figure.active && isMute;
+  const isTalking = figure.isTalking;
+  const isMute = !useRecoilValue(userVideoVoiceSwitchFamily(figure.id));
+  const activeButMute = isTalking && isMute;
 
   return (
     <FigureContainer
-      className={classNames({ inactive, mute: activeButMute })}
+      className={classNames({ inactive: !isTalking, mute: activeButMute })}
       title="点击+拖拽"
       onClick={stopPropagationHandler}
       onMouseDown={onMouseDown}

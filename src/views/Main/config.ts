@@ -21,10 +21,10 @@ import meetingAvatar from '@assets/img/meeting.png';
 import meetingTempAvatar from '@assets/img/meeting_temp.png';
 
 import { AppType } from '@components/AppIcon/type';
-import { UserState } from './state/user';
+import { UserState, RoomType } from './state/type';
 import { TeamData } from './state/team';
-import { RoomData, RoomType } from './state/room';
-import { AllChatRecords } from './state/roomSpace';
+import { RoomData } from './state/room';
+import { AllChatRecords, AllRoomSpaceInfo } from './state/roomSpace';
 
 export const initTeamDataList: TeamData[] = [
   {
@@ -97,7 +97,7 @@ export const initTeamDataList: TeamData[] = [
     name: 'JiaJia',
     state: UserState.Busy,
     currentRoomId: 'room-0',
-    usingApp: AppType.Notion,
+    // usingApp: AppType.Notion,
     isGroup: false,
   },
   {
@@ -315,6 +315,89 @@ export const initAllChatRecords: AllChatRecords = {
       userId: 'user-15',
       text: 'No problem, wait until I finish updating the code café to see',
       createTime: '13:22',
+    },
+  ],
+};
+
+export const initAllRoomSpaceInfo: AllRoomSpaceInfo = {
+  'room-1': [
+    {
+      id: 'user-0',
+      state: UserState.Idle,
+      position: [80, 80],
+      isTalking: true,
+      mute: false,
+    },
+    {
+      id: 'user-15',
+      state: UserState.Busy,
+      position: [220, 150],
+      isTalking: true,
+      mute: true,
+    },
+  ],
+  'room-5': [
+    {
+      id: 'user-1',
+      state: UserState.Talking,
+      position: [80, 80],
+      isTalking: true,
+      mute: false,
+    },
+    {
+      id: 'user-5',
+      state: UserState.Busy,
+      position: [220, 150],
+      isTalking: true,
+      mute: false,
+    },
+  ],
+  'room-11': [
+    {
+      id: 'user-2',
+      state: UserState.Busy,
+      position: [80, 80],
+      isTalking: true,
+      mute: false,
+    },
+    {
+      id: 'user-9',
+      state: UserState.Busy,
+      position: [220, 150],
+      isTalking: true,
+      mute: false,
+    },
+  ],
+  'room-4': [
+    {
+      id: 'user-14',
+      state: UserState.Busy,
+      position: [220, 150],
+      isTalking: true,
+      mute: false,
+    },
+  ],
+  'room-0': [
+    {
+      id: 'user-1000',
+      state: UserState.Idle,
+      position: [150, 150],
+      isTalking: true,
+      mute: false,
+    },
+    {
+      id: 'user-12',
+      state: UserState.Busy,
+      position: [80, 80],
+      isTalking: true,
+      mute: false,
+    },
+    {
+      id: 'user-13',
+      state: UserState.Busy,
+      position: [220, 150],
+      isTalking: true,
+      mute: false,
     },
   ],
 };

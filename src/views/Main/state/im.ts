@@ -1,13 +1,15 @@
 import { atom, selector } from 'recoil';
 
 import { AppType } from '@components/AppIcon/type';
-import { UserState } from './user';
+import { UserState } from './type';
 import {
   DEFAULT_IM_TAB,
   DEFAULT_SELECTED_ROOM_ID,
   DEFAULT_SELECTED_TEAM_ID,
 } from './defaults';
 import { TabOption } from './type';
+import { roomBasicInfoFamily } from './room';
+import { RoomType } from "./type";
 
 /**
  * 当前 im tab
@@ -47,6 +49,8 @@ interface SelectedRoomInfo {
 }
 /**
  * 当前选中 Room = roomId + followeeId
+ *   dep: selectedRoomIdState
+ *        selectedRoomFolloweeIdState
  */
 export const selectedRoomInfoState = selector<SelectedRoomInfo>({
   key: 'im_selectedRoomInfo',
@@ -58,6 +62,20 @@ export const selectedRoomInfoState = selector<SelectedRoomInfo>({
   set: ({ set }, { roomId, followeeId }: SelectedRoomInfo) => {
     set(selectedRoomIdState, roomId);
     set(selectedRoomFolloweeIdState, followeeId);
+  },
+});
+
+/**
+ * 当前选中房间类型
+ *   dep: selectedRoomIdState
+ *        roomBasicInfoFamily
+ */
+export const selectedRoomTypeState = selector<RoomType>({
+  key: 'im_selectedRoomType',
+  get: ({ get }) => {
+    const roomId = get(selectedRoomIdState);
+    const room = get(roomBasicInfoFamily(roomId));
+    return room ? room.type : RoomType.None;
   },
 });
 

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { UserState } from '@views/Main/state/user';
+import { UserState } from "@views/Main/state/type";
 import Avatar from '@components/Avatar';
 
 export const StatusBarContainer = styled.div`

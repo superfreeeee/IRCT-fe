@@ -5,11 +5,11 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { useSelector } from 'react-redux';
+import { useRecoilValue } from 'recoil';
 
-import { AppState } from '@store/reducers';
 import { roundBy } from '@utils';
-import { RoomType } from '@views/Main/state/room';
+import { RoomType } from '@views/Main/state/type';
+import { selectedRoomTypeState } from '@views/Main/state/im';
 import Chat from '../Chat';
 import SimulationArea from '../SimulationArea';
 import {
@@ -80,10 +80,7 @@ const description = `A place to relax. If you want ☕️ coffee, please click t
 const Room = () => {
   const areaWrapperRef = useRef<HTMLDivElement>(null);
 
-  const { list: rooms, selected } = useSelector(
-    (state: AppState) => state.room,
-  );
-  const currentRoomType = rooms.filter((room) => room.id === selected)[0]?.type;
+  const currentRoomType = useRecoilValue(selectedRoomTypeState);
   const isMeeting =
     currentRoomType &&
     (currentRoomType === RoomType.Meeting ||

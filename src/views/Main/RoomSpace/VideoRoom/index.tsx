@@ -1,26 +1,21 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useRecoilValue } from 'recoil';
 
-import { AppState } from '@store/reducers';
-import { RoomType } from '@views/Main/state/room';
+import { selectedRoomTypeState } from '@views/Main/state/im';
+import { RoomType } from '@views/Main/state/type';
+import { nearbyFiguresState } from '@views/Main/state/roomSpace';
 import VideoBlock from './VideoBlock';
 import { VideoRoomContainer } from './styles';
 
 const VideoRoom = () => {
-  const nearbyFigures = useSelector(
-    (state: AppState) => state.space.nearbyFigures,
-  ).sort((f1, f2) => f2.voiceRate - f1.voiceRate);
+  const isMeeting = useRecoilValue(selectedRoomTypeState) === RoomType.Meeting;
 
-  const { list: rooms, selected } = useSelector(
-    (state: AppState) => state.room,
-  );
-  const isMeeting =
-    rooms.filter((room) => room.id === selected)[0]?.type === RoomType.Meeting;
+  const nearbyFigures = useRecoilValue(nearbyFiguresState);
 
   return (
     <VideoRoomContainer>
       {nearbyFigures.map((figure) => (
-        <VideoBlock key={figure.userId} figure={figure} isMeeting={isMeeting} />
+        <VideoBlock key={figure.id} figure={figure} isMeeting={isMeeting} />
       ))}
     </VideoRoomContainer>
   );

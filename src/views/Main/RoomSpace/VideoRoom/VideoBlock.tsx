@@ -1,52 +1,41 @@
 import React, { FC } from 'react';
 import { useRecoilValue } from 'recoil';
-import { useSelector } from 'react-redux';
 import classNames from 'classnames';
 
-import {
-  currentUserTeamDataState,
-  userVideoVisibleFamily,
-} from '@views/Main/state/user';
-import { SpaceFigureWithVideo, VideoVoiceRate } from '@store/reducers/space';
+import { userVideoRoomSettingFamily } from '@views/Main/state/user';
+import { VideoRoomFigure, VideoVoiceRate } from '@views/Main/state/type';
 import {
   VideoBlockContainer,
   VideoBlockContent,
   VideoBlockTitle,
   VideoBlockWrapper,
 } from './styles';
-import { AppState } from '@store/reducers';
 import Avatar from '@components/Avatar';
 import AppIcon from '@components/AppIcon';
+import { teamDataFamily } from '@views/Main/state/team';
 
 interface VideoBlockProps {
-  figure: SpaceFigureWithVideo;
+  figure: VideoRoomFigure;
   isMeeting?: boolean;
 }
 
 const VideoBlock: FC<VideoBlockProps> = ({ figure, isMeeting = false }) => {
+  // 当前用户信息
   const {
-    id: currentUserId,
-    name,
-    avatar: selfAvatar,
-  } = useRecoilValue(currentUserTeamDataState);
-  const videoVisible = useRecoilValue(userVideoVisibleFamily(currentUserId));
+    avatar,
+    name: userName,
+    usingApp,
+  } = useRecoilValue(teamDataFamily(figure.id));
+  // 用户房间设定
+  const { videoVisible } = useRecoilValue(
+    userVideoRoomSettingFamily(figure.id),
+  );
 
-  const userList = useSelector((state: AppState) => state.team.list);
-  const getUser = (userId: string) => {
-    return userList.filter((user) => user.id === userId)[0];
-  };
-
-  const isSelf = figure.userId === currentUserId;
-  const figureUser = getUser(figure.userId);
-
-  const { voiceRate } = figure;
+  const voiceRate = isMeeting ? VideoVoiceRate.LEVEL1 : figure.voiceRate;
   const level2 = voiceRate === VideoVoiceRate.LEVEL2;
   const level3 = voiceRate === VideoVoiceRate.LEVEL3;
 
-  const hideVideo = isSelf && !videoVisible;
-  const avatar = isSelf ? selfAvatar : figureUser?.avatar;
-  const userName = isSelf ? name : figureUser?.title;
-  const usingApp = !isSelf && figureUser?.usingApp;
+  const hideVideo = !videoVisible;
 
   return (
     <VideoBlockContainer
@@ -63,7 +52,7 @@ const VideoBlock: FC<VideoBlockProps> = ({ figure, isMeeting = false }) => {
             </Avatar>
           ) : (
             <span>
-              {figure.userId}-{figure.voiceRate}
+              {figure.id}-{figure.voiceRate}
             </span>
           )}
           <VideoBlockTitle>

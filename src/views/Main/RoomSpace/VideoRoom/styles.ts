@@ -17,17 +17,17 @@ export const VideoRoomContainer = styled.div`
 
 export const VideoBlockContainer = styled.div`
   overflow: hidden;
-  transform: translateY(0);
+  transform: translateX(0);
   transition: transform 0.3s, opacity 0.2s;
-  animation: fadeIn 0.3s;
+  animation: fadeIn 0.4s ease-in;
 
   @keyframes fadeIn {
     0% {
-      transform: translateY(-100px);
+      transform: translateX(-100px);
     }
 
     100% {
-      transform: translateY(0);
+      transform: translateX(0);
     }
   }
 

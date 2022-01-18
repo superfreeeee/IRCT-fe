@@ -1,12 +1,5 @@
 import { atom, atomFamily, selector, selectorFamily } from 'recoil';
-
-export enum RoomType {
-  Office = 'office', // 办公室
-  Coffee = 'coffee', // 咖啡间
-  Meeting = 'meeting', // 视频会议
-  TempMeeting = 'temp-meeting', // 暂时会议
-  None = 'none',
-}
+import { RoomType } from './type';
 
 interface RoomBasicInfo {
   id: string;
@@ -49,6 +42,13 @@ export const roomDataFamily = selectorFamily<RoomData, string>({
         locked,
       };
     },
+  set:
+    (roomId) =>
+    ({ set }, data: RoomData) => {
+      const { locked, ...basicInfo } = data;
+      set(roomBasicInfoFamily(roomId), basicInfo);
+      set(roomLockedFamily(roomId), locked);
+    },
 });
 
 export const roomDataListState = selector<RoomData[]>({
@@ -79,4 +79,13 @@ export const roomDataListState = selector<RoomData[]>({
       set(roomLockedFamily(id), locked);
     });
   },
+});
+
+/**
+ * 当前房间所有用户
+ *   roomId => userId[]
+ */
+export const roomUserIdsFamily = atomFamily<string[], string>({
+  key: 'roomSpace_roomUserIds',
+  default: [],
 });

@@ -12,6 +12,7 @@ import {
   userVideoVisibleFamily,
   userVideoVoiceSwitchFamily,
 } from '@views/Main/state/user';
+import { currentSpaceIdState } from '@views/Main/state/roomSpace';
 
 const VideoRoomController = () => {
   const id = useRecoilValue(currentUserIdState);
@@ -34,9 +35,11 @@ const VideoRoomController = () => {
    * 离开房间
    */
   const setSelectedRoomInfo = useSetRecoilState(selectedRoomInfoState);
+  const setCurrentSpaceId = useSetRecoilState(currentSpaceIdState);
   const exitVideoRoom = () => {
     console.log(`[StatusBar] exitVideoRoom`);
     setSelectedRoomInfo({ roomId: '', followeeId: '' });
+    setCurrentSpaceId('');
   };
 
   return (

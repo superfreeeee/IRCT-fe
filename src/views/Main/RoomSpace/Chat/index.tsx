@@ -1,13 +1,16 @@
 import React, { FC, useCallback, useEffect, useRef } from 'react';
-import { bindActionCreators } from 'redux';
-import { useDispatch, useSelector } from 'react-redux';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import classNames from 'classnames';
 
-import BoxIcon, { BoxIconType } from '@components/BoxIcon';
-import { AppState } from '@store/reducers';
-import { sendChatMessageAction } from '@store/reducers/space';
+import { selectedRoomIdState, selectedTeamIdState } from '@views/Main/state/im';
+import { currentUserIdState } from '@views/Main/state/user';
+import {
+  chatHistoryFamily,
+  chatRecordsFamily,
+} from '@views/Main/state/roomSpace';
 import { getCurrentTime, scrollToBottom } from '@utils';
 import { useEnterListener, useInput } from './hooks';
+import BoxIcon, { BoxIconType } from '@components/BoxIcon';
 import ChatRecordEl from './ChatRecordEl';
 import {
   ChatContainer,
@@ -16,68 +19,54 @@ import {
   Input,
   SendButton,
 } from './styles';
-import { selectedRoomIdState, selectedTeamIdState } from '@views/Main/state/im';
-import { useRecoilValue } from 'recoil';
-import { currentUserTeamDataState } from '@views/Main/state/user';
 
 interface ChatProps {
   isInRoom?: boolean;
-  onSend?: (message: string) => void;
 }
 
-const Chat: FC<ChatProps> = ({ isInRoom = false, onSend }) => {
-  const { id: userId, avatar: selfAvatar } = useRecoilValue(
-    currentUserTeamDataState,
-  );
-
-  const space = useSelector((state: AppState) => state.space);
+const Chat: FC<ChatProps> = ({ isInRoom = false }) => {
+  const userId = useRecoilValue(currentUserIdState);
 
   const selectedTeamId = useRecoilValue(selectedTeamIdState);
   const selectedRoomId = useRecoilValue(selectedRoomIdState);
-  // const { selected: selectedTeam } = useSelector(
-  //   (state: AppState) => state.team,
-  // );
-  // const selectedRoom = useSelector((state: AppState) => state.room.selected);
 
-  const chatHistory = isInRoom ? space.roomChat : space.teamChat;
   const selectedId = isInRoom ? selectedRoomId : selectedTeamId;
-  const records = chatHistory[selectedId] || [];
+  const chatHistoryRecords = useRecoilValue(chatHistoryFamily(selectedId));
 
   // 输入框
   const [input, onInputChange, { resetInput }] = useInput();
 
-  const dispatch = useDispatch();
   const chatHistoryRef = useRef<HTMLDivElement>(null);
   const chatInputRef = useRef<HTMLInputElement>(null);
+
   const focusChatInput = useCallback(() => {
     if (document.activeElement !== chatInputRef.current) {
       chatInputRef.current.focus();
     }
   }, []);
+
+  const [chatRecords, setChatRecords] = useRecoilState(
+    chatRecordsFamily(selectedId),
+  );
   const sendMessage = (input: string) => {
     console.log(`[Chat] send message = ${input}`);
+
+    // only send when input not empty
     if (input) {
-      // only send when input not empty
-      const sendChatMessage = bindActionCreators(
-        sendChatMessageAction,
-        dispatch,
-      );
-      sendChatMessage({
-        spaceId: selectedId,
-        record: {
+      // 添加记录
+      setChatRecords([
+        ...chatRecords,
+        {
           userId,
-          avatar: selfAvatar,
           text: input,
           createTime: getCurrentTime(),
         },
-      });
+      ]);
 
       // 发出讯息后自动滚动
       setTimeout(() => {
         scrollToBottom(chatHistoryRef.current);
       });
-
-      onSend && onSend(input);
     }
 
     // refocus after sending message
@@ -118,13 +107,9 @@ const Chat: FC<ChatProps> = ({ isInRoom = false, onSend }) => {
   return (
     <ChatContainer className={classNames({ isInRoom })}>
       <ChatHistory ref={chatHistoryRef}>
-        {records
-          .map((record) => {
-            return record;
-          })
-          .map((record, index) => (
-            <ChatRecordEl key={index} isInRoom={isInRoom} record={record} />
-          ))}
+        {chatHistoryRecords.map((record, index) => (
+          <ChatRecordEl key={index} isInRoom={isInRoom} record={record} />
+        ))}
       </ChatHistory>
       <ChatInputBar>
         <Input

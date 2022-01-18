@@ -1,7 +1,7 @@
 import React from 'react';
 
 import StatusPoint from '@components/StatusPoint';
-import { UserState } from '@views/Main/state/user';
+import { UserState } from "@views/Main/state/type";
 import { StateTooltipWrapper } from './styles';
 import {
   stateTooltipInfoState,

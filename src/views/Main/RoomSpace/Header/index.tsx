@@ -1,18 +1,15 @@
 import React, { FC, useMemo } from 'react';
-import { bindActionCreators } from 'redux';
-import { useDispatch } from 'react-redux';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import classNames from 'classnames';
 
 import {
-  persistTempMeetingAction,
-  toggleMeetingRoomLockAction,
-} from '@store/reducers/room';
-import {
   roomBasicInfoFamily,
   roomDataFamily,
-  RoomType,
+  roomLockedFamily,
 } from '@views/Main/state/room';
-import { UserState } from '@views/Main/state/user';
+import { UserState, RoomType } from '@views/Main/state/type';
+import { currentSpaceIdState } from '@views/Main/state/roomSpace';
+import { teamDataFamily } from '@views/Main/state/team';
 import Avatar from '@components/Avatar';
 import BoxIcon, { BoxIconType } from '@components/BoxIcon';
 import AppIcon from '@components/AppIcon';
@@ -25,12 +22,10 @@ import {
 } from './styles';
 
 import defaultTeamAvatar from '@assets/img/graphic_2.png';
+import meetingAvatar from '@assets/img/meeting.png';
 import newMeetingUrl from '@assets/img/room_action_new_meeting.png';
 import lockedUrl from '@assets/img/room_action_lock.png';
 import unlockedUrl from '@assets/img/room_action_unlock.png';
-import { useRecoilValue } from 'recoil';
-import { currentSpaceIdState } from '@views/Main/state/roomSpace';
-import { teamDataFamily } from '@views/Main/state/team';
 
 interface HeaderProps {
   isRoom: boolean;
@@ -48,7 +43,8 @@ const Header: FC<HeaderProps> = ({ isRoom, expand }) => {
   );
 
   // for RoomData
-  const roomData = useRecoilValue(roomDataFamily(spaceId));
+  const [roomData, setRoomData] = useRecoilState(roomDataFamily(spaceId));
+  const setRoomLocked = useSetRecoilState(roomLockedFamily(spaceId));
 
   // for render
   const data = isRoom ? roomData : teamData;
@@ -86,9 +82,8 @@ const Header: FC<HeaderProps> = ({ isRoom, expand }) => {
     }
   }, [isUser, teamData]);
 
-  const dispatch = useDispatch();
   const HeaderSideActionsEl = useMemo(() => {
-    const { id: roomId, type, locked } = roomData;
+    const { id: roomId, type, title, locked } = roomData;
     const isMeeting = type === RoomType.Meeting;
     const isTempMeeting = type === RoomType.TempMeeting;
 
@@ -115,17 +110,19 @@ const Header: FC<HeaderProps> = ({ isRoom, expand }) => {
 
     if (isTempMeeting) {
       // 2. RoomSpace Header for TempMeeting
-      const persistTempMeeting = bindActionCreators(
-        persistTempMeetingAction,
-        dispatch,
-      );
+      const persistTempMeeting = () => {
+        setRoomData({
+          id: roomId,
+          type: RoomType.Meeting,
+          avatar: meetingAvatar,
+          title,
+          locked: false,
+        });
+      };
 
       return (
         <>
-          <HeaderSideBtn
-            title="新增永久会议室"
-            onClick={() => persistTempMeeting(roomId)}
-          >
+          <HeaderSideBtn title="新增永久会议室" onClick={persistTempMeeting}>
             <img src={newMeetingUrl} width={24} />
           </HeaderSideBtn>
           {MoreActionEl}
@@ -135,15 +132,14 @@ const Header: FC<HeaderProps> = ({ isRoom, expand }) => {
 
     if (isMeeting) {
       // 3.RoomSpace Header for Meeting
-      const toggleMeetingRoomLock = bindActionCreators(
-        toggleMeetingRoomLockAction,
-        dispatch,
-      );
+      const toggleMeetingRoomLock = () => {
+        setRoomLocked(!locked);
+      };
       return (
         <>
           <HeaderSideBtn
             title={locked ? '点解解锁' : '点击锁定'}
-            onClick={() => toggleMeetingRoomLock(roomId)}
+            onClick={toggleMeetingRoomLock}
           >
             <img src={locked ? lockedUrl : unlockedUrl} width={24} />
           </HeaderSideBtn>
