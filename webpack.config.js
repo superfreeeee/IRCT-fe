@@ -94,7 +94,7 @@ const config = {
       title: 'IRCT',
       template: './public/index.html',
       filename: 'index.html',
-      favicon: './public/favicon.png',
+      favicon: './public/favicon32.png',
     }),
   ],
   optimization: {
