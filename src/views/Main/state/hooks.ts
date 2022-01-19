@@ -157,9 +157,11 @@ export const useExitRoom = () => {
   return exitRoom;
 };
 
+/**
+ * 创建临时房间
+ */
 let _tempMeetingIdSeed = 100;
 const getNextMeetingId = () => `room-tmp_${_tempMeetingIdSeed}`;
-
 export const useCreateTempMeeting = (targetUserId: string) => {
   const userId = useRecoilValue(currentUserIdState);
 
@@ -231,4 +233,27 @@ export const useCreateTempMeeting = (targetUserId: string) => {
   };
 
   return createTempMeeting;
+};
+
+export const useInviteToRoom = (roomId: string, targetUserId: string) => {
+  const [currentRoomId, setCurrentRoomId] = useRecoilState(
+    userCurrentRoomIdFamily(targetUserId),
+  );
+
+  const [currentRoomUserIds, setCurrentRoomUserIds] = useRecoilState(
+    roomUserIdsFamily(currentRoomId),
+  );
+  const [roomUserIds, setRoomUserIds] = useRecoilState(
+    roomUserIdsFamily(roomId),
+  );
+
+  const inviteToRoom = () => {
+    setCurrentRoomId(roomId);
+    setCurrentRoomUserIds(
+      currentRoomUserIds.filter((userId) => userId !== targetUserId),
+    );
+    setRoomUserIds([...roomUserIds, targetUserId]);
+  };
+
+  return inviteToRoom;
 };

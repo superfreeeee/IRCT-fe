@@ -9,6 +9,7 @@ import BoxIcon, { BoxIconType } from '@components/BoxIcon';
 import { MeetingRoomAddBtn, MeetingRoomMembersWrapper } from './styles';
 import { selectUserModalControllerInfoState } from '@views/Main/state/modals/selectUserModal';
 import useWaitFor from '@hooks/useWaitFor';
+import { useInviteToRoom } from '@views/Main/state/hooks';
 
 const MeetingRoomMembers = () => {
   const selectedRoomId = useRecoilValue(selectedRoomIdState);
@@ -53,11 +54,14 @@ const MeetingRoomMembers = () => {
 
   const { visible: modalVisible, selectedUserId } =
     selectUserModalControllerInfo;
+  const inviteToRoom = useInviteToRoom(selectedRoomId, selectedUserId);
   useWaitFor(
     !modalVisible,
     () => {
       if (selectedUserId) {
         console.log(`[MeetingRoomMembers] select ${selectedUserId}`);
+        inviteToRoom();
+        waitingResponseRef.current = false;
       }
     },
     waitingResponseRef.current,

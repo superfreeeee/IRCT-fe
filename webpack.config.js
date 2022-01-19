@@ -66,14 +66,22 @@ const config = {
           },
         ],
       },
+      // 视频
+      {
+        test: /\.mov$/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: 'video/[name].[ext]',
+              limit: 0,
+            },
+          },
+        ],
+      },
       // 字体类型
       {
         test: /\.(ttf|otf|eot|woff)$/,
-        type: 'asset/resource',
-        dependency: { not: ['url'] },
-      },
-      {
-        test: /\.mov$/,
         type: 'asset/resource',
         dependency: { not: ['url'] },
       },
