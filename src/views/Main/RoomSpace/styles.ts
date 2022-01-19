@@ -24,7 +24,7 @@ export const RoomSpaceContainer = styled.div`
   ${HidePageWrapper} {
     position: absolute;
     right: 0;
-    top: 70px;
+    top: 78px;
     transform: translate(50%, -50%);
 
     &:hover {
@@ -63,11 +63,16 @@ export const RoomSpaceOrigin = styled.div`
 export const RoomSpaceVideo = styled.div`
   position: relative;
   flex: 1;
+  display: none;
   min-width: 224px;
   height: 100%;
   padding-top: 112px;
   overflow-x: hidden;
   overflow-y: auto;
+
+  &.visible {
+    display: block;
+  }
 `;
 
 export const Divider = styled.div`

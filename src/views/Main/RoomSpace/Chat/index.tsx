@@ -9,8 +9,8 @@ import {
   chatRecordsFamily,
 } from '@views/Main/state/roomSpace';
 import { getCurrentTime, scrollToBottom } from '@utils';
-import { useEnterListener, useInput } from './hooks';
 import BoxIcon, { BoxIconType } from '@components/BoxIcon';
+import { useEnterListener, useInput } from './hooks';
 import ChatRecordEl from './ChatRecordEl';
 import {
   ChatContainer,
@@ -19,6 +19,7 @@ import {
   Input,
   SendButton,
 } from './styles';
+import useKeyDetect from '@hooks/useKeyDetect';
 
 interface ChatProps {
   isInRoom?: boolean;
@@ -76,18 +77,13 @@ const Chat: FC<ChatProps> = ({ isInRoom = false }) => {
   /**
    * 渲染聊天界面的时候，单击 Enter focus 到输入框上
    */
-  useEffect(() => {
-    const focusInputWhileEnter = (e: KeyboardEvent) => {
-      if (e.key === 'Enter') {
-        focusChatInput();
-      }
-    };
-
-    document.addEventListener('keydown', focusInputWhileEnter);
-    return () => {
-      document.removeEventListener('keydown', focusInputWhileEnter);
-    };
-  }, []);
+  useKeyDetect(
+    'Enter',
+    () => {
+      focusChatInput();
+    },
+    true,
+  );
 
   /**
    * focus 输入框时监听 enter 输入

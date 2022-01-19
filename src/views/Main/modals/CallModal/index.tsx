@@ -4,12 +4,12 @@ import classNames from 'classnames';
 
 import BoxIcon, { BoxIconType } from '@components/BoxIcon';
 import Avatar from '@components/Avatar';
-import { callModalInfoState, callModalVisibleState } from '../state/callModal';
-import { MeetingActionBtn } from '../StatusBar/styles';
+import { callModalInfoState, callModalVisibleState } from '../../state/modals/callModal';
+import { MeetingActionBtn } from '../../StatusBar/styles';
 import { CallModalContainer, CallModalOptions } from './styles';
-import { invitationAcceptList } from '../config';
+import { invitationAcceptList } from '../../config';
 import Modal from '@components/Modal';
-import { useCreateTempMeeting } from '../state/hooks';
+import { useCreateTempMeeting } from '../../state/hooks';
 
 const CallModal = () => {
   const [{ avatar, userId, userName, responsed, accept }, setCallModalInfo] =

@@ -56,12 +56,12 @@ const RoomSpace: FC<RoomSpaceProps> = ({}) => {
           <RoomSpaceOrigin className={classNames({ isChat: !isRoom })}>
             {BodyEl}
           </RoomSpaceOrigin>
-          {isRoom && expandVideoRoom && (
-            <RoomSpaceVideo>
-              <VideoRoom />
-              <VideoRoomController />
-            </RoomSpaceVideo>
-          )}
+          <RoomSpaceVideo
+            className={classNames({ visible: isRoom && expandVideoRoom })}
+          >
+            <VideoRoom />
+            <VideoRoomController />
+          </RoomSpaceVideo>
         </RoomSpaceBody>
       </RoomSpaceWrapper>
       {isRoom && (

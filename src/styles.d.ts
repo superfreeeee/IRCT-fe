@@ -12,3 +12,8 @@ declare module '*.png' {
   const url: string;
   export default url;
 }
+
+declare module '*.mov' {
+  const url: string;
+  export default url;
+}

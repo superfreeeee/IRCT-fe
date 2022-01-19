@@ -80,6 +80,7 @@ export const VideoBlockContent = styled.div`
   height: 100%;
   border-radius: 5px;
   background-color: #666666;
+  overflow: hidden;
   transition: all 0.3s;
 
   &.hide {
@@ -103,6 +104,10 @@ export const VideoBlockContent = styled.div`
       width: 70px;
       height: 70px;
     }
+  }
+
+  .video {
+    width: 100%;
   }
 
   ${AppIconWrapper} {

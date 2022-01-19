@@ -156,13 +156,12 @@ export const userRoomSpaceInfoFamily = selectorFamily<
   get:
     (userId) =>
     ({ get }) => {
-      const basicInfo = get(userBasicInfoFamily(userId));
       const state = get(userStateFamily(userId));
       const position = get(userRoomSpacePositionFamily(userId));
       const isTalking = get(userTalkingStateFamily(userId));
       const mute = get(userVideoVoiceSwitchFamily(userId));
       const info: UserRoomSpaceInfo = {
-        id: basicInfo.id,
+        id: userId,
         state,
         position,
         isTalking,

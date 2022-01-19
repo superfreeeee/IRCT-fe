@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from 'react';
+import React, { FC, useMemo, useRef } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import classNames from 'classnames';
 
@@ -10,6 +10,12 @@ import {
 import { UserState, RoomType } from '@views/Main/state/type';
 import { currentSpaceIdState } from '@views/Main/state/roomSpace';
 import { teamDataFamily } from '@views/Main/state/team';
+import {
+  createMeetingModalInfoState,
+  createMeetingModalVisibleState,
+} from '@views/Main/state/modals/createMeetingModal';
+import { selectUserModalControllerInfoState } from '@views/Main/state/modals/selectUserModal';
+import { SELECT_USER_MODAL_WIDTH } from '@views/Main/modals/SelectUserModal/styles';
 import Avatar from '@components/Avatar';
 import BoxIcon, { BoxIconType } from '@components/BoxIcon';
 import AppIcon from '@components/AppIcon';
@@ -22,14 +28,9 @@ import {
 } from './styles';
 
 import defaultTeamAvatar from '@assets/img/graphic_2.png';
-import meetingAvatar from '@assets/img/meeting.png';
 import newMeetingUrl from '@assets/img/room_action_new_meeting.png';
 import lockedUrl from '@assets/img/room_action_lock.png';
 import unlockedUrl from '@assets/img/room_action_unlock.png';
-import {
-  createMeetingModalInfoState,
-  createMeetingModalVisibleState,
-} from '@views/Main/state/createMeetingModal';
 
 interface HeaderProps {
   isRoom: boolean;
@@ -47,7 +48,7 @@ const Header: FC<HeaderProps> = ({ isRoom, expand }) => {
   );
 
   // for RoomData
-  const [roomData, setRoomData] = useRecoilState(roomDataFamily(spaceId));
+  const roomData = useRecoilValue(roomDataFamily(spaceId));
   const setRoomLocked = useSetRecoilState(roomLockedFamily(spaceId));
 
   // for render
@@ -92,8 +93,12 @@ const Header: FC<HeaderProps> = ({ isRoom, expand }) => {
   const setCreateMeetingModalInfo = useSetRecoilState(
     createMeetingModalInfoState,
   );
+  const setSelectUserModalControllerInfo = useSetRecoilState(
+    selectUserModalControllerInfoState,
+  );
+  const actionBtnRef = useRef<HTMLDivElement>(null); // 按钮位置信息
   const HeaderSideActionsEl = useMemo(() => {
-    const { id: roomId, type, title, locked } = roomData;
+    const { id: roomId, type, locked } = roomData;
     const isMeeting = type === RoomType.Meeting;
     const isTempMeeting = type === RoomType.TempMeeting;
 
@@ -155,14 +160,24 @@ const Header: FC<HeaderProps> = ({ isRoom, expand }) => {
     }
 
     const showCurrentUsers = () => {
-      // TODO show users
-      console.log(`[RoomSpace.Header] showCurrentUsers`);
+      const { bottom, right } = actionBtnRef.current.getBoundingClientRect();
+      const position = { left: right - SELECT_USER_MODAL_WIDTH, top: bottom };
+      setSelectUserModalControllerInfo({
+        visible: true,
+        position,
+        selectable: false,
+        scopeRoomId: roomId,
+      });
     };
 
     // 4. RoomSpace Header for Office / Coffee Bar
     return (
       <>
-        <HeaderSideBtn title="查看人物列表" onClick={showCurrentUsers}>
+        <HeaderSideBtn
+          ref={actionBtnRef}
+          title="查看人物列表"
+          onClick={showCurrentUsers}
+        >
           <BoxIcon type={BoxIconType.GroupFill} size={'sm'} clickable />
         </HeaderSideBtn>
         {MoreActionEl}

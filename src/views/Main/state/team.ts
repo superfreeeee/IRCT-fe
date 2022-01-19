@@ -37,8 +37,9 @@ export const teamDataFamily = selectorFamily<TeamData, string>({
   set:
     (userId) =>
     ({ set }, data: TeamData) => {
-      const { id, avatar, name, isGroup, currentRoomId, usingApp } = data;
-      set(userBasicInfoFamily(userId), { id, avatar, name, isGroup });
+      const { id, avatar, name, isGroup, videoUrl, currentRoomId, usingApp } =
+        data;
+      set(userBasicInfoFamily(userId), { id, avatar, name, isGroup, videoUrl });
       set(userCurrentRoomIdFamily(userId), currentRoomId);
       set(userUsingAppFamily(userId), usingApp);
     },

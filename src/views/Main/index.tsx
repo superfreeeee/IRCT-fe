@@ -5,7 +5,7 @@ import StatusBar from './StatusBar';
 import IM from './IM';
 import RoomSpace from './RoomSpace';
 import AppSidebar from './AppSidebar';
-import CallModal from './CallModal';
+import CallModal from './modals/CallModal';
 import { MainContainer } from './styles';
 
 import { teamDataListState } from './state/team';
@@ -17,7 +17,8 @@ import {
   initRoomDataList,
   initTeamDataList,
 } from './config';
-import CreateMeetingModal from './CreateMeetingModal';
+import CreateMeetingModal from './modals/CreateMeetingModal';
+import SelectUserModal from './modals/SelectUserModal';
 
 const useInit = () => {
   const setTeamDataList = useSetRecoilState(teamDataListState);
@@ -53,6 +54,8 @@ const Main = () => {
       <CallModal />
       {/* 创建永久会议室 Modal */}
       <CreateMeetingModal />
+      {/* 选人组件 Modal */}
+      <SelectUserModal />
     </MainContainer>
   );
 };

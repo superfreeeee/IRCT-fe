@@ -1,8 +1,11 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect, useRef } from 'react';
 import { useRecoilValue } from 'recoil';
 import classNames from 'classnames';
 
-import { userVideoRoomSettingFamily } from '@views/Main/state/user';
+import {
+  userUsingAppFamily,
+  userVideoRoomSettingFamily,
+} from '@views/Main/state/user';
 import { VideoRoomFigure, VideoVoiceRate } from '@views/Main/state/type';
 import {
   VideoBlockContainer,
@@ -12,30 +15,50 @@ import {
 } from './styles';
 import Avatar from '@components/Avatar';
 import AppIcon from '@components/AppIcon';
-import { teamDataFamily } from '@views/Main/state/team';
 
 interface VideoBlockProps {
   figure: VideoRoomFigure;
+  count: number;
   isMeeting?: boolean;
 }
 
-const VideoBlock: FC<VideoBlockProps> = ({ figure, isMeeting = false }) => {
+const VideoBlock: FC<VideoBlockProps> = ({
+  figure,
+  count,
+  isMeeting = false,
+}) => {
   // 当前用户信息
-  const {
-    avatar,
-    name: userName,
-    usingApp,
-  } = useRecoilValue(teamDataFamily(figure.id));
-  // 用户房间设定
-  const { videoVisible } = useRecoilValue(
-    userVideoRoomSettingFamily(figure.id),
-  );
+  const { id, avatar, name, videoUrl } = figure;
+  const usingApp = useRecoilValue(userUsingAppFamily(id));
 
+  // 视频设定
+  const { videoVisible } = useRecoilValue(userVideoRoomSettingFamily(id));
+  const hideVideo = !videoVisible;
+
+  // 视频控制
+  const videoRef = useRef<HTMLVideoElement>(null);
+  useEffect(() => {
+    const video = videoRef.current;
+    if (video.fastSeek) {
+      video.fastSeek(0);
+    } else {
+      video.currentTime = 0;
+      video.play();
+    }
+  }, [count]);
+
+  // 声音设定
   const voiceRate = isMeeting ? VideoVoiceRate.LEVEL1 : figure.voiceRate;
   const level2 = voiceRate === VideoVoiceRate.LEVEL2;
   const level3 = voiceRate === VideoVoiceRate.LEVEL3;
 
-  const hideVideo = !videoVisible;
+  // 音频控制
+  useEffect(() => {
+    videoRef.current.volume = voiceRate / 100;
+    // console.log(
+    //   `[VideoBlock] user(${id}), voiceRate = ${videoRef.current.volume}`,
+    // );
+  }, [voiceRate]);
 
   return (
     <VideoBlockContainer
@@ -51,15 +74,22 @@ const VideoBlock: FC<VideoBlockProps> = ({ figure, isMeeting = false }) => {
               <img src={avatar} width={'100%'} />
             </Avatar>
           ) : (
-            <span>
-              {figure.id}-{figure.voiceRate}
-            </span>
+            <video
+              autoPlay
+              // muted
+              className="video"
+              ref={videoRef}
+              src={videoUrl}
+            ></video>
+            // <span>
+            //   {figure.id}-{figure.voiceRate}
+            // </span>
           )}
           <VideoBlockTitle>
             <Avatar className={classNames({ hideVideo })}>
               <img src={avatar} width={'100%'} />
             </Avatar>
-            {userName}
+            {name}
           </VideoBlockTitle>
           {usingApp && <AppIcon type={usingApp} size={22} />}
         </VideoBlockContent>

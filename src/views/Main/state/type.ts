@@ -23,7 +23,7 @@ export enum RoomType {
 export enum VideoVoiceRate {
   LEVEL1 = 100,
   LEVEL2 = 60,
-  LEVEL3 = 20,
+  LEVEL3 = 15,
   LEVEL4 = 0,
 }
 

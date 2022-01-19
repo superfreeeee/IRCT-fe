@@ -1,3 +1,4 @@
+// user avatar resources
 import user0Avatar from '@assets/img/user_0.png';
 import user1Avatar from '@assets/img/user_1.png';
 import user2Avatar from '@assets/img/user_2.png';
@@ -11,6 +12,7 @@ import user1000Avatar from '@assets/img/user_1000.png';
 import graphic1Avatar from '@assets/img/graphic_1.png';
 import graphic2Avatar from '@assets/img/graphic_2.png';
 
+// room avatar resources
 import officeBookAvatar from '@assets/img/office_book.png';
 import officeToolsAvatar from '@assets/img/office_tools.png';
 import officeGraphicsAvatar from '@assets/img/office_graphics.png';
@@ -18,6 +20,8 @@ import officeGitlabAvatar from '@assets/img/office_gitlab.png';
 import coffeeAvatar from '@assets/img/coffee.png';
 import coffeeGymAvatar from '@assets/img/coffee_gym.png';
 import meetingAvatar from '@assets/img/meeting.png';
+
+import SanVideoUrl from '@assets/video/San.mov';
 
 import { AppType } from '@components/AppIcon/type';
 import { UserState, RoomType } from './state/type';
@@ -33,6 +37,7 @@ export const initTeamDataList: TeamData[] = [
     state: UserState.Idle,
     currentRoomId: 'room-0',
     isGroup: false,
+    // videoUrl: SanVideoUrl,
   },
   {
     id: 'user-0',
@@ -107,6 +112,7 @@ export const initTeamDataList: TeamData[] = [
     currentRoomId: 'room-0',
     usingApp: AppType.Figma,
     isGroup: false,
+    videoUrl: SanVideoUrl,
   },
   {
     id: 'user-14',

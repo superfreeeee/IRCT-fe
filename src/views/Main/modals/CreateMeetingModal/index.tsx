@@ -7,8 +7,8 @@ import Modal from '@components/Modal';
 import {
   createMeetingModalInfoState,
   createMeetingModalVisibleState,
-} from '../state/createMeetingModal';
-import { RoomData, roomDataFamily } from '../state/room';
+} from '../../state/modals/createMeetingModal';
+import { RoomData, roomDataFamily } from '../../state/room';
 import {
   CreateMeetingBody,
   CreateMeetingBtn,
@@ -16,7 +16,7 @@ import {
   CreateMeetingHeader,
   CreateMeetingOptions,
 } from './styles';
-import { RoomType } from '../state/type';
+import { RoomType } from '../../state/type';
 
 import meetingAvatar from '@assets/img/meeting.png';
 

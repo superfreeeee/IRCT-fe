@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { selectedRoomTypeState } from '@views/Main/state/im';
@@ -11,11 +11,22 @@ const VideoRoom = () => {
   const isMeeting = useRecoilValue(selectedRoomTypeState) === RoomType.Meeting;
 
   const nearbyFigures = useRecoilValue(nearbyFiguresState);
+  const count = nearbyFigures.length;
+
+  // TODO clear console
+  // useEffect(() => {
+  //   console.log(`VideoRoom currentFigures`, count);
+  // }, [count]);
 
   return (
     <VideoRoomContainer>
       {nearbyFigures.map((figure) => (
-        <VideoBlock key={figure.id} figure={figure} isMeeting={isMeeting} />
+        <VideoBlock
+          key={figure.id}
+          figure={figure}
+          count={count}
+          isMeeting={isMeeting}
+        />
       ))}
     </VideoRoomContainer>
   );

@@ -66,9 +66,14 @@ const config = {
           },
         ],
       },
+      // 字体类型
       {
         test: /\.(ttf|otf|eot|woff)$/,
-        // use: 'file-loader',
+        type: 'asset/resource',
+        dependency: { not: ['url'] },
+      },
+      {
+        test: /\.mov$/,
         type: 'asset/resource',
         dependency: { not: ['url'] },
       },
@@ -81,6 +86,7 @@ const config = {
       title: 'IRCT',
       template: './public/index.html',
       filename: 'index.html',
+      favicon: './public/favicon.png',
     }),
   ],
   optimization: {

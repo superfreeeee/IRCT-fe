@@ -17,7 +17,7 @@ import { TeamData } from '@views/Main/state/team';
 import {
   callModalInfoState,
   callModalVisibleState,
-} from '@views/Main/state/callModal';
+} from '@views/Main/state/modals/callModal';
 import { lastChatRecordFamily } from '@views/Main/state/roomSpace';
 import { useCreateTempMeeting, useEnterRoom } from '@views/Main/state/hooks';
 import {
