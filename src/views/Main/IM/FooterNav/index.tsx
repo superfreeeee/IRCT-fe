@@ -9,6 +9,7 @@ import {
   appSidebarVisibleState,
 } from '@views/Main/state/appSidebar';
 import { useSetRecoilState } from 'recoil';
+import { okrPathVisibleState } from '@views/Main/state/okrPath';
 
 const FooterNav = () => {
   const setAppSidebarVisible = useSetRecoilState(appSidebarVisibleState);
@@ -26,8 +27,10 @@ const FooterNav = () => {
     setActiveApp(AppSidebarType.Doc);
   };
 
+  const setOKRPathVisible = useSetRecoilState(okrPathVisibleState);
   const clickPath = () => {
     console.log(`[FooterNav] clickPath`);
+    setOKRPathVisible(true);
   };
 
   const clickTodo = () => {

@@ -43,7 +43,16 @@ const VideoBlock: FC<VideoBlockProps> = ({
       video.fastSeek(0);
     } else {
       video.currentTime = 0;
-      video.play();
+      video.play().catch((e) => {
+        if (e instanceof DOMException) {
+          const autoPlayFailMsg = `try play before user interact`;
+          console.warn(
+            `[VideoBlock] play video fail(${id}): ${autoPlayFailMsg}`,
+          );
+        } else {
+          return Promise.reject(e);
+        }
+      });
     }
   }, [count]);
 

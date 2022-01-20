@@ -1,14 +1,18 @@
 import { atom, selector } from 'recoil';
 
 import { expandVideoRoomState } from './roomSpace';
+import { StateNamespace } from './type';
+import { createPrefixer } from './utils';
+
+const prefixer = createPrefixer(StateNamespace.AppSidebar);
 
 export const appSidebarVisibleBaseState = atom({
-  key: 'appSidebar_appSidebarVisibleBase',
+  key: prefixer('appSidebarVisibleBase'),
   default: false,
 });
 
 export const appSidebarVisibleState = selector<boolean>({
-  key: 'appSidebar_appSidebarVisible',
+  key: prefixer('appSidebarVisible'),
   get: ({ get }) => get(appSidebarVisibleBaseState),
   set: ({ set }, visible: boolean) => {
     set(appSidebarVisibleBaseState, visible);
@@ -26,6 +30,6 @@ export enum AppSidebarType {
 }
 
 export const activeAppState = atom({
-  key: 'appSidebar_activeApp',
+  key: prefixer('activeApp'),
   default: AppSidebarType.None,
 });

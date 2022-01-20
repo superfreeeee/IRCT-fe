@@ -4,34 +4,38 @@ import { AppType } from '@components/AppIcon/type';
 import { roomBasicInfoFamily } from './room';
 import {
   RoomType,
+  StateNamespace,
   UserBasicInfo,
   UserRoomSpaceFigure,
   UserRoomSpaceInfo,
 } from './type';
 import { TeamData, teamDataFamily } from './team';
 import { RoomSpacePosition, UserState } from './type';
+import { createPrefixer } from './utils';
+
+const prefixer = createPrefixer(StateNamespace.User);
 
 // const currentUserid = 'user_1000'
 export const currentUserIdState = selector<string>({
-  key: 'user_currentUserId',
-  get: () => 'user-1000',
+  key: prefixer('currentUserId'),
+  get: () => 'user-07',
 });
 
 // userId => UserBasicInfo 用户基本信息
 export const userBasicInfoFamily = atomFamily<UserBasicInfo | null, string>({
-  key: 'user_userBasicInfo',
+  key: prefixer('userBasicInfo'),
   default: null,
 });
 
 // userId => currentRoomId
 export const userCurrentRoomIdFamily = atomFamily<string, string>({
-  key: 'user_userCurrentRoomId',
+  key: prefixer('userCurrentRoomId'),
   default: '',
 });
 
 // userId => talkingState 对话状态
 export const userTalkingStateFamily = atomFamily<boolean, string>({
-  key: 'user_userTalking',
+  key: prefixer('userTalkingState'),
   default: false,
 });
 
@@ -41,7 +45,7 @@ interface UserTalkingStateUpdate {
   isTalking: boolean;
 }
 export const userTalkingListState = selector<UserTalkingStateUpdate[]>({
-  key: 'user_userTalkingList',
+  key: prefixer('userTalkingList'),
   get: () => [], // shall get nothing
   set: ({ set }, userUpdateList: UserTalkingStateUpdate[]) => {
     userUpdateList.forEach(({ userId, isTalking }) => {
@@ -52,19 +56,19 @@ export const userTalkingListState = selector<UserTalkingStateUpdate[]>({
 
 // userId => AppType 当前正在使用 App
 export const userUsingAppFamily = atomFamily<AppType, string>({
-  key: 'user_userUsingApp',
+  key: prefixer('userUsingApp'),
   default: AppType.None,
 });
 
 // userId => customBusy state 自定义忙碌状态
 export const userCustomBusyFamily = atomFamily({
-  key: 'user_userCustomBusy',
+  key: prefixer('userCustomBusy'),
   default: false,
 });
 
 // userid => UserState
 export const userStateFamily = selectorFamily<UserState, string>({
-  key: 'user_userState',
+  key: prefixer('userState'),
   get:
     (userId) =>
     ({ get }) => {
@@ -94,7 +98,7 @@ export const userStateFamily = selectorFamily<UserState, string>({
  *   dep: teamDataFamily
  */
 export const currentUserTeamDataState = selector<TeamData>({
-  key: 'user_currentUserInfo',
+  key: prefixer('currentUserTeamData'),
   get: ({ get }) => {
     const uid = get(currentUserIdState); // currentUserId
     return get(teamDataFamily(uid));
@@ -103,13 +107,13 @@ export const currentUserTeamDataState = selector<TeamData>({
 
 // userId => videoVisible 用户视频开放状态
 export const userVideoVisibleFamily = atomFamily<boolean, string>({
-  key: 'user_userVideoVisible',
+  key: prefixer('userVideoVisible'),
   default: true,
 });
 
 // userId => videoVoiceSwitch 用户语音开放状态
 export const userVideoVoiceSwitchFamily = atomFamily<boolean, string>({
-  key: 'user_userVideoVoiceSwitch',
+  key: prefixer('userVideoVoiceSwitch'),
   default: true,
 });
 
@@ -126,7 +130,7 @@ export const userVideoRoomSettingFamily = selectorFamily<
   UserVideoRoomSetting,
   string
 >({
-  key: 'user_userVideoRoomSetting',
+  key: prefixer('userVideoRoomSetting'),
   get:
     (userId) =>
     ({ get }) => {
@@ -143,7 +147,7 @@ export const userRoomSpacePositionFamily = atomFamily<
   RoomSpacePosition,
   string
 >({
-  key: 'user_userRoomPosition',
+  key: prefixer('userRoomSpacePosition'),
   default: [0, 0],
 });
 
@@ -152,7 +156,7 @@ export const userRoomSpaceInfoFamily = selectorFamily<
   UserRoomSpaceInfo,
   string
 >({
-  key: 'user_userRoomSpaceInfo',
+  key: prefixer('userRoomSpaceInfo'),
   get:
     (userId) =>
     ({ get }) => {
@@ -183,7 +187,7 @@ export const userRoomSpaceFigureFamily = selectorFamily<
   UserRoomSpaceFigure,
   string
 >({
-  key: 'user_userRoomSpaceFigure',
+  key: prefixer('userRoomSpaceFigure'),
   get:
     (userId) =>
     ({ get }) => {

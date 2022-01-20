@@ -1,7 +1,11 @@
 import { atom } from 'recoil';
+import { StateNamespace } from '../type';
+import { createPrefixer } from '../utils';
+
+const prefixer = createPrefixer(StateNamespace.CallModal);
 
 export const callModalVisibleState = atom<boolean>({
-  key: 'callModal_callModalVisible',
+  key: prefixer('callModalVisible'),
   default: false,
 });
 
@@ -14,7 +18,7 @@ export interface CallModalInfo {
 }
 
 export const callModalInfoState = atom<CallModalInfo>({
-  key: 'callModal_callModalInfo',
+  key: prefixer('callModalInfo'),
   default: {
     avatar: '',
     userId: '',

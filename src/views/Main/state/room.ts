@@ -1,12 +1,15 @@
 import { atom, atomFamily, selector, selectorFamily } from 'recoil';
 import { resetTalkingState } from '../RoomSpace/SimulationArea/utils';
 import { roomSpaceUserFigureListFamily } from './roomSpace';
-import { RoomType } from './type';
+import { RoomType, StateNamespace } from './type';
 import {
   userCurrentRoomIdFamily,
   userTalkingListState,
   userTalkingStateFamily,
 } from './user';
+import { createPrefixer } from './utils';
+
+const prefixer = createPrefixer(StateNamespace.Room);
 
 export interface RoomBasicInfo {
   id: string;
@@ -16,18 +19,18 @@ export interface RoomBasicInfo {
 }
 // roomId => RoomBasicInfo
 export const roomBasicInfoFamily = atomFamily<RoomBasicInfo, string>({
-  key: 'room_roomBasicInfo',
+  key: prefixer('roomBasicInfo'),
   default: null,
 });
 
 // roomId => meeting room locked
 export const roomLockedFamily = atomFamily<boolean, string>({
-  key: 'room_roomLocked',
+  key: prefixer('roomLocked'),
   default: false,
 });
 
 export const roomIdsBaseState = atom({
-  key: 'room_roomIdsBase',
+  key: prefixer('roomIdsBase'),
   default: [],
 });
 
@@ -37,7 +40,7 @@ export const roomIdsBaseState = atom({
  *   移除房间：修改 user 状态
  */
 export const roomIdsState = selector<string[]>({
-  key: 'room_roomIds',
+  key: prefixer('roomIds'),
   get: ({ get }) => get(roomIdsBaseState),
   set: ({ set, get }, roomIds: string[]) => {
     set(roomIdsBaseState, roomIds);
@@ -62,7 +65,7 @@ export interface RoomData extends RoomBasicInfo {
 
 // roomId => RoomData
 export const roomDataFamily = selectorFamily<RoomData, string>({
-  key: 'room_roomData',
+  key: prefixer('roomData'),
   get:
     (roomId) =>
     ({ get }) => {
@@ -83,7 +86,7 @@ export const roomDataFamily = selectorFamily<RoomData, string>({
 });
 
 export const roomDataListState = selector<RoomData[]>({
-  key: 'room_roomDataList',
+  key: prefixer('roomDataList'),
   get: ({ get }) => {
     const roomIds = get(roomIdsState);
     const roomDataList = roomIds.map((roomId): RoomData => {
@@ -117,7 +120,7 @@ export const roomDataListState = selector<RoomData[]>({
  *   roomId => userId[]
  */
 export const roomUserIdsBaseFamily = atomFamily<string[], string>({
-  key: 'roomSpace_roomUserIdsBase',
+  key: prefixer('roomUserIdsBase'),
   default: [],
 });
 
@@ -125,7 +128,7 @@ export const roomUserIdsBaseFamily = atomFamily<string[], string>({
  * 更新房间用户信息
  */
 export const roomUserIdsFamily = selectorFamily<string[], string>({
-  key: 'roomSpace_roomUserIds',
+  key: prefixer('roomUserIds'),
   get:
     (roomId) =>
     ({ get }) =>

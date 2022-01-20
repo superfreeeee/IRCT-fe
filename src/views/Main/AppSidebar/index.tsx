@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import classNames from 'classnames';
 
 import useClickDetect from '@hooks/useClickDetect';
@@ -10,12 +10,16 @@ import {
 } from '../state/appSidebar';
 import { expandVideoRoomState } from '../state/roomSpace';
 import { AppSidebarContainer } from './styles';
+import { okrPathVisibleState } from '../state/okrPath';
 
 const AppSidebar = () => {
   const setExpandVideoRoom = useSetRecoilState(expandVideoRoomState);
   const [appSidebarVisible, setAppSidebarVisible] = useRecoilState(
     appSidebarVisibleState,
   );
+
+  const okrPathVisible = useRecoilValue(okrPathVisibleState);
+  const visibleWithPath = appSidebarVisible && okrPathVisible;
 
   const [activeApp, setActiveApp] = useRecoilState(activeAppState);
 
@@ -37,7 +41,10 @@ const AppSidebar = () => {
   return (
     <AppSidebarContainer
       ref={containerRef}
-      className={classNames({ isVisible: appSidebarVisible })}
+      className={classNames({
+        isVisible: appSidebarVisible,
+        withPath: visibleWithPath,
+      })}
     >
       {activeApp}
     </AppSidebarContainer>

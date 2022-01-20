@@ -8,6 +8,7 @@ import {
   currentSpaceIdState,
   currentSpaceTypeState,
   expandVideoRoomState,
+  roomSpaceVisibleState,
 } from '../state/roomSpace';
 import {
   currentUserTeamDataState,
@@ -29,20 +30,24 @@ import {
 } from './styles';
 
 const StatusBar = () => {
-  const [expandVideoRoom, setExpandVideoRoom] =
-    useRecoilState(expandVideoRoomState);
-
   /**
    * 当前用户基本信息
    */
   const { id, state, avatar } = useRecoilValue(currentUserTeamDataState);
   const selectedRoomId = useRecoilValue(selectedRoomIdState);
 
+  const roomSpaceVisible = useRecoilValue(roomSpaceVisibleState);
+  const [expandVideoRoom, setExpandVideoRoom] =
+    useRecoilState(expandVideoRoomState);
+
   const currentSpaceType = useRecoilValue(currentSpaceTypeState);
 
-  const inMeeting = !!selectedRoomId;
-  const videoRoomHidden =
-    currentSpaceType === TabOption.Team || !expandVideoRoom;
+  // for render
+  const isInRoom = !!selectedRoomId;
+  const showController =
+    !roomSpaceVisible ||
+    currentSpaceType === TabOption.Team ||
+    !expandVideoRoom;
 
   /**
    * 当前用户视频设定
@@ -95,9 +100,9 @@ const StatusBar = () => {
       </AvatarBlock>
       {/* 下半 */}
       <StatusBarBottom className="bottom">
-        {inMeeting && (
+        {isInRoom && (
           <MeetingActions>
-            {videoRoomHidden && (
+            {showController && (
               <>
                 <MeetingActionBtn
                   className={classNames({ off: !videoVisible })}

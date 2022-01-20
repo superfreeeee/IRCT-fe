@@ -28,9 +28,9 @@ const useClickDetect = (
         cbLive.current(isOuteSide);
       };
 
-      document.addEventListener('click', onDocumentClick);
+      document.addEventListener('click', onDocumentClick, true);
       return () => {
-        document.removeEventListener('click', onDocumentClick);
+        document.removeEventListener('click', onDocumentClick, true);
       };
     }
   }, [active]);

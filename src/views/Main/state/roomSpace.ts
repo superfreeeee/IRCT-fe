@@ -6,6 +6,7 @@ import {
 } from '../RoomSpace/SimulationArea/utils';
 import {
   RoomType,
+  StateNamespace,
   TabOption,
   UserBasicInfo,
   UserRoomSpaceFigure,
@@ -22,15 +23,19 @@ import {
   userRoomSpaceFigureFamily,
   userRoomSpaceInfoFamily,
 } from './user';
-import { DEFAULT_SPACE_ID } from './defaults';
+import { DEFAULT_EXPAND_VIDEO_ROOM, DEFAULT_SPACE_ID } from './defaults';
 import { selectedRoomIdState, selectedRoomTypeState } from './im';
+import { okrPathVisibleState } from './okrPath';
+import { createPrefixer } from './utils';
+
+const prefixer = createPrefixer(StateNamespace.Space);
 
 /**
  * 是否展开 RoomSpace
  */
 export const expandVideoRoomState = atom({
-  key: 'roomSpace_expandVideoRoom',
-  default: true,
+  key: prefixer('expandVideoRoom'),
+  default: DEFAULT_EXPAND_VIDEO_ROOM,
 });
 
 export interface ChatRecord {
@@ -41,12 +46,12 @@ export interface ChatRecord {
 
 // userId/roomId => chat records
 export const chatRecordsFamily = atomFamily<ChatRecord[], string>({
-  key: 'roomSpace_chatRecords',
+  key: prefixer('chatRecords'),
   default: [],
 });
 
 export const lastChatRecordFamily = selectorFamily<ChatRecord, string>({
-  key: 'roomSpace_lastChatRecord',
+  key: prefixer('lastChatRecord'),
   get:
     (spaceId) =>
     ({ get }) => {
@@ -60,7 +65,7 @@ export const lastChatRecordFamily = selectorFamily<ChatRecord, string>({
  */
 export type AllChatRecords = { [spaceId: string]: ChatRecord[] };
 export const allChatRecordsState = selector<AllChatRecords>({
-  key: 'roomSpace_allChatRecords',
+  key: prefixer('allChatRecords'),
   get: ({ get }) => {
     const spaceIds = [...get(teamIdsState), ...get(roomIdsState)];
     const records = spaceIds.reduce((records, nextId) => {
@@ -81,7 +86,7 @@ export interface ChatHistoryRecord extends ChatRecord {
 }
 // userId/roomId => chat history
 export const chatHistoryFamily = selectorFamily<ChatHistoryRecord[], string>({
-  key: 'roomSpace_chatHistory',
+  key: prefixer('chatHistory'),
   get:
     (spaceId) =>
     ({ get }) => {
@@ -97,12 +102,25 @@ export const chatHistoryFamily = selectorFamily<ChatHistoryRecord[], string>({
     },
 });
 
+export const currentSpaceIdBaseState = atom<string>({
+  key: prefixer('currentSpaceIdBase'),
+  default: DEFAULT_SPACE_ID,
+});
+
 /**
  * 当前展示空间
  */
-export const currentSpaceIdState = atom<string>({
-  key: 'roomSpace_currentSpaceType',
-  default: DEFAULT_SPACE_ID,
+export const currentSpaceIdState = selector<string>({
+  key: prefixer('currentSpaceId'),
+  get: ({ get }) => get(currentSpaceIdBaseState),
+  set: ({ set, get }, spaceId: string) => {
+    set(currentSpaceIdBaseState, spaceId);
+
+    // selectedRoomId 修改时，关闭 Path
+    if (get(okrPathVisibleState)) {
+      set(okrPathVisibleState, false);
+    }
+  },
 });
 
 /**
@@ -110,8 +128,16 @@ export const currentSpaceIdState = atom<string>({
  *   dep: currentSpaceIdState
  */
 export const roomSpaceVisibleState = selector<boolean>({
-  key: 'roomSpace_roomSpaceVisible',
-  get: ({ get }) => !!get(currentSpaceIdState),
+  key: prefixer('roomSpaceVisible'),
+  get: ({ get }) => {
+    const okrPathVisible = get(okrPathVisibleState);
+    if (okrPathVisible) {
+      return false;
+    }
+
+    const spaceIdExist = !!get(currentSpaceIdState);
+    return spaceIdExist;
+  },
 });
 
 /**
@@ -119,7 +145,7 @@ export const roomSpaceVisibleState = selector<boolean>({
  *   dep: currentSpaceIdState
  */
 export const currentSpaceTypeState = selector<TabOption>({
-  key: 'roomSpace_currentSpaceData',
+  key: prefixer('currentSpaceType'),
   get: ({ get }) => {
     const spaceId = get(currentSpaceIdState);
     if (!spaceId) {
@@ -146,7 +172,7 @@ export const roomSpaceUserBasicInfoListFamily = selectorFamily<
   UserBasicInfo[],
   string
 >({
-  key: 'roomSpace_roomSpaceUserBasicInfoList',
+  key: prefixer('roomSpaceUserBasicInfoList'),
   get:
     (roomId) =>
     ({ get }) => {
@@ -163,7 +189,7 @@ export const roomSpaceUserSpaceInfoListFamily = selectorFamily<
   UserRoomSpaceInfo[],
   string
 >({
-  key: 'roomSpace_roomSpaceUserSpaceInfoList',
+  key: prefixer('roomSpaceUserSpaceInfoList'),
   get:
     (roomId) =>
     ({ get }) => {
@@ -205,7 +231,7 @@ export const roomSpaceUserFigureListFamily = selectorFamily<
   UserRoomSpaceFigure[],
   string
 >({
-  key: 'roomSpace_roomSpaceUserFigureList',
+  key: prefixer('roomSpaceUserFigureList'),
   get:
     (roomId) =>
     ({ get }) => {
@@ -218,7 +244,7 @@ export const roomSpaceUserFigureListFamily = selectorFamily<
 });
 
 export const nearbyFiguresState = selector<VideoRoomFigure[]>({
-  key: 'roomSpace_nearbyFigures',
+  key: prefixer('nearbyFigures'),
   get: ({ get }) => {
     // Team 空间下为空
     const spaceRoomType = get(currentSpaceTypeState);
@@ -255,7 +281,7 @@ export const nearbyFiguresState = selector<VideoRoomFigure[]>({
  */
 export type AllRoomSpaceInfo = { [roomId: string]: UserRoomSpaceInfo[] };
 export const allRoomSpaceInfoState = selector<AllRoomSpaceInfo>({
-  key: 'roomSpace_allRoomSpaceInfo',
+  key: prefixer('allRoomSpaceInfo'),
   get: ({ get }) => {
     const roomIds = get(roomIdsState);
     const allInfo = roomIds.reduce((allInfo: AllRoomSpaceInfo, nextId) => {

@@ -1,3 +1,17 @@
+export enum StateNamespace {
+  IM = 'im',
+  User = 'user',
+  Room = 'room',
+  Team = 'team',
+  Space = 'roomSpace',
+  AppSidebar = 'appSidebar',
+  OKRPath = 'okrPath',
+
+  CallModal = 'callModal',
+  CreateMeetingModal = 'createMeetingModal',
+  SelectUserModal = 'selectUserModal',
+}
+
 // ========== enum 枚举类型 ==========
 export enum TabOption {
   Room = 'Room',

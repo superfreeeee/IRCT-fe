@@ -31,7 +31,7 @@ import { AllChatRecords, AllRoomSpaceInfo } from './state/roomSpace';
 
 export const initTeamDataList: TeamData[] = [
   {
-    id: 'user-1000',
+    id: 'user-07',
     avatar: user1000Avatar,
     name: 'San',
     state: UserState.Idle,
@@ -40,7 +40,7 @@ export const initTeamDataList: TeamData[] = [
     // videoUrl: SanVideoUrl,
   },
   {
-    id: 'user-0',
+    id: 'user-01',
     avatar: user0Avatar,
     name: 'Jojo Zhao',
     state: UserState.Idle,
@@ -48,7 +48,7 @@ export const initTeamDataList: TeamData[] = [
     isGroup: false,
   },
   {
-    id: 'user-1',
+    id: 'user-08',
     avatar: user1Avatar,
     name: 'Tingting',
     state: UserState.Talking,
@@ -57,7 +57,7 @@ export const initTeamDataList: TeamData[] = [
     isGroup: false,
   },
   {
-    id: 'user-2',
+    id: 'user-06',
     avatar: user2Avatar,
     name: 'Xin Liu',
     state: UserState.Busy,
@@ -66,13 +66,13 @@ export const initTeamDataList: TeamData[] = [
     isGroup: false,
   },
   {
-    id: 'user-3',
+    id: 'group-01',
     avatar: graphic1Avatar,
     name: 'Doc PM Group',
     isGroup: true,
   },
   {
-    id: 'user-5',
+    id: 'user-09',
     avatar: user5Avatar,
     name: 'Lan',
     state: UserState.Busy,
@@ -81,13 +81,13 @@ export const initTeamDataList: TeamData[] = [
     isGroup: false,
   },
   {
-    id: 'user-4',
+    id: 'group-02',
     avatar: graphic2Avatar,
     name: 'Project Alpha Group',
     isGroup: true,
   },
   {
-    id: 'user-9',
+    id: 'user-05',
     avatar: user9Avatar,
     name: 'Shu ting',
     state: UserState.Busy,
@@ -96,7 +96,7 @@ export const initTeamDataList: TeamData[] = [
     isGroup: false,
   },
   {
-    id: 'user-12',
+    id: 'user-02',
     avatar: user12Avatar,
     name: 'JiaJia',
     state: UserState.Busy,
@@ -105,7 +105,7 @@ export const initTeamDataList: TeamData[] = [
     isGroup: false,
   },
   {
-    id: 'user-13',
+    id: 'user-03',
     avatar: user13Avatar,
     name: 'Yu hang',
     state: UserState.Busy,
@@ -115,7 +115,7 @@ export const initTeamDataList: TeamData[] = [
     videoUrl: SanVideoUrl,
   },
   {
-    id: 'user-14',
+    id: 'user-04',
     avatar: user14Avatar,
     name: 'Tian tian',
     state: UserState.Busy,
@@ -124,7 +124,7 @@ export const initTeamDataList: TeamData[] = [
     isGroup: false,
   },
   {
-    id: 'user-15',
+    id: 'user-10',
     avatar: user15Avatar,
     name: 'Lei',
     state: UserState.Busy,
@@ -132,19 +132,19 @@ export const initTeamDataList: TeamData[] = [
     isGroup: false,
   },
   {
-    id: 'user-6',
+    id: 'group-003',
     avatar: graphic2Avatar,
     name: 'Test 1 - Project Alpha Group LongLongLongLongNmae',
     isGroup: true,
   },
   {
-    id: 'user-10',
+    id: 'group-004',
     avatar: graphic2Avatar,
     name: 'Test 2 - Project Alpha Group LongLongLongLongNmae',
     isGroup: true,
   },
   {
-    id: 'user-11',
+    id: 'user-001',
     avatar: graphic2Avatar,
     name: 'Test 3 - Noise User with LongLongLongLongNmae',
     state: UserState.Talking,
@@ -212,112 +212,112 @@ export const initRoomDataList: RoomData[] = [
 ];
 
 export const initAllChatRecords: AllChatRecords = {
-  'user-0': [
+  'user-01': [
     {
-      userId: 'user-1000',
+      userId: 'user-07',
       text: 'I want to find you to understand some of the details of the relevant PRD, it will not be too long',
       createTime: '12:27',
     },
     {
-      userId: 'user-0',
+      userId: 'user-01',
       text: "Ok let's talk, I'm at Coffee Bar now, Plz follow me",
       createTime: '12:30',
     },
   ],
-  'user-1': [
+  'user-08': [
     {
-      userId: 'user-1000',
+      userId: 'user-07',
       text: 'How is your design going?',
       createTime: '11:44',
     },
     {
-      userId: 'user-1',
+      userId: 'user-08',
       text: 'Not bad, you can take a look at my recent goals on Path, and you can talk about it later',
       createTime: '11:45',
     },
   ],
-  'user-2': [
+  'user-06': [
     {
-      userId: 'user-1000',
+      userId: 'user-07',
       text: 'Hi, are u the PM for Project A?',
       createTime: '11:33',
     },
     {
-      userId: 'user-2',
+      userId: 'user-06',
       text: 'Yes, is there any problem?',
       createTime: '11:34',
     },
   ],
-  'user-3': [
+  'group-01': [
     {
-      userId: 'user-12',
+      userId: 'user-02',
       text: 'Please all PM give the ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ?',
       createTime: '14:01',
     },
   ],
-  'user-5': [
+  'user-09': [
     {
-      userId: 'user-1000',
+      userId: 'user-07',
       text: 'This software is so much fun',
       createTime: '11:14',
     },
     {
-      userId: 'user-5',
+      userId: 'user-09',
       text: 'Lollllll',
       createTime: '11:15',
     },
   ],
-  'user-9': [
+  'user-05': [
     {
-      userId: 'user-9',
+      userId: 'user-05',
       text: 'get lunch together?',
       createTime: '10:23',
     },
   ],
-  'user-12': [
+  'user-02': [
     {
-      userId: 'user-1000',
+      userId: 'user-07',
       text: 'I have some questions I would like to consult',
       createTime: '10:11',
     },
     {
-      userId: 'user-12',
+      userId: 'user-02',
       text: 'We can have a conversation...',
       createTime: '10:12',
     },
   ],
-  'user-13': [
+  'user-03': [
     {
-      userId: 'user-1000',
+      userId: 'user-07',
       text: "Sorry, I can't go to the afternoon meeting later",
       createTime: '09:33',
     },
     {
-      userId: 'user-13',
+      userId: 'user-03',
       text: 'Ok, Thats fine',
       createTime: '09:34',
     },
   ],
-  'user-14': [
+  'user-04': [
     {
-      userId: 'user-1000',
+      userId: 'user-07',
       text: 'Where are you, there is a technical question you would like to ask',
       createTime: '10:54',
     },
     {
-      userId: 'user-14',
+      userId: 'user-04',
       text: 'Something is wrong with my computer and I checked it here',
       createTime: '10:55',
     },
   ],
-  'user-15': [
+  'user-10': [
     {
-      userId: 'user-1000',
+      userId: 'user-07',
       text: "I see you this month Objective and feel like there's some place to collaborate",
       createTime: '13:20',
     },
     {
-      userId: 'user-15',
+      userId: 'user-10',
       text: 'No problem, wait until I finish updating the code café to see',
       createTime: '13:22',
     },
@@ -327,14 +327,14 @@ export const initAllChatRecords: AllChatRecords = {
 export const initAllRoomSpaceInfo: AllRoomSpaceInfo = {
   'room-1': [
     {
-      id: 'user-0',
+      id: 'user-01',
       state: UserState.Idle,
       position: [80, 80],
       isTalking: true,
       mute: false,
     },
     {
-      id: 'user-15',
+      id: 'user-10',
       state: UserState.Busy,
       position: [220, 150],
       isTalking: true,
@@ -343,14 +343,14 @@ export const initAllRoomSpaceInfo: AllRoomSpaceInfo = {
   ],
   'room-5': [
     {
-      id: 'user-1',
+      id: 'user-08',
       state: UserState.Talking,
       position: [80, 80],
       isTalking: true,
       mute: false,
     },
     {
-      id: 'user-5',
+      id: 'user-09',
       state: UserState.Busy,
       position: [220, 150],
       isTalking: true,
@@ -359,14 +359,14 @@ export const initAllRoomSpaceInfo: AllRoomSpaceInfo = {
   ],
   'room-11': [
     {
-      id: 'user-2',
+      id: 'user-06',
       state: UserState.Busy,
       position: [80, 80],
       isTalking: true,
       mute: false,
     },
     {
-      id: 'user-9',
+      id: 'user-05',
       state: UserState.Busy,
       position: [220, 150],
       isTalking: true,
@@ -375,7 +375,7 @@ export const initAllRoomSpaceInfo: AllRoomSpaceInfo = {
   ],
   'room-4': [
     {
-      id: 'user-14',
+      id: 'user-04',
       state: UserState.Busy,
       position: [220, 150],
       isTalking: true,
@@ -384,21 +384,21 @@ export const initAllRoomSpaceInfo: AllRoomSpaceInfo = {
   ],
   'room-0': [
     {
-      id: 'user-1000',
+      id: 'user-07',
       state: UserState.Idle,
       position: [150, 150],
       isTalking: true,
       mute: false,
     },
     {
-      id: 'user-12',
+      id: 'user-02',
       state: UserState.Busy,
       position: [80, 80],
       isTalking: true,
       mute: false,
     },
     {
-      id: 'user-13',
+      id: 'user-03',
       state: UserState.Busy,
       position: [220, 150],
       isTalking: true,
@@ -408,8 +408,8 @@ export const initAllRoomSpaceInfo: AllRoomSpaceInfo = {
 };
 
 export const invitationAcceptList: string[] = [
-  'user-2', // Xin Liu
-  'user-9', // Shu ting
+  'user-06', // Xin Liu
+  'user-05', // Shu ting
 ];
 
 export const collaborateOuterLinkMap: { [type in AppType]: string } = {

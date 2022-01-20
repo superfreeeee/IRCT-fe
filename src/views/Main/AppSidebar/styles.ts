@@ -1,10 +1,6 @@
 import styled from 'styled-components';
 
 export const AppSidebarContainer = styled.div`
-  /* position: fixed; */
-  /* right: 0; */
-  /* top: 0; */
-  /* min-width: 300px; */
   flex: 1;
   display: none;
   height: calc(100% - 30px);
@@ -21,5 +17,12 @@ export const AppSidebarContainer = styled.div`
   &.isVisible {
     display: block;
     transform: translateX(0);
+  }
+
+  &.withPath {
+    position: fixed;
+    right: 0;
+    top: 0;
+    min-width: 30%;
   }
 `;

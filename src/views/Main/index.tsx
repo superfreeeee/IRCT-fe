@@ -20,6 +20,8 @@ import {
 import CreateMeetingModal from './modals/CreateMeetingModal';
 import SelectUserModal from './modals/SelectUserModal';
 import Background from './Background';
+import OKRPath from './OKRPath';
+import OKRList from './OKRList';
 
 const useInit = () => {
   const setTeamDataList = useSetRecoilState(teamDataListState);
@@ -47,11 +49,22 @@ const Main = () => {
 
   return (
     <MainContainer>
+      {/* // ! left */}
       <StatusBar />
       <IM />
       <RoomSpace />
+
+      {/* // ! center */}
+      <OKRPath />
+      <Background />
+
+      {/* // ! right */}
+      {/* OKR Path 页面右侧列表 */}
+      <OKRList />
+      {/* 应用侧边栏(Date, Doc, Todo) */}
       <AppSidebar />
-      {/* <Background /> */}
+
+      {/* // ! overhead */}
       {/* 请求语音 Modal */}
       <CallModal />
       {/* 创建永久会议室 Modal */}

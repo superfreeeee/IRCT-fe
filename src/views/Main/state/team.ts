@@ -7,7 +7,10 @@ import {
   userStateFamily,
   userUsingAppFamily,
 } from './user';
-import { UserBasicInfo, UserState } from './type';
+import { StateNamespace, UserBasicInfo, UserState } from './type';
+import { createPrefixer } from './utils';
+
+const prefixer = createPrefixer(StateNamespace.Team);
 
 export interface TeamData extends UserBasicInfo {
   state?: UserState;
@@ -16,7 +19,7 @@ export interface TeamData extends UserBasicInfo {
 }
 // userId => TeamData
 export const teamDataFamily = selectorFamily<TeamData, string>({
-  key: 'team_teamData',
+  key: prefixer('teamData'),
   get:
     (userId) =>
     ({ get }) => {
@@ -47,12 +50,12 @@ export const teamDataFamily = selectorFamily<TeamData, string>({
 
 // 当前 team 列表中数据
 export const teamIdsState = atom<string[]>({
-  key: 'team_teamIds',
+  key: prefixer('teamIds'),
   default: [],
 });
 
 export const teamDataListState = selector<TeamData[]>({
-  key: 'team_teamDataList',
+  key: prefixer('teamDataList'),
   get: ({ get }) => {
     const teamIds = get(teamIdsState);
     const teamDataList = teamIds.map((teamId) => get(teamDataFamily(teamId)));

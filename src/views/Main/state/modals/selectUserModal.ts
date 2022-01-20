@@ -1,12 +1,14 @@
 import { atom, selector } from 'recoil';
 import { roomUserIdsBaseFamily } from '../room';
 import { teamIdsState } from '../team';
+import { StateNamespace } from '../type';
 import { userBasicInfoFamily } from '../user';
+import { createPrefixer } from '../utils';
 
-const PREFIX = 'selectUserModal';
+const prefixer = createPrefixer(StateNamespace.SelectUserModal);
 
 export const selectUserModalVisibleState = atom<boolean>({
-  key: `${PREFIX}_selectUserModalVisible`,
+  key: prefixer('selectUserModalVisible'),
   default: false,
 });
 
@@ -21,32 +23,46 @@ interface SelectUserModalPosition {
   top: number | string;
 }
 export const selectUserModalPositionState = atom<SelectUserModalPosition>({
-  key: `${PREFIX}_selectUserModalPosition`,
+  key: prefixer('selectUserModalPosition'),
   default: initPosition,
 });
 
 export const selectUserModalSelectableState = atom<boolean>({
-  key: `${PREFIX}_selectUserModalSelectable`,
+  key: prefixer('selectUserModalSelectable'),
   default: true,
 });
 
 export const selectUserModalSelectedUserIdState = atom<string>({
-  key: `${PREFIX}_selectUserModalSelectedUserId`,
+  key: prefixer('selectUserModalSelectedUserId'),
   default: '',
 });
 
 // roomId
 export const selectUserModalCandidateScopeState = atom<string>({
-  key: `${PREFIX}_selectUserModalCandidateScope`,
+  key: prefixer('selectUserModalCandidateScope'),
   default: '',
 });
 
 export const selectUserModalCandidateUserIdsState = atom<string[]>({
-  key: `${PREFIX}_selectUserModalCandidateUserIds`,
-  // default: [],
-  default: ['user-0', 'user-1000', 'user-5', 'user-9'],
+  key: prefixer('selectUserModalCandidateUserIds'),
+  default: [],
 });
 
+/**
+ * 选人组件控制器模块
+ * 对于 getter
+ *   get: { visible, selectedUserId, candidateUsers }
+ *   set: {
+ *     visible: true,
+ *     selectable?,
+ *     scopeRoomId
+ *     position
+ *   } | {
+ *     visible: false,
+ *     selectable?,
+ *     selectedUserId
+ *   }
+ */
 interface ShowSelectUserModalInfo {
   visible: boolean;
   position?: SelectUserModalPosition;
@@ -57,7 +73,7 @@ interface ShowSelectUserModalInfo {
 }
 export const selectUserModalControllerInfoState =
   selector<ShowSelectUserModalInfo>({
-    key: `${PREFIX}_selectUserModalControllerInfo`,
+    key: prefixer('selectUserModalControllerInfo'),
     get: ({ get }) => {
       const visible = get(selectUserModalVisibleState);
       const position = get(selectUserModalPositionState);

@@ -1,7 +1,11 @@
 import { atom } from 'recoil';
+import { StateNamespace } from '../type';
+import { createPrefixer } from '../utils';
+
+const prefixer = createPrefixer(StateNamespace.CreateMeetingModal);
 
 export const createMeetingModalVisibleState = atom<boolean>({
-  key: 'createMeetingModal_createMeetingModalVisible',
+  key: prefixer('createMeetingModalVisible'),
   default: false,
 });
 
@@ -9,7 +13,7 @@ export interface CreateMeetingModalInfo {
   roomId: string;
 }
 export const createMeetingModalInfoState = atom<CreateMeetingModalInfo>({
-  key: 'createMeetingModal_createMeetingModalInfo',
+  key: prefixer('createMeetingModalInfo'),
   default: {
     roomId: '',
   },

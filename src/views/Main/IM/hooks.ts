@@ -9,6 +9,7 @@ import { teamDataListState } from '../state/team';
 import { roomDataListState } from '../state/room';
 import { currentUserIdState } from '../state/user';
 import { currentSpaceIdState } from '../state/roomSpace';
+import { okrPathVisibleState } from '../state/okrPath';
 
 /**
  * Tabs
@@ -70,9 +71,9 @@ export const useMenu = () => {
    * 点击目录切换
    */
   const setCurrentSpaceId = useSetRecoilState(currentSpaceIdState);
-  const onItemClick = useMemo(() => {
-    //  spaceId: string
-    return (data: MenuData) => {
+  const setOKRPathVisible = useSetRecoilState(okrPathVisibleState);
+  const onItemClick = useCallback(
+    (data: MenuData) => {
       // 点击 MenuItem 只对 Team 有效
       if (currentTab === TabOption.Team) {
         const { id: teamId } = data;
@@ -84,8 +85,11 @@ export const useMenu = () => {
           setCurrentSpaceId(teamId);
         }
       }
-    };
-  }, [currentTab, selectedId]);
+      // 点击任意 item 关闭 Path 页面
+      setOKRPathVisible(false);
+    },
+    [currentTab, selectedId],
+  );
 
   return {
     menuList,
