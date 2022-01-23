@@ -1,6 +1,169 @@
 [
-  {
-    "projectId": 3,
-    "userId": 
-  }
+  { "projectId": 1, "userId": "user-10", "duty": "设计" },
+  { "projectId": 1, "userId": "user-08", "duty": "设计" },
+  { "projectId": 1, "userId": "user-01", "duty": "产品" },
+  { "projectId": 1, "userId": "user-02", "duty": "产品" },
+  { "projectId": 1, "userId": "user-06", "duty": "研发" },
+  { "projectId": 1, "userId": "user-04", "duty": "研发" },
+
+  { "projectId": 2, "userId": "user-10", "duty": "设计" },
+  { "projectId": 2, "userId": "user-08", "duty": "设计" },
+  { "projectId": 2, "userId": "user-01", "duty": "产品" },
+  { "projectId": 2, "userId": "user-02", "duty": "产品" },
+  { "projectId": 2, "userId": "user-05", "duty": "研发" },
+  { "projectId": 2, "userId": "user-04", "duty": "研发" },
+
+  { "projectId": 3, "userId": "user-10", "duty": "设计" },
+  { "projectId": 3, "userId": "user-08", "duty": "设计" },
+  { "projectId": 3, "userId": "user-01", "duty": "产品" },
+  { "projectId": 3, "userId": "user-02", "duty": "产品" },
+  { "projectId": 3, "userId": "user-05", "duty": "研发" },
+  { "projectId": 3, "userId": "user-04", "duty": "研发" },
+
+  { "projectId": 4, "userId": "user-10", "duty": "设计" },
+  { "projectId": 4, "userId": "user-08", "duty": "设计" },
+  { "projectId": 4, "userId": "user-01", "duty": "产品" },
+  { "projectId": 4, "userId": "user-02", "duty": "产品" },
+  { "projectId": 4, "userId": "user-05", "duty": "研发" },
+  { "projectId": 4, "userId": "user-04", "duty": "研发" },
+
+  { "projectId": 5, "userId": "user-10", "duty": "设计" },
+  { "projectId": 5, "userId": "user-08", "duty": "设计" },
+  { "projectId": 5, "userId": "user-01", "duty": "产品" },
+  { "projectId": 5, "userId": "user-02", "duty": "产品" },
+  { "projectId": 5, "userId": "user-06", "duty": "研发" },
+  { "projectId": 5, "userId": "user-05", "duty": "研发" },
+  { "projectId": 5, "userId": "user-04", "duty": "研发" },
+
+  { "projectId": 6, "userId": "user-10", "duty": "设计" },
+  { "projectId": 6, "userId": "user-08", "duty": "设计" },
+  { "projectId": 6, "userId": "user-01", "duty": "产品" },
+  { "projectId": 6, "userId": "user-02", "duty": "产品" },
+  { "projectId": 6, "userId": "user-06", "duty": "研发" },
+  { "projectId": 6, "userId": "user-05", "duty": "研发" },
+  { "projectId": 6, "userId": "user-04", "duty": "研发" },
+
+  { "projectId": 7, "userId": "user-10", "duty": "设计" },
+  { "projectId": 7, "userId": "user-08", "duty": "设计" },
+  { "projectId": 7, "userId": "user-01", "duty": "产品" },
+  { "projectId": 7, "userId": "user-02", "duty": "产品" },
+  { "projectId": 7, "userId": "user-06", "duty": "研发" },
+  { "projectId": 7, "userId": "user-05", "duty": "研发" },
+  { "projectId": 7, "userId": "user-04", "duty": "研发" },
+
+  { "projectId": 8, "userId": "user-10", "duty": "设计" },
+  { "projectId": 8, "userId": "user-08", "duty": "设计" },
+  { "projectId": 8, "userId": "user-01", "duty": "产品" },
+  { "projectId": 8, "userId": "user-02", "duty": "产品" },
+  { "projectId": 8, "userId": "user-05", "duty": "研发" },
+  { "projectId": 8, "userId": "user-04", "duty": "研发" },
+
+  { "projectId": 9, "userId": "user-10", "duty": "设计" },
+  { "projectId": 9, "userId": "user-08", "duty": "设计" },
+  { "projectId": 9, "userId": "user-01", "duty": "产品" },
+  { "projectId": 9, "userId": "user-02", "duty": "产品" },
+  { "projectId": 9, "userId": "user-05", "duty": "研发" },
+  { "projectId": 9, "userId": "user-04", "duty": "研发" },
+
+  { "projectId": 10, "userId": "user-09", "duty": "设计" },
+  { "projectId": 10, "userId": "user-08", "duty": "设计" },
+  { "projectId": 10, "userId": "user-01", "duty": "产品" },
+  { "projectId": 10, "userId": "user-02", "duty": "产品" },
+  { "projectId": 10, "userId": "user-06", "duty": "研发" },
+  { "projectId": 10, "userId": "user-07", "duty": "研发" },
+  { "projectId": 10, "userId": "user-04", "duty": "研发" },
+
+  { "projectId": 11, "userId": "user-09", "duty": "设计" },
+  { "projectId": 11, "userId": "user-08", "duty": "设计" },
+  { "projectId": 11, "userId": "user-01", "duty": "产品" },
+  { "projectId": 11, "userId": "user-02", "duty": "产品" },
+  { "projectId": 11, "userId": "user-06", "duty": "研发" },
+  { "projectId": 11, "userId": "user-07", "duty": "研发" },
+  { "projectId": 11, "userId": "user-04", "duty": "研发" },
+
+  { "projectId": 12, "userId": "user-09", "duty": "设计" },
+  { "projectId": 12, "userId": "user-08", "duty": "设计" },
+  { "projectId": 12, "userId": "user-01", "duty": "产品" },
+  { "projectId": 12, "userId": "user-02", "duty": "产品" },
+  { "projectId": 12, "userId": "user-06", "duty": "研发" },
+  { "projectId": 12, "userId": "user-07", "duty": "研发" },
+  { "projectId": 12, "userId": "user-04", "duty": "研发" },
+
+  { "projectId": 13, "userId": "user-01", "duty": "产品" },
+  { "projectId": 13, "userId": "user-02", "duty": "产品" },
+  { "projectId": 13, "userId": "user-07", "duty": "研发" },
+  { "projectId": 13, "userId": "user-04", "duty": "研发" },
+
+  { "projectId": 14, "userId": "user-01", "duty": "产品" },
+  { "projectId": 14, "userId": "user-02", "duty": "产品" },
+  { "projectId": 14, "userId": "user-07", "duty": "研发" },
+  { "projectId": 14, "userId": "user-04", "duty": "研发" },
+
+  { "projectId": 15, "userId": "user-10", "duty": "设计" },
+  { "projectId": 15, "userId": "user-08", "duty": "设计" },
+  { "projectId": 15, "userId": "user-03", "duty": "产品" },
+  { "projectId": 15, "userId": "user-02", "duty": "产品" },
+  { "projectId": 15, "userId": "user-05", "duty": "研发" },
+  { "projectId": 15, "userId": "user-04", "duty": "研发" },
+
+  { "projectId": 16, "userId": "user-10", "duty": "设计" },
+  { "projectId": 16, "userId": "user-08", "duty": "设计" },
+  { "projectId": 16, "userId": "user-03", "duty": "产品" },
+  { "projectId": 16, "userId": "user-02", "duty": "产品" },
+  { "projectId": 16, "userId": "user-05", "duty": "研发" },
+  { "projectId": 16, "userId": "user-04", "duty": "研发" },
+
+  { "projectId": 17, "userId": "user-10", "duty": "设计" },
+  { "projectId": 17, "userId": "user-08", "duty": "设计" },
+  { "projectId": 17, "userId": "user-03", "duty": "产品" },
+  { "projectId": 17, "userId": "user-02", "duty": "产品" },
+  { "projectId": 17, "userId": "user-05", "duty": "研发" },
+  { "projectId": 17, "userId": "user-04", "duty": "研发" },
+
+  { "projectId": 18, "userId": "user-03", "duty": "产品" },
+  { "projectId": 18, "userId": "user-02", "duty": "产品" },
+  { "projectId": 18, "userId": "user-06", "duty": "研发" },
+
+  { "projectId": 19, "userId": "user-03", "duty": "产品" },
+  { "projectId": 19, "userId": "user-02", "duty": "产品" },
+  { "projectId": 19, "userId": "user-06", "duty": "研发" },
+
+  { "projectId": 20, "userId": "user-03", "duty": "产品" },
+  { "projectId": 20, "userId": "user-02", "duty": "产品" },
+  { "projectId": 20, "userId": "user-06", "duty": "研发" },
+
+  { "projectId": 21, "userId": "user-05", "duty": "研发" },
+  { "projectId": 21, "userId": "user-04", "duty": "研发" },
+
+  { "projectId": 22, "userId": "user-05", "duty": "研发" },
+  { "projectId": 22, "userId": "user-04", "duty": "研发" },
+
+  { "projectId": 23, "userId": "user-06", "duty": "研发" },
+  { "projectId": 23, "userId": "user-04", "duty": "研发" },
+
+  { "projectId": 24, "userId": "user-06", "duty": "研发" },
+  { "projectId": 24, "userId": "user-04", "duty": "研发" },
+
+  { "projectId": 25, "userId": "user-06", "duty": "研发" },
+  { "projectId": 25, "userId": "user-04", "duty": "研发" },
+
+  { "projectId": 26, "userId": "user-06", "duty": "研发" },
+  { "projectId": 26, "userId": "user-04", "duty": "研发" },
+
+  { "projectId": 27, "userId": "user-07", "duty": "研发" },
+  { "projectId": 27, "userId": "user-04", "duty": "研发" },
+
+  { "projectId": 28, "userId": "user-07", "duty": "研发" },
+  { "projectId": 28, "userId": "user-04", "duty": "研发" },
+
+  { "projectId": 29, "userId": "user-09", "duty": "设计" },
+  { "projectId": 29, "userId": "user-08", "duty": "设计" },
+
+  { "projectId": 30, "userId": "user-09", "duty": "设计" },
+  { "projectId": 30, "userId": "user-08", "duty": "设计" },
+
+  { "projectId": 31, "userId": "user-10", "duty": "设计" },
+  { "projectId": 31, "userId": "user-08", "duty": "设计" },
+
+  { "projectId": 100, "userId": "user-00", "duty": "--" }
 ]

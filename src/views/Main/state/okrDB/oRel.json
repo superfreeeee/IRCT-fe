@@ -1,14 +1,56 @@
 [
-  {
-    "OId": 8,
-    "upperOId": 4
-  },
-  {
-    "OId": 8,
-    "upperOId": 1
-  },
-  {
-    "OId": 8,
-    "upperOId": 6
-  }
+  { "OId": 1, "upperOId": 4 },
+
+  { "OId": 2, "upperOId": 4 },
+
+  { "OId": 3, "upperOId": 5 },
+
+  { "OId": 6, "upperOId": 4 },
+
+  { "OId": 7, "upperOId": 4 },
+
+  { "OId": 8, "upperOId": 4 },
+  { "OId": 8, "upperOId": 1 },
+  { "OId": 8, "upperOId": 6 },
+
+  { "OId": 9, "upperOId": 5 },
+  { "OId": 9, "upperOId": 3 },
+
+  { "OId": 10, "upperOId": 8 },
+  { "OId": 10, "upperOId": 1 },
+
+  { "OId": 11, "upperOId": 8 },
+  { "OId": 11, "upperOId": 1 },
+  { "OId": 11, "upperOId": 2 },
+
+  { "OId": 12, "upperOId": 9 },
+  { "OId": 12, "upperOId": 3 },
+
+  { "OId": 13, "upperOId": 8 },
+  { "OId": 13, "upperOId": 1 },
+
+  { "OId": 14, "upperOId": 9 },
+  { "OId": 14, "upperOId": 3 },
+
+  { "OId": 15, "upperOId": 9 },
+  { "OId": 15, "upperOId": 3 },
+
+  { "OId": 16, "upperOId": 5 },
+
+  { "OId": 17, "upperOId": 4 },
+
+  { "OId": 18, "upperOId": 16 },
+  { "OId": 18, "upperOId": 3 },
+
+  { "OId": 19, "upperOId": 16 },
+
+  { "OId": 20, "upperOId": 17 },
+  { "OId": 20, "upperOId": 1 },
+
+  { "OId": 21, "upperOId": 1 },
+  { "OId": 21, "upperOId": 2 },
+  { "OId": 21, "upperOId": 6 },
+  { "OId": 21, "upperOId": 17 },
+
+  { "OId": 100, "upperOId": 100 }
 ]

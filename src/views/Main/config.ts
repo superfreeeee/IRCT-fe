@@ -9,6 +9,7 @@ import user13Avatar from '@assets/img/user_13.png';
 import user14Avatar from '@assets/img/user_14.png';
 import user15Avatar from '@assets/img/user_15.png';
 import user1000Avatar from '@assets/img/user_1000.png';
+import user666Avatar from '@assets/img/user_666.jpeg';
 import graphic1Avatar from '@assets/img/graphic_1.png';
 import graphic2Avatar from '@assets/img/graphic_2.png';
 
@@ -144,10 +145,10 @@ export const initTeamDataList: TeamData[] = [
     isGroup: true,
   },
   {
-    id: 'user-001',
-    avatar: graphic2Avatar,
-    name: 'Test 3 - Noise User with LongLongLongLongNmae',
-    state: UserState.Talking,
+    id: 'user-666',
+    avatar: user666Avatar,
+    name: 'CEO',
+    state: UserState.Idle,
     isGroup: false,
   },
 ];

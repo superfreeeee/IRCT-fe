@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import StatusBar from './StatusBar';
 import IM from './IM';
@@ -22,6 +22,7 @@ import SelectUserModal from './modals/SelectUserModal';
 import Background from './Background';
 import OKRPath from './OKRPath';
 import OKRList from './OKRList';
+import { okrPathVisibleState } from './state/okrPath';
 
 const useInit = () => {
   const setTeamDataList = useSetRecoilState(teamDataListState);
@@ -45,6 +46,8 @@ const useInit = () => {
 const Main = () => {
   useInit();
 
+  const okrPathVisible = useRecoilValue(okrPathVisibleState);
+
   console.log(`>>>>>>>> render Main`);
 
   return (
@@ -52,7 +55,7 @@ const Main = () => {
       {/* // ! left */}
       <StatusBar />
       <IM />
-      <RoomSpace />
+      {!okrPathVisible && <RoomSpace />}
 
       {/* // ! center */}
       <OKRPath />

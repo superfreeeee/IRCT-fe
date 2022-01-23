@@ -1,0 +1,162 @@
+[
+  { "projectId": 1, "KRId": 1 },
+  { "projectId": 1, "KRId": 18 },
+  { "projectId": 1, "KRId": 33 },
+  { "projectId": 1, "KRId": 52 },
+  { "projectId": 1, "KRId": 43 },
+  { "projectId": 1, "KRId": 9 },
+
+  { "projectId": 2, "KRId": 2 },
+  { "projectId": 2, "KRId": 19 },
+  { "projectId": 2, "KRId": 26 },
+  { "projectId": 2, "KRId": 51 },
+  { "projectId": 2, "KRId": 43 },
+  { "projectId": 2, "KRId": 9 },
+
+  { "projectId": 3, "KRId": 2 },
+  { "projectId": 3, "KRId": 19 },
+  { "projectId": 3, "KRId": 27 },
+  { "projectId": 3, "KRId": 51 },
+  { "projectId": 3, "KRId": 43 },
+  { "projectId": 3, "KRId": 9 },
+
+  { "projectId": 4, "KRId": 2 },
+  { "projectId": 4, "KRId": 19 },
+  { "projectId": 4, "KRId": 27 },
+  { "projectId": 4, "KRId": 51 },
+  { "projectId": 4, "KRId": 43 },
+  { "projectId": 4, "KRId": 9 },
+
+  { "projectId": 5, "KRId": 3 },
+  { "projectId": 5, "KRId": 25 },
+  { "projectId": 5, "KRId": 31 },
+  { "projectId": 5, "KRId": 52 },
+  { "projectId": 5, "KRId": 43 },
+  { "projectId": 5, "KRId": 9 },
+
+  { "projectId": 6, "KRId": 3 },
+  { "projectId": 6, "KRId": 25 },
+  { "projectId": 6, "KRId": 31 },
+  { "projectId": 6, "KRId": 52 },
+  { "projectId": 6, "KRId": 43 },
+  { "projectId": 6, "KRId": 9 },
+
+  { "projectId": 7, "KRId": 3 },
+  { "projectId": 7, "KRId": 25 },
+  { "projectId": 7, "KRId": 32 },
+  { "projectId": 7, "KRId": 52 },
+  { "projectId": 7, "KRId": 43 },
+  { "projectId": 7, "KRId": 9 },
+
+  { "projectId": 8, "KRId": 4 },
+  { "projectId": 8, "KRId": 28 },
+  { "projectId": 8, "KRId": 18 },
+  { "projectId": 8, "KRId": 53 },
+  { "projectId": 8, "KRId": 43 },
+  { "projectId": 8, "KRId": 10 },
+
+  { "projectId": 9, "KRId": 5 },
+  { "projectId": 9, "KRId": 28 },
+  { "projectId": 9, "KRId": 18 },
+  { "projectId": 9, "KRId": 53 },
+  { "projectId": 9, "KRId": 43 },
+  { "projectId": 9, "KRId": 10 },
+
+  { "projectId": 10, "KRId": 6 },
+  { "projectId": 10, "KRId": 29 },
+  { "projectId": 10, "KRId": 34 },
+  { "projectId": 10, "KRId": 22 },
+  { "projectId": 10, "KRId": 44 },
+  { "projectId": 10, "KRId": 12 },
+
+  { "projectId": 11, "KRId": 6 },
+  { "projectId": 11, "KRId": 29 },
+  { "projectId": 11, "KRId": 34 },
+  { "projectId": 11, "KRId": 22 },
+  { "projectId": 11, "KRId": 45 },
+  { "projectId": 11, "KRId": 39 },
+  { "projectId": 11, "KRId": 12 },
+
+  { "projectId": 12, "KRId": 6 },
+  { "projectId": 12, "KRId": 30 },
+  { "projectId": 12, "KRId": 34 },
+  { "projectId": 12, "KRId": 22 },
+  { "projectId": 12, "KRId": 45 },
+  { "projectId": 12, "KRId": 39 },
+  { "projectId": 12, "KRId": 12 },
+
+  { "projectId": 13, "KRId": 7 },
+  { "projectId": 13, "KRId": 37 },
+  { "projectId": 13, "KRId": 21 },
+  { "projectId": 13, "KRId": 12 },
+
+  { "projectId": 14, "KRId": 8 },
+  { "projectId": 14, "KRId": 35 },
+  { "projectId": 14, "KRId": 21 },
+  { "projectId": 14, "KRId": 12 },
+
+  { "projectId": 15, "KRId": 14 },
+  { "projectId": 15, "KRId": 25 },
+  { "projectId": 15, "KRId": 18 },
+  { "projectId": 15, "KRId": 54 },
+  { "projectId": 15, "KRId": 43 },
+  { "projectId": 15, "KRId": 11 },
+
+  { "projectId": 16, "KRId": 14 },
+  { "projectId": 16, "KRId": 25 },
+  { "projectId": 16, "KRId": 18 },
+  { "projectId": 16, "KRId": 54 },
+  { "projectId": 16, "KRId": 43 },
+  { "projectId": 16, "KRId": 11 },
+
+  { "projectId": 17, "KRId": 15 },
+  { "projectId": 17, "KRId": 25 },
+  { "projectId": 17, "KRId": 18 },
+  { "projectId": 17, "KRId": 54 },
+  { "projectId": 17, "KRId": 43 },
+  { "projectId": 17, "KRId": 11 },
+
+  { "projectId": 18, "KRId": 16 },
+  { "projectId": 18, "KRId": 31 },
+
+  { "projectId": 19, "KRId": 16 },
+  { "projectId": 19, "KRId": 32 },
+
+  { "projectId": 20, "KRId": 17 },
+  { "projectId": 20, "KRId": 31 },
+
+  { "projectId": 21, "KRId": 23 },
+  { "projectId": 21, "KRId": 20 },
+
+  { "projectId": 22, "KRId": 23 },
+  { "projectId": 22, "KRId": 18 },
+
+  { "projectId": 23, "KRId": 30 },
+  { "projectId": 23, "KRId": 22 },
+
+  { "projectId": 24, "KRId": 29 },
+  { "projectId": 24, "KRId": 22 },
+
+  { "projectId": 25, "KRId": 32 },
+  { "projectId": 25, "KRId": 20 },
+
+  { "projectId": 26, "KRId": 33 },
+  { "projectId": 26, "KRId": 20 },
+
+  { "projectId": 27, "KRId": 36 },
+  { "projectId": 27, "KRId": 22 },
+
+  { "projectId": 28, "KRId": 38 },
+  { "projectId": 28, "KRId": 21 },
+
+  { "projectId": 29, "KRId": 45 },
+  { "projectId": 29, "KRId": 39 },
+
+  { "projectId": 30, "KRId": 48 },
+  { "projectId": 30, "KRId": 41 },
+
+  { "projectId": 31, "KRId": 49 },
+  { "projectId": 31, "KRId": 42 },
+
+  { "projectId": 100, "KRId": 100 }
+]

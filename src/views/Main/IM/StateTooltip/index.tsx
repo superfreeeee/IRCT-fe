@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import StatusPoint from '@components/StatusPoint';
-import { UserState } from "@views/Main/state/type";
+import { UserState } from '@views/Main/state/type';
 import { StateTooltipWrapper } from './styles';
 import {
   stateTooltipInfoState,
@@ -32,6 +32,12 @@ const StateTooltip = () => {
   );
 
   const currentRoom = room && `${stateText} in ${room}`;
+
+  useEffect(() => {
+    if (visible) {
+      console.log(`[StateTooltip] visible: ${state}, ${room}, ${usingApp}`);
+    }
+  }, [visible]);
 
   return (
     <StateTooltipWrapper

@@ -131,7 +131,7 @@ const Item: FC<ItemProps> = ({ currentTab, selected, data, onSelect }) => {
    */
   const { onMouseEnter, onMouseLeave } = useTooltip(
     data as TeamData,
-    currentRoom.title,
+    roomOfcurrentTeam && roomOfcurrentTeam.title,
   );
 
   // for Team Actions

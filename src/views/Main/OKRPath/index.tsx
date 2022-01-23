@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import { okrPathVisibleState } from '../state/okrPath';
 import { OKRPathContainer } from './styles';
 import SideActions from './SideActions';
+import PathBoard from './PathBoard';
 
 // import
 
@@ -13,7 +14,9 @@ const OKRPath = () => {
 
   return (
     <OKRPathContainer className={classNames({ hide: !visible })}>
-      <div>OKRPath</div>
+      {/* 主板 */}
+      <PathBoard />
+      {/* Icon Btns */}
       <SideActions />
     </OKRPathContainer>
   );

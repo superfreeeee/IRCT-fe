@@ -1,0 +1,14 @@
+[
+  { "userId": "user-01", "bossId": "user-02" },
+  { "userId": "user-02", "bossId": "user-666" },
+  { "userId": "user-03", "bossId": "user-02" },
+  { "userId": "user-04", "bossId": "user-666" },
+  { "userId": "user-05", "bossId": "user-04" },
+  { "userId": "user-06", "bossId": "user-04" },
+  { "userId": "user-07", "bossId": "user-04" },
+  { "userId": "user-08", "bossId": "user-666" },
+  { "userId": "user-09", "bossId": "user-08" },
+  { "userId": "user-10", "bossId": "user-08" },
+
+  { "userId": "user-00", "bossId": "user-00" }
+]
