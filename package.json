@@ -13,7 +13,6 @@
     "clear": "rm -rf dist"
   },
   "dependencies": {
-    "@youxian/utils": "^0.1.1",
     "axios": "^0.24.0",
     "boxicons": "^2.1.1",
     "classnames": "^2.3.1",
