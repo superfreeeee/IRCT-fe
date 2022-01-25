@@ -4,24 +4,47 @@
 
 ## TODO
 
+### Feature1(Done)
+
 - [x] IM 当前使用应用 icon
 - [x] 房间声波更新
 - [x] IM 跟随功能
 - [x] Date、Doc、Path 展开图片实现
 - [x] 状态点 tooltip
 - [x] RoomSpace Team header 详情
-- [ ] 临时会议发起
+- [x] 临时会议发起
 - [x] RoomSpace 房间头像
-  - [ ] 选人加入列表
-- [ ] RoomSpace header action
+  - [x] 选人加入列表
+- [x] RoomSpace header action
   - [x] 锁定
   - [x] IM 锁定同步
-  - [ ] 请求创建固定会议
-  - [ ] 选人组件列表
+  - [x] 请求创建固定会议
+  - [x] 选人组件列表
 - [x] RoomSpace Meeting Room 实现
 - [x] VideoRoom 平滑移入
-- [ ] VideoRoom 加入视频
-- [ ] IM 合作功能？
+- [x] VideoRoom 加入视频
+- [x] IM 合作功能 => 打开页面
+
+### Feature2
+
+- [ ] 主视图
+  - [ ] 视窗 resize/container size change => 更新 svg 大小
+  - [ ] 个人视图数据
+  - [ ] 个人视图颜色填充
+  - [ ] 人物点 active
+  - [ ] O/KR/Project/Todo active 状态
+- [ ] 侧边栏
+  - [ ] 侧边栏定位
+  - [ ] 侧边栏填充数据（静态）
+  - [ ] 侧边栏折叠
+  - [ ] 侧边栏项hover
+- [ ] 编辑
+  - [ ] 添加/删除节点
+  - [ ] 添加/删除边
+
+### 边缘 feature
+
+- [ ] SideApp 图片
 
 ## 问题
 
