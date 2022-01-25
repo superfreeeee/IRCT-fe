@@ -24,6 +24,7 @@ export enum BoxIconType {
   SearchAlt = 'bx-search-alt',
   Send = 'bx-send',
   Setting = 'bx-cog',
+  TargetLock = 'bx-target-lock',
   Undo = 'bx-undo',
   Video = 'bxs-video',
   VideoOff = 'bxs-video-off',

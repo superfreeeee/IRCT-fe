@@ -21,10 +21,13 @@ import {
   RoomSpaceVideo,
   RoomSpaceWrapper,
 } from './styles';
+import { okrPathVisibleState } from '../state/okrPath';
 
 interface RoomSpaceProps {}
 
 const RoomSpace: FC<RoomSpaceProps> = ({}) => {
+  const okrPathVisible = useRecoilValue(okrPathVisibleState);
+
   /**
    * 展开 RoomSpace
    */
@@ -42,32 +45,34 @@ const RoomSpace: FC<RoomSpaceProps> = ({}) => {
   }, [isRoom]);
 
   return (
-    <RoomSpaceContainer
-      className={classNames({
-        hidden: !visible,
-        shrink: !isRoom || !expandVideoRoom,
-      })}
-    >
-      <RoomSpaceWrapper>
-        {/* Header */}
-        <Header isRoom={isRoom} expand={expandVideoRoom} />
-        {/* body: Room | Chat */}
-        <RoomSpaceBody>
-          <RoomSpaceOrigin className={classNames({ isChat: !isRoom })}>
-            {BodyEl}
-          </RoomSpaceOrigin>
-          <RoomSpaceVideo
-            className={classNames({ visible: isRoom && expandVideoRoom })}
-          >
-            <VideoRoom />
-            <VideoRoomController />
-          </RoomSpaceVideo>
-        </RoomSpaceBody>
-      </RoomSpaceWrapper>
-      {isRoom && (
-        <HidePage revert={!expandVideoRoom} onClick={toggleExpandVideoRoom} />
-      )}
-    </RoomSpaceContainer>
+    !okrPathVisible && (
+      <RoomSpaceContainer
+        className={classNames({
+          hidden: !visible,
+          shrink: !isRoom || !expandVideoRoom,
+        })}
+      >
+        <RoomSpaceWrapper>
+          {/* Header */}
+          <Header isRoom={isRoom} expand={expandVideoRoom} />
+          {/* body: Room | Chat */}
+          <RoomSpaceBody>
+            <RoomSpaceOrigin className={classNames({ isChat: !isRoom })}>
+              {BodyEl}
+            </RoomSpaceOrigin>
+            <RoomSpaceVideo
+              className={classNames({ visible: isRoom && expandVideoRoom })}
+            >
+              <VideoRoom />
+              <VideoRoomController />
+            </RoomSpaceVideo>
+          </RoomSpaceBody>
+        </RoomSpaceWrapper>
+        {isRoom && (
+          <HidePage revert={!expandVideoRoom} onClick={toggleExpandVideoRoom} />
+        )}
+      </RoomSpaceContainer>
+    )
   );
 };
 

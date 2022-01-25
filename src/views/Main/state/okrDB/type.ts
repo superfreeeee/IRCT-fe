@@ -3,19 +3,24 @@ export enum ProjectType {
   Product = "产品需求",
   Design = "设计需求",
   Technique = "技术需求",
-  Unkonwn = "",
+  Unkonwn = "__ProjectType",
 }
 
 export enum ProjectDuty {
   Product = "产品",
   Design = "设计",
   Technique = "技术",
-  Unkonwn = "",
+  Unkonwn = "__ProjectDuty",
 }
 
 export enum TodoStatus {
   Done = "已完成",
   Incomplete = "未完成",
+}
+
+export enum ViewPointType {
+  Organization = "organization", // 组织视图
+  Personal = "personal", //         个人视图
 }
 
 export enum EntityType {
@@ -96,11 +101,28 @@ export interface OrganizationViewPointEntity {
 }
 
 export interface OrganizationViewPointRelation {
-  fromId: string;
-  toId: string;
+  source: string;
+  target: string;
 }
 
-export interface OrganizationViewPoint {
-  entities: OrganizationViewPointEntity[];
-  relations: OrganizationViewPointRelation[];
+export interface PersonalViewPointEntity {
+  type: EntityType;
+  id: string;
 }
+
+export interface PersonalViewPointRelation {
+  source: string;
+  target: string;
+}
+
+export type ViewPointSource =
+  | {
+      type: ViewPointType.Organization;
+      entities: OrganizationViewPointEntity[];
+      relations: OrganizationViewPointRelation[];
+    }
+  | {
+      type: ViewPointType.Personal;
+      entities: PersonalViewPointEntity[];
+      relations: PersonalViewPointRelation[];
+    };

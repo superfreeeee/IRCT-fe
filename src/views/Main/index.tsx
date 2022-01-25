@@ -46,8 +46,6 @@ const useInit = () => {
 const Main = () => {
   useInit();
 
-  const okrPathVisible = useRecoilValue(okrPathVisibleState);
-
   console.log(`>>>>>>>> render Main`);
 
   return (
@@ -55,7 +53,7 @@ const Main = () => {
       {/* // ! left */}
       <StatusBar />
       <IM />
-      {!okrPathVisible && <RoomSpace />}
+      <RoomSpace />
 
       {/* // ! center */}
       <OKRPath />

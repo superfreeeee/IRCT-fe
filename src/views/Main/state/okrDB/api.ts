@@ -1,9 +1,9 @@
-import { EntityType, OEntity, OrganizationViewPoint, OrganizationViewPointEntity, OrganizationViewPointRelation, UserEntity } from "./type";
+import { EntityType, OEntity, OrganizationViewPointEntity, OrganizationViewPointRelation, UserEntity, ViewPointSource, ViewPointType } from "./type";
 
 import { oRelTable, oTable, userRelTable, userTable } from "./db";
 
 // ========== public ==========
-export const getOrganizationViewPoint = (): OrganizationViewPoint => {
+export const getOrganizationViewPoint = (): ViewPointSource => {
   const CEO_ID = "user-666"; // ! hard code set CEO_ID
 
   const entities: OrganizationViewPointEntity[] = [];
@@ -35,8 +35,8 @@ export const getOrganizationViewPoint = (): OrganizationViewPoint => {
       });
 
       relations.push({
-        fromId: fromId,
-        toId: oId,
+        source: fromId,
+        target: oId,
       });
     });
 
@@ -45,8 +45,8 @@ export const getOrganizationViewPoint = (): OrganizationViewPoint => {
     userIds.forEach((userId) => {
       // push relation
       relations.push({
-        fromId: fromId,
-        toId: userId,
+        source: fromId,
+        target: userId,
       });
 
       // add user to search list
@@ -57,6 +57,7 @@ export const getOrganizationViewPoint = (): OrganizationViewPoint => {
   // oRelTable.filter((oRel) => oRel.OId === CEO_ID);
 
   return {
+    type: ViewPointType.Organization,
     entities,
     relations,
   };

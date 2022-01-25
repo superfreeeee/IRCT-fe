@@ -8,8 +8,8 @@
     "start": "cross-env NODE_ENV=development webpack serve",
     "build": "cross-env NODE_ENV=production webpack",
     "upload": "./deploy/upload",
-    "deploy": "yarn build && yarn upload",
-    "reinstall": "rm -rf node_modules && yarn",
+    "deploy": "pnpm run build && pnpm run upload",
+    "reinstall": "rm -rf node_modules && pnpm install",
     "clear": "rm -rf dist"
   },
   "dependencies": {

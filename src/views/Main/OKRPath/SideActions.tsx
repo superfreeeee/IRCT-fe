@@ -1,8 +1,13 @@
 import BoxIcon, { BoxIconType } from '@components/BoxIcon';
-import React from 'react';
+import React, { FC } from 'react';
+import { PathBoardRef } from './PathBoard';
 import { OKRIconActions, OKRIconBtn } from './styles';
 
-const SideActions = () => {
+interface SideActionsProps {
+  boardRef: React.MutableRefObject<PathBoardRef>;
+}
+
+const SideActions: FC<SideActionsProps> = ({ boardRef }) => {
   /**
    * 退出? 返回上一个视图?
    */
@@ -15,6 +20,13 @@ const SideActions = () => {
    */
   const searchPath = () => {
     console.log(`[OKRPath.SideActions] searchPath`);
+  };
+
+  /**
+   * 重置缩放
+   */
+  const resetZoom = () => {
+    boardRef.current.resetZoom();
   };
 
   /**
@@ -34,6 +46,9 @@ const SideActions = () => {
         </OKRIconBtn>
         <OKRIconBtn onClick={searchPath}>
           <BoxIcon type={BoxIconType.SearchAlt} />
+        </OKRIconBtn>
+        <OKRIconBtn onClick={resetZoom}>
+          <BoxIcon type={BoxIconType.TargetLock} />
         </OKRIconBtn>
       </OKRIconActions>
       {/* left-bottom actions */}
