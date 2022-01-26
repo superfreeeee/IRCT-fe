@@ -5,9 +5,11 @@ import { getOrganizationViewPoint } from '@views/Main/state/okrDB/api';
 import { EntityType, ViewPointType } from '@views/Main/state/okrDB/type';
 import { PathBoardContainer } from './styles';
 import {
+  LinkColor,
   LinksSelection,
   MaskSelection,
   NodesSelection,
+  NodeTextColor,
   PathLink,
   PathNode,
   RootSelection,
@@ -16,6 +18,7 @@ import {
   TransZoomBehavior,
 } from './type';
 import {
+  linkColor,
   nodeColor,
   nodeImageWidth,
   nodeRadius,
@@ -28,6 +31,7 @@ import {
   onMaskClick,
   onTick,
   onTransZoom,
+  transition,
 } from './utils';
 
 const BOARD_ID = 'path-board';
@@ -77,16 +81,22 @@ const PathBoard = React.forwardRef((props, ref) => {
     // calc node side data(store in d.store)
     const _calcRadius = nodeRadius(ViewPointType.Organization);
     const _calcWidth = nodeImageWidth(ViewPointType.Organization);
+    const _nodeMap = {}; // nodeId => node
     nodes.forEach((node) => {
       _calcRadius(node);
       _calcWidth(node);
       nodeColor(node);
+      _nodeMap[node.id] = node;
     });
     // calc link side data(store in d.store)
     links.forEach((link) => {
-      link.store.color = 'rgba(255,255,255,0.15)';
-      link.store.activeColor = 'rgba(255,255,255,0.7)';
+      linkColor(link, _nodeMap);
+      const linkId = (link.store.id = `link-${link.source}-${link.target}`);
+      link.store.colorId = `${linkId}-color`;
     });
+
+    console.table(nodes);
+    console.table(links);
 
     // refs for function binding
     const tickBindRefs: TickBindRefs = {
@@ -153,9 +163,14 @@ const PathBoard = React.forwardRef((props, ref) => {
     const linksSelection = (linksRef.current = root
       .append('g')
       .attr('class', 'links')
-      .selectAll('path')
+      .selectAll('g')
       .data(links)
-      .join('path')
+      .join('g')
+      .attr('class', (d) => d.store.id));
+
+    // 关系图形
+    linksSelection
+      .append('path')
       .attr('d', (d) => {
         const r1 = (d.source as PathNode).store.radius;
         const r2 = (d.target as PathNode).store.radius;
@@ -165,8 +180,24 @@ const PathBoard = React.forwardRef((props, ref) => {
           V-${r2}
           Q1 0,0 ${-r1} Z`;
       })
-      .attr('fill', 'rgba(255,255,255,0.15)')
-      .style('transition', 'fill 0.15s'));
+      .attr('fill', (d) => `url(#${d.store.colorId})`);
+
+    // 关系颜色
+    const gradients = linksSelection
+      .append('linearGradient')
+      .attr('id', (d) => d.store.colorId);
+    gradients
+      .append('stop')
+      .attr('offset', '0%')
+      .attr('stop-color', LinkColor.Inactive)
+      .attr('stop-opacity', 0.1)
+      .style('transition', transition('all'));
+    gradients
+      .append('stop')
+      .attr('offset', '100%')
+      .attr('stop-color', LinkColor.Inactive)
+      .attr('stop-opacity', 0.1)
+      .style('transition', transition('all'));
 
     /**
      * nodes
@@ -192,11 +223,15 @@ const PathBoard = React.forwardRef((props, ref) => {
     nodesSelection
       .append('circle')
       .attr('r', (d) => d.store.radius)
-      .style('fill', (d) => d.store.color);
+      .attr('fill', (d) => d.store.color)
+      .style('transition', transition('fill'));
 
     // 用户头像
-    nodesSelection
-      .filter((d) => d.data.type === EntityType.User)
+    const userNodes = nodesSelection.filter(
+      (d) => d.data.type === EntityType.User,
+    );
+
+    userNodes
       .append('image')
       .attr('width', (d) => d.store.imageWidth)
       .attr('height', (d) => d.store.imageWidth)
@@ -210,16 +245,32 @@ const PathBoard = React.forwardRef((props, ref) => {
         return `translate(${offset}, ${offset})`;
       })
       .attr('clip-path', (d) => `url(#node-${d.data.id}-circle)`);
+    userNodes
+      .append('circle')
+      .attr('class', 'user-mask')
+      .attr('r', (d) => d.store.radius)
+      .attr('fill', 'black')
+      .attr('opacity', 0.5)
+      .style('transition', transition('opacity'));
 
     // 节点文字
-    nodesSelection
-      .filter((d) => d.data.type !== EntityType.User)
+    const itemNodes = nodesSelection.filter(
+      (d) => d.data.type !== EntityType.User,
+    );
+
+    itemNodes
+      .select('circle')
+      .attr('stroke', '#FFFFFF')
+      .attr('stroke-width', 0);
+
+    itemNodes
       .append('text')
       .text(nodeText)
+      .attr('fill', NodeTextColor.Inactive)
       .style('user-select', 'none')
       .style('dominant-baseline', 'middle')
       .style('text-anchor', 'middle')
-      .style('fill', '#BABABA');
+      .style('transition', transition('fill'));
 
     // bind simulation tick
     const boundOnTick = onTick({

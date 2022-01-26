@@ -28,6 +28,8 @@
 ### Feature2
 
 - [ ] 主视图
+  - [x] 关系颜色渐层
+  - [ ] 节点透明度遮罩
   - [ ] 视窗 resize/container size change => 更新 svg 大小
   - [ ] 个人视图数据
   - [ ] 个人视图颜色填充

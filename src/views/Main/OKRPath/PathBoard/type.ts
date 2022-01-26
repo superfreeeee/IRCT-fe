@@ -1,10 +1,10 @@
 import { BaseType } from 'd3';
+import { MutableRefObject } from 'react';
 
 import {
   OrganizationViewPointEntity,
   PersonalViewPointEntity,
 } from '@views/Main/state/okrDB/type';
-import { MutableRefObject } from 'react';
 
 // ========== enum ==========
 /**
@@ -33,11 +33,44 @@ export enum NodeImagePadding {
  * 节点填充色
  */
 export enum NodeColor {
-  User = '#fff',
-  O = '#f0feff',
-  KR = '#f0feff',
-  Project = '#f4f0ff',
-  Todo = '#fff8f3',
+  // 激活前颜色
+  User = '#FFFFFF',
+  O = '#F0FEFF',
+  KR = '#F0FEFF',
+  Project = '#F4F0FF',
+  Todo = '#FFF8F3',
+
+  // 激活后颜色
+  ActiveO = '#8DBBBE',
+  ActiveKR = '#8DBBBE',
+  ActiveProject = '#9485BF',
+  ActiveTodo = '#BC8D73',
+}
+
+export enum NodeTextColor {
+  Inactive = '#BABABA',
+  Active = '#FFFFFF',
+}
+
+/**
+ * 关系渐层色
+ */
+export enum LinkColor {
+  Inactive = '#FFFFFF',
+  UserSide = '#FFFFFF',
+  OSide = '#9CBDBF',
+  KRSide = '#9CBDBF',
+  ProjectSide = '#9485BF',
+  TodoSide = '#BC8D73',
+}
+
+/**
+ * Node/Link 选中状态
+ */
+export enum SelectionType {
+  Inactive = 'inactive',
+  Hover = 'hover',
+  Active = 'active',
 }
 
 // ========== data ==========
@@ -48,9 +81,12 @@ export interface PathNode extends d3.SimulationNodeDatum {
     // static init 初始化确定
     radius?: NodeRadius;
     color?: NodeColor;
-    text?: string;
+    activeColor?: NodeColor;
     imageWidth?: number;
     imagePadding?: NodeImagePadding;
+    text?: string;
+    // node state 动态状态
+    active?: boolean;
   };
   draggable: boolean;
 }
@@ -58,8 +94,10 @@ export interface PathNode extends d3.SimulationNodeDatum {
 export interface PathLink extends d3.SimulationLinkDatum<PathNode> {
   store: {
     // static init 初始化确定
-    color?: string;
-    activeColor?: string;
+    id?: string;
+    colorId?: string;
+    activeColorStart?: LinkColor;
+    activeColorEnd?: LinkColor;
     // update when tick
     x1?: number;
     y1?: number;

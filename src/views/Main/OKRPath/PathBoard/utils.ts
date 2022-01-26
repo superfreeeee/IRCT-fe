@@ -2,12 +2,17 @@ import * as d3 from 'd3';
 
 import { EntityType, ViewPointType } from '@views/Main/state/okrDB/type';
 import {
+  LinkColor,
+  LinksSelection,
   NodeColor,
   NodeImagePadding,
   NodeRadius,
+  NodesSelection,
+  NodeTextColor,
   PathLink,
   PathNode,
   RootSelection,
+  SelectionType,
   TickBindRefs,
 } from './type';
 
@@ -99,22 +104,43 @@ export const nodeImageWidth = (
 interface CalcNodeColor {
   (d: PathNode): string;
 }
-export const nodeColor: CalcNodeColor = (function () {
-  const _nodeColorMap: { [type in EntityType]: NodeColor } = {
-    [EntityType.User]: NodeColor.User,
-    [EntityType.O]: NodeColor.O,
-    [EntityType.KR]: NodeColor.KR,
-    [EntityType.Project]: NodeColor.Project,
-    [EntityType.Todo]: NodeColor.Todo,
+const _nodeColorMap: {
+  [type in EntityType]: {
+    color: NodeColor;
+    activeColor: NodeColor;
   };
+} = {
+  [EntityType.User]: {
+    color: NodeColor.User,
+    activeColor: NodeColor.User,
+  },
+  [EntityType.O]: {
+    color: NodeColor.O,
+    activeColor: NodeColor.ActiveO,
+  },
+  [EntityType.KR]: {
+    color: NodeColor.KR,
+    activeColor: NodeColor.ActiveKR,
+  },
+  [EntityType.Project]: {
+    color: NodeColor.Project,
+    activeColor: NodeColor.ActiveProject,
+  },
+  [EntityType.Todo]: {
+    color: NodeColor.Todo,
+    activeColor: NodeColor.ActiveTodo,
+  },
+};
+export const nodeColor: CalcNodeColor = (d: PathNode) => {
+  const { color, activeColor } = _nodeColorMap[d.data.type];
+  d.store.color = color;
+  d.store.activeColor = activeColor;
+  return color;
+};
 
-  return (d: PathNode) => {
-    const color = _nodeColorMap[d.data.type];
-    d.store.color = color;
-    return color;
-  };
-})();
-
+/**
+ * 节点文字
+ */
 export const nodeText = (d: PathNode) => {
   const { type, id } = d.data;
   let text: string;
@@ -128,6 +154,31 @@ export const nodeText = (d: PathNode) => {
 
   return text;
 };
+
+/**
+ * 关系填充色
+ */
+const _linkSideColorMap: { [type in EntityType]: LinkColor } = {
+  [EntityType.User]: LinkColor.UserSide,
+  [EntityType.O]: LinkColor.OSide,
+  [EntityType.KR]: LinkColor.KRSide,
+  [EntityType.Project]: LinkColor.ProjectSide,
+  [EntityType.Todo]: LinkColor.TodoSide,
+};
+export const linkColor = (
+  d: PathLink,
+  nodeMap: { [nodeId: string]: PathNode },
+) => {
+  const t1 = nodeMap[d.source as string].data.type;
+  const t2 = nodeMap[d.target as string].data.type;
+
+  d.store.activeColorStart = _linkSideColorMap[t1];
+  d.store.activeColorEnd = _linkSideColorMap[t2];
+};
+
+// ========== common style ==========
+export const transition = (attr: string, duration: number = 0.2) =>
+  `${attr} ${duration}s`;
 
 // ========== simulation action ==========
 /**
@@ -164,6 +215,7 @@ export const onTick =
           scale,
         };
       })
+      .select('path')
       .attr('transform', (d) => {
         const { x1, y1, angle, scale } = d.store;
         return `translate(${x1},${y1}) rotate(${angle}) scale(${scale},1)`;
@@ -171,6 +223,11 @@ export const onTick =
 
     nodesRef.current
       .select('circle')
+      .attr('cx', (d) => d.x)
+      .attr('cy', (d) => d.y);
+
+    nodesRef.current
+      .select('circle.user-mask')
       .attr('cx', (d) => d.x)
       .attr('cy', (d) => d.y);
 
@@ -265,10 +322,18 @@ export const onMaskClick =
   ({ linksRef, nodesRef }: TickBindRefs) =>
   (e: MouseEvent, d: PathNode) => {
     // clear all active
-    linksRef.current
-      .filter((link) => link.store.active)
-      .each((d) => (d.store.active = false))
-      .attr('fill', (d) => d.store.color);
+    _linksColor(
+      linksRef.current
+        .filter((link) => link.store.active)
+        .each((d) => (d.store.active = false)),
+      false,
+    );
+    _nodesColor(
+      nodesRef.current
+        .filter((node) => node.store.active)
+        .each((d) => (d.store.active = false)),
+      SelectionType.Inactive,
+    );
   };
 
 // ========== node hover/click ==========
@@ -276,12 +341,16 @@ export const onMaskClick =
  * 节点 hover
  *   关联边着色
  */
-const calcRelativeLinks = (
+const calcRelativeItems = (
   targetNode: PathNode,
   links: PathLink[],
-): Set<PathLink> => {
+): {
+  relativeLinks: Set<PathLink>;
+  relativeNodes: Set<PathNode>;
+} => {
   const nodeId = targetNode.id;
-  const activeLinks: Set<PathLink> = new Set();
+  const relativeLinks: Set<PathLink> = new Set();
+  const relativeNodes: Set<PathNode> = new Set();
   let parentId: string = null;
 
   // targetId => sourceId
@@ -302,7 +371,8 @@ const calcRelativeLinks = (
 
     // append child
     if (sourceId === nodeId) {
-      activeLinks.add(link);
+      relativeLinks.add(link);
+      relativeNodes.add(link.target as PathNode);
     }
 
     relationMap[targetId] = sourceId;
@@ -315,36 +385,61 @@ const calcRelativeLinks = (
     parentId = relationMap[parentId] || null; // null if not exists
   }
 
+  // append self & ancestor
   links.forEach((link) => {
     if (
       inheritIds.has((link.source as PathNode).id) &&
       inheritIds.has((link.target as PathNode).id)
     ) {
-      activeLinks.add(link);
+      relativeLinks.add(link);
+      relativeNodes.add(link.source as PathNode);
     }
   });
+  relativeNodes.add(targetNode);
 
-  return activeLinks;
+  return {
+    relativeLinks,
+    relativeNodes,
+  };
 };
 export const onEnterNode =
   ({ linksRef, nodesRef }: TickBindRefs) =>
   (e: MouseEvent, d: PathNode) => {
-    const activeLinks = calcRelativeLinks(d, linksRef.current.data());
+    const { relativeLinks, relativeNodes } = calcRelativeItems(
+      d,
+      linksRef.current.data(),
+    );
     // fill activeColor
-    linksRef.current
-      .filter((link) => activeLinks.has(link))
-      .attr('fill', (d) => d.store.activeColor);
+    _linksColor(
+      linksRef.current.filter((link) => relativeLinks.has(link)),
+      true,
+    );
+    _nodesColor(
+      nodesRef.current.filter((node) => relativeNodes.has(node)),
+      SelectionType.Hover,
+    );
   };
 
 export const onLeaveNode =
   ({ linksRef, nodesRef }: TickBindRefs) =>
   (e: MouseEvent, d: PathNode) => {
-    const activeLinks = calcRelativeLinks(d, linksRef.current.data());
+    const { relativeLinks, relativeNodes } = calcRelativeItems(
+      d,
+      linksRef.current.data(),
+    );
     // remove activeColor
-    linksRef.current
-      .filter((link) => activeLinks.has(link))
-      .filter((link) => !link.store.active) // recover unactive link
-      .attr('fill', (d) => d.store.color);
+    _linksColor(
+      linksRef.current
+        .filter((link) => relativeLinks.has(link))
+        .filter((link) => !link.store.active), // recover unactive link
+      false,
+    );
+    _nodesColor(
+      nodesRef.current
+        .filter((node) => relativeNodes.has(node))
+        .filter((node) => !node.store.active),
+      SelectionType.Inactive,
+    );
   };
 
 /**
@@ -355,28 +450,103 @@ export const onLeaveNode =
 export const onClickNode =
   ({ linksRef, nodesRef }: TickBindRefs) =>
   (e: MouseEvent, d: PathNode) => {
-    const activeLinks = calcRelativeLinks(d, linksRef.current.data());
+    const { relativeLinks, relativeNodes } = calcRelativeItems(
+      d,
+      linksRef.current.data(),
+    );
     // fill activeColor & state active = true
     const links = linksRef.current;
     // clear old active
-    links
-      .filter((link) => link.store.active)
-      .each((d) => (d.store.active = false))
-      .attr('fill', (d) => d.store.color);
+    _linksColor(
+      links
+        .filter((link) => link.store.active)
+        .each((d) => (d.store.active = false)),
+      false,
+    );
     // add new active
-    links
-      .filter((link) => activeLinks.has(link))
-      .attr('fill', (d) => d.store.activeColor)
-      .each((d) => (d.store.active = true));
+    _linksColor(
+      links
+        .filter((link) => relativeLinks.has(link))
+        .each((d) => (d.store.active = true)),
+      true,
+    );
+
+    const nodes = nodesRef.current;
+    _nodesColor(
+      nodes
+        .filter((node) => node.store.active)
+        .each((d) => (d.store.active = false)),
+      SelectionType.Inactive,
+    );
+    _nodesColor(
+      nodes
+        .filter((node) => relativeNodes.has(node))
+        .each((d) => (d.store.active = true)),
+      SelectionType.Active,
+    );
   };
 
 // ========== private common actions ==========
-// interface LinksActionProps {
-//   // color
-//   activeColor: boolean;
-//   // update state
-//   active?: boolean;
-// }
-// const linksAction = (links: LinksSelection) => {
+/**
+ * 改变 node 颜色
+ */
+const _nodesColor = (nodes: NodesSelection, type: SelectionType) => {
+  if (nodes.size() === 0) {
+    return;
+  }
+  console.log(`[_nodesColor]`, nodes);
+  if (type === SelectionType.Active) {
+    // 激活 node
+    nodes.select('circle').attr('fill', (d) => d.store.activeColor);
+    nodes.select('text').attr('fill', NodeTextColor.Active);
+    nodes.select('circle.user-mask').attr('opacity', 0);
 
-// };
+    const itemNodes = nodes.filter((d) => d.data.type !== EntityType.User);
+    itemNodes.select('circle').attr('stroke-width', 5);
+  } else if (type === SelectionType.Hover) {
+    // hover node
+    // active 覆盖 hover 状态
+    nodes = nodes.filter((node) => !node.store.active);
+
+    nodes.select('circle').attr('fill', (d) => d.store.activeColor);
+    nodes.select('text').attr('fill', NodeTextColor.Active);
+    nodes.select('circle.user-mask').attr('opacity', 0.2);
+  } else if (type === SelectionType.Inactive) {
+    // 取消激活 node
+    nodes.select('circle').attr('fill', (d) => d.store.color);
+    nodes.select('text').attr('fill', NodeTextColor.Inactive);
+    nodes.select('circle.user-mask').attr('opacity', 0.5);
+
+    const itemNodes = nodes.filter((d) => d.data.type !== EntityType.User);
+    itemNodes.select('circle').attr('stroke-width', 0);
+  } else {
+    console.error(`[_nodesColor] unknonw selection type: ${type}`);
+  }
+};
+
+/**
+ * 改变 link 颜色
+ */
+const _linksColor = (links: LinksSelection, active: boolean) => {
+  if (links.size() === 0) {
+    return;
+  }
+  const gradients = links.select('linearGradient');
+  if (active) {
+    // 激活 link
+    gradients
+      .select('stop[offset="0%"]')
+      .attr('stop-color', (d) => d.store.activeColorStart)
+      .attr('stop-opacity', 0.7);
+    gradients
+      .select('stop[offset="100%"]')
+      .attr('stop-color', (d) => d.store.activeColorEnd)
+      .attr('stop-opacity', 0.7);
+  } else {
+    // 取消激活 link
+    gradients
+      .selectAll('stop')
+      .attr('stop-color', LinkColor.Inactive)
+      .attr('stop-opacity', 0.1);
+  }
+};
