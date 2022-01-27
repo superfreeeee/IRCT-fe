@@ -9,7 +9,7 @@ import {
 } from './im';
 import { roomBasicInfoFamily, roomIdsState, roomUserIdsFamily } from './room';
 import { currentSpaceIdState } from './roomSpace';
-import { RoomType, TabOption } from './type';
+import { RoomType, TabOption, ViewPointRecord } from './type';
 import {
   currentUserIdState,
   userCurrentRoomIdFamily,
@@ -17,7 +17,15 @@ import {
 } from './user';
 
 import meetingTempAvatar from '@assets/img/meeting_temp.png';
+import { PlainFn } from '@utils/type';
+import {
+  viewPointCenterUserIdState,
+  viewPointStackState,
+  viewPointTypeState,
+} from './okrPath';
+import { ViewPointType } from './okrDB/type';
 
+// ========== room 相关 ==========
 /**
  * 加入新房间
  */
@@ -157,6 +165,7 @@ export const useExitRoom = () => {
   return exitRoom;
 };
 
+// ========== meeting 相关 ==========
 /**
  * 创建临时房间
  */

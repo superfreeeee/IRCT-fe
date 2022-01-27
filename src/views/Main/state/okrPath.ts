@@ -55,6 +55,7 @@ const viewPointTypeBaseState = atom<ViewPointType>({
 export const viewPointTypeState = selector<ViewPointType>({
   key: prefixer('viewPointType'),
   get: ({ get }) => get(viewPointTypeBaseState),
+  set: ({ set }, type) => set(viewPointTypeBaseState, type),
 });
 
 /**
@@ -75,6 +76,7 @@ export const viewPointCenterUserIdState = selector<string>({
       return get(viewPointCenterUserIdBaseState);
     }
   },
+  set: ({ set }, userId) => set(viewPointCenterUserIdBaseState, userId),
 });
 
 /**
@@ -84,9 +86,10 @@ const viewPointStackBaseState = atom<ViewPointRecord[]>({
   key: prefixer('viewPointStackBase'),
   default: [],
 });
-export const viewPointStackState = selector({
+export const viewPointStackState = selector<ViewPointRecord[]>({
   key: prefixer('viewPointStack'),
   get: ({ get }) => get(viewPointStackBaseState),
+  set: ({ set }, stack) => set(viewPointStackBaseState, stack),
 });
 
 /**
@@ -94,9 +97,10 @@ export const viewPointStackState = selector({
  */
 export const viewPointStackUpdater = selector<ViewPointStackAction>({
   key: prefixer('viewPointStackUpdater'),
-  get: () => {
+  get: ({ get }) => {
     console.warn('try get viewPointStackUpdater');
-    return { type: ViewPointStackActionType.Null };
+    const records = get(viewPointStackBaseState);
+    return { type: ViewPointStackActionType.Null, record: records[0] };
   },
   set: ({ get, set }, action: ViewPointStackAction) => {
     let records: ViewPointRecord[], type: ViewPointType, centerUserId: string;
@@ -110,15 +114,12 @@ export const viewPointStackUpdater = selector<ViewPointStackAction>({
 
       // 弹出一项纪录
       case ViewPointStackActionType.Pop:
-        records = get(viewPointStackBaseState).slice();
-        console.log(`records`, [...records]);
-
-        records.pop();
-        console.log(`records after pop`, records);
+        records = get(viewPointStackBaseState);
+        records = records.slice(0, records.length - 1);
+        set(viewPointStackBaseState, records);
 
         if (records.length > 0) {
           ({ type, centerUserId } = records[records.length - 1]);
-          set(viewPointStackBaseState, records);
           set(viewPointTypeBaseState, type);
           set(viewPointCenterUserIdBaseState, centerUserId || '');
         } else {
@@ -129,12 +130,10 @@ export const viewPointStackUpdater = selector<ViewPointStackAction>({
 
       // 推入一项纪录
       case ViewPointStackActionType.Push:
-        records = get(viewPointStackBaseState).slice();
-        console.log(`records`, [...records]);
+        records = get(viewPointStackBaseState);
 
         ({ type, centerUserId } = action.record);
         records = [...records, { type, centerUserId }];
-        console.log(`records after push`, [...records]);
 
         set(viewPointStackBaseState, records);
         set(viewPointTypeBaseState, type);
