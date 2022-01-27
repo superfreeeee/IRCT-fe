@@ -39,8 +39,11 @@ const OKRPath = () => {
 
   // 视图/中心用户改变时重新渲染
   useEffect(() => {
-    console.log(`[OKRPath] viewPointType = ${viewPointType}`);
-    console.log(`[OKRPath] centerUserId = ${centerUserId}`);
+    console.group(`[OKRPath] view change`);
+    console.log(`viewPointType = ${viewPointType}`);
+    console.log(`centerUserId = ${centerUserId}`);
+    console.groupEnd();
+
     let viewPointData: ViewPointSource;
     if (viewPointType === ViewPointType.Organization) {
       viewPointData = getOrganizationViewPoint();
@@ -65,6 +68,8 @@ const OKRPath = () => {
     const links: PathLink[] = relations.map((rel) => ({
       ...rel,
       store: {},
+      additional: !!rel.additional,
+      force: rel.additional ? 0 : 1,
     }));
 
     /**

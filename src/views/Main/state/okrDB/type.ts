@@ -107,6 +107,7 @@ export interface OrganizationViewPointEntity {
 export interface OrganizationViewPointRelation {
   source: string;
   target: string;
+  additional?: boolean;
 }
 
 export interface PersonalViewPointEntity {
@@ -122,6 +123,7 @@ export interface PersonalViewPointEntity {
 export interface PersonalViewPointRelation {
   source: string;
   target: string;
+  additional?: boolean;
 }
 
 export type ViewPointSource =

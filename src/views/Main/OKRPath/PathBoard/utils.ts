@@ -4,9 +4,11 @@ import { EntityType, ViewPointType } from '@views/Main/state/okrDB/type';
 import { PlainFn } from '@utils/type';
 import {
   ClickNodeCallback,
+  ItemsRefObj,
   LinkColor,
   LinkColorOpacity,
   LinksSelection,
+  MouseActionType,
   NodeColor,
   NodeImageMaskOpacity,
   NodeImagePadding,
@@ -280,6 +282,13 @@ export const onTick =
         return `translate(${x1},${y1}) rotate(${angle}) scale(${scale},1)`;
       });
 
+    linksRef.current
+      .select('line')
+      .attr('x1', (d) => (d.source as PathNode).x)
+      .attr('y1', (d) => (d.source as PathNode).y)
+      .attr('x2', (d) => (d.target as PathNode).x)
+      .attr('y2', (d) => (d.target as PathNode).y);
+
     nodesRef.current
       .select('circle')
       .attr('cx', (d) => d.x)
@@ -300,7 +309,7 @@ export const onTick =
  * 模拟结束
  */
 export const onEnd = (simulation: d3.Simulation<PathNode, any>) => () => {
-  console.log(`[onEnd] simulation end: alpha = ${simulation.alpha()}`);
+  // console.log(`[onEnd] simulation end: alpha = ${simulation.alpha()}`);
 };
 
 // ========== node drag ==========
@@ -385,20 +394,8 @@ export const onTransZoom = (root: RootSelection) => {
  */
 export const onMaskClick =
   ({ linksRef, nodesRef }: TickBindRefs, cb?: PlainFn) =>
-  (e: MouseEvent, d: PathNode) => {
-    // clear all active
-    _linksColor(
-      linksRef.current
-        .filter((link) => link.store.active)
-        .each((d) => (d.store.active = false)),
-      false,
-    );
-    _nodesColor(
-      nodesRef.current
-        .filter((node) => node.store.active)
-        .each((d) => (d.store.active = false)),
-      SelectionType.Inactive,
-    );
+  (e: MouseEvent) => {
+    updateItems({ linksRef, nodesRef }, MouseActionType.Clear);
 
     cb && cb();
   };
@@ -408,16 +405,54 @@ export const onMaskClick =
  * 节点 hover
  *   关联边着色
  */
+export const onEnterNode =
+  ({ linksRef, nodesRef }: TickBindRefs) =>
+  (e: MouseEvent, targetNode: PathNode) => {
+    updateItems({ linksRef, nodesRef }, MouseActionType.Enter, targetNode);
+  };
+
+export const onLeaveNode =
+  ({ linksRef, nodesRef }: TickBindRefs) =>
+  (e: MouseEvent, targetNode: PathNode) => {
+    updateItems({ linksRef, nodesRef }, MouseActionType.Leave, targetNode);
+  };
+
+/**
+ * 节点 click
+ *   节点着色
+ *   link active 状态 = true
+ */
+export const onClickNode =
+  ({ linksRef, nodesRef }: TickBindRefs, cb?: ClickNodeCallback) =>
+  (e: MouseEvent, targetNode: PathNode) => {
+    updateItems({ linksRef, nodesRef }, MouseActionType.Click, targetNode);
+
+    // invoke callback
+    cb && cb(targetNode);
+  };
+
+// ========== private common actions ==========
+/**
+ * 计算目标关联 Node & Link(主要)
+ */
 const calcRelativeItems = (
-  targetNode: PathNode,
   links: PathLink[],
+  targetNode?: PathNode,
 ): {
-  relativeLinks: Set<PathLink>;
-  relativeNodes: Set<PathNode>;
+  relativeLinkSet: Set<PathLink>;
+  relativeNodeSet: Set<PathNode>;
 } => {
+  const relativeLinkSet: Set<PathLink> = new Set();
+  const relativeNodeSet: Set<PathNode> = new Set();
+  if (!targetNode) {
+    // when mouse action === Clear
+    return {
+      relativeLinkSet,
+      relativeNodeSet,
+    };
+  }
+
   const nodeId = targetNode.id;
-  const relativeLinks: Set<PathLink> = new Set();
-  const relativeNodes: Set<PathNode> = new Set();
   let parentId: string = null;
 
   // targetId => sourceId
@@ -425,6 +460,9 @@ const calcRelativeItems = (
 
   // 1. calc children
   links.forEach((link) => {
+    if (link.additional) {
+      return;
+    }
     const sourceId = (link.source as PathNode).id;
     const targetId = (link.target as PathNode).id;
 
@@ -438,8 +476,8 @@ const calcRelativeItems = (
 
     // append child
     if (sourceId === nodeId) {
-      relativeLinks.add(link);
-      relativeNodes.add(link.target as PathNode);
+      relativeLinkSet.add(link);
+      relativeNodeSet.add(link.target as PathNode);
     }
 
     relationMap[targetId] = sourceId;
@@ -458,91 +496,62 @@ const calcRelativeItems = (
       inheritIds.has((link.source as PathNode).id) &&
       inheritIds.has((link.target as PathNode).id)
     ) {
-      relativeLinks.add(link);
-      relativeNodes.add(link.source as PathNode);
+      relativeLinkSet.add(link);
+      relativeNodeSet.add(link.source as PathNode);
     }
   });
-  relativeNodes.add(targetNode);
+  relativeNodeSet.add(targetNode);
 
   return {
-    relativeLinks,
-    relativeNodes,
+    relativeLinkSet,
+    relativeNodeSet,
   };
 };
-export const onEnterNode =
-  ({ linksRef, nodesRef }: TickBindRefs) =>
-  (e: MouseEvent, d: PathNode) => {
-    const { relativeLinks, relativeNodes } = calcRelativeItems(
-      d,
-      linksRef.current.data(),
-    );
-    // fill activeColor
-    _linksColor(
-      linksRef.current.filter((link) => relativeLinks.has(link)),
-      true,
-    );
-    _nodesColor(
-      nodesRef.current.filter((node) => relativeNodes.has(node)),
-      SelectionType.Hover,
-    );
-  };
-
-export const onLeaveNode =
-  ({ linksRef, nodesRef }: TickBindRefs) =>
-  (e: MouseEvent, d: PathNode) => {
-    const { relativeLinks, relativeNodes } = calcRelativeItems(
-      d,
-      linksRef.current.data(),
-    );
-    // remove activeColor
-    _linksColor(
-      linksRef.current
-        .filter((link) => relativeLinks.has(link))
-        .filter((link) => !link.store.active), // recover unactive link
-      false,
-    );
-    _nodesColor(
-      nodesRef.current
-        .filter((node) => relativeNodes.has(node))
-        .filter((node) => !node.store.active),
-      SelectionType.Inactive,
-    );
-  };
 
 /**
- * 节点 click
- *   节点着色
- *   link active 状态 = true
+ * 更新 Node & Link 状态/颜色
  */
-export const onClickNode =
-  ({ linksRef, nodesRef }: TickBindRefs, cb?: ClickNodeCallback) =>
-  (e: MouseEvent, d: PathNode) => {
-    const { relativeLinks, relativeNodes } = calcRelativeItems(
-      d,
-      linksRef.current.data(),
-    );
+const updateItems = (
+  items: ItemsRefObj,
+  action: MouseActionType,
+  targetNode?: PathNode,
+) => {
+  // 所有物件
+  const {
+    linksRef: { current: links },
+    nodesRef: { current: nodes },
+  } = items;
 
-    /**
-     * 1. 关系 active
-     */
-    const links = linksRef.current;
-    _linksColor(
-      links
-        .filter((link) => link.store.active)
-        .each((d) => (d.store.active = false)),
-      false,
-    );
-    _linksColor(
-      links
-        .filter((link) => relativeLinks.has(link))
-        .each((d) => (d.store.active = true)),
-      true,
-    );
+  // 关联物件集合
+  const { relativeLinkSet, relativeNodeSet } = calcRelativeItems(
+    links.data(),
+    targetNode,
+  );
 
+  // 关联物件
+  const isClear = action === MouseActionType.Clear;
+  const relativeLinks = isClear
+    ? links
+    : links.filter((link) => relativeLinkSet.has(link));
+  const relativeNodes = isClear
+    ? nodes
+    : nodes.filter((node) => relativeNodeSet.has(node));
+
+  // 更新
+  updateNodes(nodes, relativeNodes, action, targetNode);
+  updateLinks(links, relativeLinks, action, targetNode);
+};
+
+const updateNodes = (
+  nodes: NodesSelection,
+  relativeNodes: NodesSelection,
+  action: MouseActionType,
+  targetNode?: PathNode,
+) => {
+  if (action === MouseActionType.Click) {
     /**
-     * 2. 节点 active
+     * 1. Click
      */
-    const nodes = nodesRef.current;
     _nodesColor(
       nodes
         .filter((node) => node.store.active)
@@ -550,17 +559,35 @@ export const onClickNode =
       SelectionType.Inactive,
     );
     _nodesColor(
-      nodes
-        .filter((node) => relativeNodes.has(node))
-        .each((d) => (d.store.active = true)),
+      relativeNodes.each((d) => (d.store.active = true)),
       SelectionType.Active,
     );
+  } else if (action === MouseActionType.Enter) {
+    /**
+     * 2. Enter
+     */
+    _nodesColor(relativeNodes, SelectionType.Hover);
+  } else if (action === MouseActionType.Leave) {
+    /**
+     * 3. Leave
+     */
+    _nodesColor(
+      relativeNodes.filter((node) => !node.store.active),
+      SelectionType.Inactive,
+    );
+  } else if (action === MouseActionType.Clear) {
+    /**
+     * 4. Clear
+     */
+    _nodesColor(
+      nodes
+        .filter((node) => node.store.active)
+        .each((d) => (d.store.active = false)),
+      SelectionType.Inactive,
+    );
+  }
+};
 
-    // invoke callback
-    cb && cb(d);
-  };
-
-// ========== private common actions ==========
 /**
  * 改变 node 颜色
  */
@@ -603,6 +630,64 @@ const _nodesColor = (nodes: NodesSelection, type: SelectionType) => {
 };
 
 /**
+ * 更新 link 状态
+ */
+const updateLinks = (
+  links: LinksSelection,
+  relativeLinks: LinksSelection,
+  action: MouseActionType,
+  targetNode?: PathNode,
+) => {
+  // 处理主要边
+  if (action === MouseActionType.Click) {
+    /**
+     * 1. Click
+     */
+    // 重置全部状态 & 颜色
+    _linksColor(
+      links
+        .filter((link) => link.store.active)
+        .each((d) => (d.store.active = false)),
+      false,
+    );
+    // 激活目标边
+    _linksColor(
+      relativeLinks.each((d) => (d.store.active = true)),
+      true,
+    );
+  } else if (action === MouseActionType.Enter) {
+    /**
+     * 2. Enter
+     */
+    // 全部上色
+    _linksColor(relativeLinks, true);
+  } else if (action === MouseActionType.Leave) {
+    /**
+     * 3. Leave
+     */
+    // inactive 去色
+    _linksColor(
+      relativeLinks.filter((link) => !link.store.active),
+      false,
+    );
+  } else if (action === MouseActionType.Clear) {
+    /**
+     * 4. Clear
+     */
+    // 重置全部状态 & 颜色
+    _linksColor(
+      links
+        .filter((link) => link.store.active)
+        .each((d) => (d.store.active = false)),
+      false,
+    );
+  }
+
+  // 处理额外边
+  _addtionalLinksColor(links, targetNode, action);
+};
+
+/**
  * 改变 link 颜色
  */
 const _linksColor = (links: LinksSelection, active: boolean) => {
@@ -626,5 +711,41 @@ const _linksColor = (links: LinksSelection, active: boolean) => {
       .selectAll('stop')
       .attr('stop-color', LinkColor.Inactive)
       .attr('stop-opacity', LinkColorOpacity.Inactive);
+  }
+};
+
+/**
+ * 额外关系（O-O 关系）颜色
+ */
+const _addtionalLinksColor = (
+  links: LinksSelection,
+  targetNode: PathNode,
+  action: MouseActionType,
+) => {
+  // clear all lines first
+  links.select('line').attr('stroke', LinkColor.Hidden);
+
+  if (action === MouseActionType.Click) {
+    // active state = true & draw color
+    links
+      .filter((d) => d.source === targetNode)
+      .each((d) => (d.store.active = true))
+      .select('line')
+      .attr('stroke', LinkColor.AddtionalOO);
+  } else if (action === MouseActionType.Enter) {
+    // draw color only
+    links
+      .filter((d) => d.source === targetNode)
+      .select('line')
+      .attr('stroke', LinkColor.AddtionalOO);
+  } else if (action === MouseActionType.Leave) {
+    // redraw active links
+    links
+      .filter((d) => d.store.active)
+      .select('line')
+      .attr('stroke', LinkColor.AddtionalOO);
+  } else if (action === MouseActionType.Clear) {
+  } else {
+    console.error(`[_addtionalLinksColor] unknonw selection type: ${action}`);
   }
 };

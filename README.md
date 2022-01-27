@@ -31,10 +31,12 @@
   - [x] 关系颜色渐层
   - [x] 人物节点透明度遮罩
   - [ ] 视窗 resize/container size change => 更新 svg 大小
-  - [ ] 个人视图数据
-  - [ ] 个人视图颜色填充
-  - [ ] 人物点 active
-  - [ ] O/KR/Project/Todo active 状态
+  - [x] 个人视图数据
+  - [x] 个人视图颜色填充
+  - [x] 人物点 active
+  - [x] O/KR/Project/Todo active 状态
+  - [ ] 组织视图 O-O 关系
+  - [ ] Hover tooltip 简单信息
 - [ ] 侧边栏
   - [ ] 侧边栏定位
   - [ ] 侧边栏填充数据（静态）

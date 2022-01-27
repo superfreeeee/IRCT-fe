@@ -20,6 +20,8 @@ export const getOrganizationViewPoint = (): ViewPointSource => {
   const relations: OrganizationViewPointRelation[] = [];
 
   const userEntityMapper = createUserEntityMapper();
+  const oIdSet = new Set(); // collect all appeared O'id
+  const oIdMap = new Map();
 
   const fromIdQueue = [CEO_ID]; // start with CEO
   const userAppeared = new Set<string>();
@@ -30,14 +32,17 @@ export const getOrganizationViewPoint = (): ViewPointSource => {
     }
     userAppeared.add(fromId);
 
-    // push user
+    // append User entity
     entities.push({ type: EntityType.User, ...userEntityMapper[fromId] });
 
-    // push user O list
     const oList = getOsByUserId(fromId);
     oList.forEach((o) => {
       const { id, content } = o;
       const oId = wrapId(EntityType.O, id);
+
+      oIdSet.add(id);
+      oIdMap.set(id, oId);
+      // append O entity
       entities.push({
         type: EntityType.O,
         id: oId,
@@ -45,27 +50,35 @@ export const getOrganizationViewPoint = (): ViewPointSource => {
         content,
       });
 
+      // append User-O relation
       relations.push({
         source: fromId,
         target: oId,
       });
     });
 
-    // get relations
     const userIds = getUserIdsByBossId(fromId);
     userIds.forEach((userId) => {
-      // push relation
+      // append User-User relation
       relations.push({
         source: fromId,
         target: userId,
       });
 
-      // add user to search list
+      // add user to search more O
       fromIdQueue.push(userId);
     });
   }
 
-  // oRelTable.filter((oRel) => oRel.OId === CEO_ID);
+  oRelTable
+    .filter((oRel) => oIdSet.has(oRel.OId) && oIdSet.has(oRel.upperOId))
+    .forEach((oRel) => {
+      relations.push({
+        source: oIdMap.get(oRel.OId),
+        target: oIdMap.get(oRel.upperOId),
+        additional: true,
+      });
+    });
 
   return {
     type: ViewPointType.Organization,

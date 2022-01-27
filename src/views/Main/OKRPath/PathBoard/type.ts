@@ -85,12 +85,15 @@ export enum NodeStrokeWidth {
  * 关系渐层色
  */
 export enum LinkColor {
+  Hidden = 'transparent',
   Inactive = '#FFFFFF',
   UserSide = '#FFFFFF',
   OSide = '#9CBDBF',
   KRSide = '#9CBDBF',
   ProjectSide = '#9485BF',
   TodoSide = '#BC8D73',
+
+  AddtionalOO = '#8DBBBE',
 }
 
 /**
@@ -108,6 +111,16 @@ export enum SelectionType {
   Inactive = 'inactive',
   Hover = 'hover',
   Active = 'active',
+}
+
+/**
+ * 根据鼠标手势控制颜色
+ */
+export enum MouseActionType {
+  Enter = 'mouse_enter',
+  Leave = 'mouse_leave',
+  Click = 'mouse_click',
+  Clear = 'mouse_clear',
 }
 
 // ========== data ==========
@@ -146,6 +159,8 @@ export interface PathLink extends d3.SimulationLinkDatum<PathNode> {
     // link state 动态状态
     active?: boolean;
   };
+  additional: boolean;
+  force: number;
 }
 
 export interface PathBoardSource {
@@ -180,4 +195,9 @@ export type TransZoomBehavior = d3.ZoomBehavior<Element, any>;
 // ========== actions ==========
 export interface ClickNodeCallback {
   (node: PathNode): void;
+}
+
+export interface ItemsRefObj {
+  linksRef: MutableRefObject<LinksSelection>;
+  nodesRef: MutableRefObject<NodesSelection>;
 }

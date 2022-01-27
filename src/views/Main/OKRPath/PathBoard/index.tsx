@@ -69,6 +69,7 @@ const PathBoard: ForwardRefExoticComponent<
   const viewPointType = useRecoilValue(viewPointTypeState);
   const viewPointTypeRef = useClosestRef(viewPointType);
   const centerUserId = useRecoilValue(viewPointCenterUserIdState);
+  const centerUserIdRef = useClosestRef(centerUserId);
 
   // =============== refs ===============
   const containerRef = useRef<HTMLDivElement>(null);
@@ -88,7 +89,6 @@ const PathBoard: ForwardRefExoticComponent<
   /**
    * 重置成合适的缩放、中心用户平移到中央
    */
-  const centerUserIdRef = useClosestRef(centerUserId);
   const resetZoom = useCallback(() => {
     const centerUserCircle = nodesRef.current
       .filter((d) => d.data.id === centerUserIdRef.current)
@@ -96,8 +96,6 @@ const PathBoard: ForwardRefExoticComponent<
 
     const x = centerUserCircle.attr('cx');
     const y = centerUserCircle.attr('cy');
-
-    console.log(`center(userId = ${centerUserIdRef.current}) = (${x}, ${y})`);
 
     maskRef.current
       ?.transition()
@@ -244,7 +242,7 @@ const PathBoard: ForwardRefExoticComponent<
         const t2 = (d.target as PathNode).store.radius;
         return Math.max(t1, t2) * 2 + 30;
       })
-      .strength(1);
+      .strength((d) => d.force);
     const forceNodes = d3.forceManyBody().strength(-30);
     const simulation = d3
       .forceSimulation(nodes)
@@ -265,6 +263,7 @@ const PathBoard: ForwardRefExoticComponent<
 
     // 关系图形
     linksSelection
+      .filter((link) => !link.additional) // 主边
       .append('path')
       .attr('d', (d) => {
         const r1 = (d.source as PathNode).store.radius;
@@ -275,10 +274,13 @@ const PathBoard: ForwardRefExoticComponent<
            V-${r2}
            Q1 0,0 ${-r1} Z`;
       })
-      .attr('fill', (d) => `url(#${d.store.colorId})`);
+      .attr('fill', (d) =>
+        d.additional ? 'transparent' : `url(#${d.store.colorId})`,
+      );
 
     // 关系颜色
     const gradients = linksSelection
+      .filter((link) => !link.additional)
       .append('linearGradient')
       .attr('id', (d) => d.store.colorId);
     gradients
@@ -293,6 +295,14 @@ const PathBoard: ForwardRefExoticComponent<
       .attr('stop-color', LinkColor.Inactive)
       .attr('stop-opacity', LinkColorOpacity.Inactive)
       .style('transition', transition('all'));
+
+    linksSelection
+      .filter((link) => link.additional) // 额外边
+      .append('line')
+      .attr('stroke', LinkColor.Hidden)
+      .attr('stroke-dasharray', [10, 8])
+      .attr('stroke-width', 4)
+      .style('transition', transition('stroke'));
 
     /**
      * nodes
