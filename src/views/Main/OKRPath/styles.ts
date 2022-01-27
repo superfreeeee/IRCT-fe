@@ -23,6 +23,7 @@ export const OKRIconActions = styled.div`
 `;
 
 export const OKRIconBtn = styled.div`
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -31,4 +32,15 @@ export const OKRIconBtn = styled.div`
   border-radius: 5px;
   color: white;
   background-color: #474849;
+
+  &.disabled::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 5px;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
 `;

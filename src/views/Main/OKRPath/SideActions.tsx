@@ -1,22 +1,30 @@
-import BoxIcon, { BoxIconType } from '@components/BoxIcon';
-import useClosestRef from '@hooks/useClosestRef';
 import React, { FC } from 'react';
-import { useSetRecoilState } from 'recoil';
-import { viewPointStackUpdater } from '../state/okrPath';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+
+import BoxIcon, { BoxIconType } from '@components/BoxIcon';
+import { viewPointStackState, viewPointStackUpdater } from '../state/okrPath';
 import { ViewPointStackActionType } from '../state/type';
 import { PathBoardRef } from './PathBoard';
 import { OKRIconActions, OKRIconBtn } from './styles';
+import classNames from 'classnames';
 
 interface SideActionsProps {
   boardRef: React.MutableRefObject<PathBoardRef>;
 }
 
 const SideActions: FC<SideActionsProps> = ({ boardRef }) => {
+  const viewPointStack = useRecoilValue(viewPointStackState);
+
+  const popDisabled = viewPointStack.length === 0;
+
   /**
    * 返回上一个视图
    */
   const updateStack = useSetRecoilState(viewPointStackUpdater);
   const popRecord = () => {
+    if (popDisabled) {
+      return;
+    }
     console.log(`[OKRPath.SideActions] popRecord`);
     updateStack({
       type: ViewPointStackActionType.Pop,
@@ -48,7 +56,10 @@ const SideActions: FC<SideActionsProps> = ({ boardRef }) => {
     <>
       {/* left-top actions */}
       <OKRIconActions style={{ left: 32, top: 24 }}>
-        <OKRIconBtn onClick={popRecord}>
+        <OKRIconBtn
+          className={classNames({ disabled: popDisabled })}
+          onClick={popRecord}
+        >
           <BoxIcon type={BoxIconType.Undo} />
           {/* <img src={''} alt="" /> */}
         </OKRIconBtn>
