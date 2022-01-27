@@ -1,11 +1,12 @@
-import classNames from 'classnames';
 import React from 'react';
 import { useRecoilValue } from 'recoil';
-import { okrListVisibleState } from '../state/okrPath';
+import classNames from 'classnames';
+
+import { okrPathListVisibleState } from '../../state/okrPath';
 import { OKRListContainer } from './styles';
 
-const OKRList = () => {
-  const visible = useRecoilValue(okrListVisibleState);
+const PathList = () => {
+  const visible = useRecoilValue(okrPathListVisibleState);
 
   return (
     <OKRListContainer className={classNames({ hide: !visible })}>
@@ -14,4 +15,4 @@ const OKRList = () => {
   );
 };
 
-export default OKRList;
+export default PathList;

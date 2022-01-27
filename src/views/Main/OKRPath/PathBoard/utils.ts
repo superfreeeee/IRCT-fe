@@ -1,13 +1,18 @@
 import * as d3 from 'd3';
 
 import { EntityType, ViewPointType } from '@views/Main/state/okrDB/type';
+import { PlainFn } from '@utils/type';
 import {
+  ClickNodeCallback,
   LinkColor,
+  LinkColorOpacity,
   LinksSelection,
   NodeColor,
+  NodeImageMaskOpacity,
   NodeImagePadding,
   NodeRadius,
   NodesSelection,
+  NodeStrokeWidth,
   NodeTextColor,
   PathLink,
   PathNode,
@@ -16,9 +21,10 @@ import {
   TickBindRefs,
 } from './type';
 
-// ========== style ==========
+// ========== style / init props ==========
 /**
  * 节点半径
+ *   calc radius
  */
 interface CalcNodeRadius {
   (d: PathNode): number;
@@ -42,7 +48,7 @@ export const nodeRadius = (viewPointType: ViewPointType): CalcNodeRadius => {
 
         case EntityType.O:
         default:
-          return NodeRadius.O;
+          return NodeRadius.KR; // 组织视图 O.radius = 17
       }
     };
     return calcAndStoreRadius(calcRadius);
@@ -61,6 +67,9 @@ export const nodeRadius = (viewPointType: ViewPointType): CalcNodeRadius => {
   }
 };
 
+/**
+ *
+ */
 interface CalcNodeImageWidth {
   (d: PathNode): number;
 }
@@ -100,6 +109,8 @@ export const nodeImageWidth = (
 
 /**
  * 节点填充颜色
+ *   calc color
+ *        activeColor
  */
 interface CalcNodeColor {
   (d: PathNode): string;
@@ -107,56 +118,94 @@ interface CalcNodeColor {
 const _nodeColorMap: {
   [type in EntityType]: {
     color: NodeColor;
+    hoverColor: NodeColor;
     activeColor: NodeColor;
   };
 } = {
   [EntityType.User]: {
     color: NodeColor.User,
+    hoverColor: NodeColor.User,
     activeColor: NodeColor.User,
   },
   [EntityType.O]: {
     color: NodeColor.O,
+    hoverColor: NodeColor.HoverO,
     activeColor: NodeColor.ActiveO,
   },
   [EntityType.KR]: {
     color: NodeColor.KR,
+    hoverColor: NodeColor.HoverKR,
     activeColor: NodeColor.ActiveKR,
   },
   [EntityType.Project]: {
     color: NodeColor.Project,
+    hoverColor: NodeColor.HoverProject,
     activeColor: NodeColor.ActiveProject,
   },
   [EntityType.Todo]: {
     color: NodeColor.Todo,
+    hoverColor: NodeColor.HoverTodo,
     activeColor: NodeColor.ActiveTodo,
   },
 };
 export const nodeColor: CalcNodeColor = (d: PathNode) => {
-  const { color, activeColor } = _nodeColorMap[d.data.type];
+  const { color, hoverColor, activeColor } = _nodeColorMap[d.data.type];
   d.store.color = color;
+  d.store.hoverColor = hoverColor;
   d.store.activeColor = activeColor;
   return color;
 };
 
 /**
- * 节点文字
+ * 节点描边宽度
  */
-export const nodeText = (d: PathNode) => {
+const _nodeStrokeWidthMap: { [type in EntityType]: NodeStrokeWidth } = {
+  [EntityType.User]: NodeStrokeWidth.Inactive,
+  [EntityType.O]: NodeStrokeWidth.O,
+  [EntityType.KR]: NodeStrokeWidth.KR,
+  [EntityType.Project]: NodeStrokeWidth.Project,
+  [EntityType.Todo]: NodeStrokeWidth.Todo,
+};
+export const nodeStrokeWidth = (node: PathNode) => {
+  const strokeWidth = _nodeStrokeWidthMap[node.data.type];
+  node.store.strokeWidth = strokeWidth;
+  return strokeWidth;
+};
+
+/**
+ * 节点文字
+ *   calc text
+ */
+export const nodeText = (viewPointType: ViewPointType) => (d: PathNode) => {
   const { type, id } = d.data;
-  let text: string;
-  if ([EntityType.O, EntityType.KR].includes(type)) {
-    text = `${type}${id.split('-')[1]}`;
-  } else {
+  let text: string, fontSize: number;
+  if (
+    viewPointType === ViewPointType.Organization ||
+    ![EntityType.O, EntityType.KR].includes(type)
+  ) {
     text = '';
+    fontSize = 12;
+  } else {
+    text = `${type}${id.split('-')[1]}`;
+    if (type === EntityType.O) {
+      fontSize = 16;
+    } else if (type === EntityType.KR) {
+      fontSize = 12;
+    } else {
+      fontSize = 12;
+    }
   }
 
   d.store.text = text;
+  d.store.fontSize = fontSize;
 
   return text;
 };
 
 /**
  * 关系填充色
+ *   calc activeColorStart
+ *        activeColorEnd
  */
 const _linkSideColorMap: { [type in EntityType]: LinkColor } = {
   [EntityType.User]: LinkColor.UserSide,
@@ -174,6 +223,16 @@ export const linkColor = (
 
   d.store.activeColorStart = _linkSideColorMap[t1];
   d.store.activeColorEnd = _linkSideColorMap[t2];
+};
+
+/**
+ * 计算 link Id
+ *   calc id
+ *        colorId
+ */
+export const linkId = (link: PathLink) => {
+  const linkId = (link.store.id = `link-${link.source}-${link.target}`);
+  link.store.colorId = `${linkId}-color`;
 };
 
 // ========== common style ==========
@@ -250,6 +309,7 @@ export const onEnd = (simulation: d3.Simulation<PathNode, any>) => () => {
  */
 export const onDrag = (simulation: d3.Simulation<PathNode, any>) => {
   let dragging = false;
+  let startX: number, startY: number;
 
   const dragStart = (e, d: PathNode) => {
     if (!d.draggable) {
@@ -257,14 +317,20 @@ export const onDrag = (simulation: d3.Simulation<PathNode, any>) => {
     }
     const { x, y } = d;
     // store origin x,y
-    d.fx = x;
-    d.fy = y;
+    startX = d.fx = x;
+    startY = d.fy = y;
   };
 
   const dragDrag = (e, d: PathNode) => {
     if (!d.draggable) {
       return;
     }
+    const { x, y } = e;
+    const distance = (x - startX) ** 2 + (y - startY) ** 2;
+    if (distance < 100) {
+      return;
+    }
+
     if (!dragging) {
       dragging = true;
       /**
@@ -274,7 +340,6 @@ export const onDrag = (simulation: d3.Simulation<PathNode, any>) => {
       // simulation state
       simulation.alphaTarget(0.1).restart();
     }
-    const { x, y } = e;
     // poisition set to fix
     d.fx = x;
     d.fy = y;
@@ -319,7 +384,7 @@ export const onTransZoom = (root: RootSelection) => {
  *   清除节点/边 active 状态
  */
 export const onMaskClick =
-  ({ linksRef, nodesRef }: TickBindRefs) =>
+  ({ linksRef, nodesRef }: TickBindRefs, cb?: PlainFn) =>
   (e: MouseEvent, d: PathNode) => {
     // clear all active
     _linksColor(
@@ -334,6 +399,8 @@ export const onMaskClick =
         .each((d) => (d.store.active = false)),
       SelectionType.Inactive,
     );
+
+    cb && cb();
   };
 
 // ========== node hover/click ==========
@@ -364,7 +431,7 @@ const calcRelativeItems = (
     // check parent node
     if (targetId === nodeId) {
       if (parentId !== null) {
-        console.log(`multiple source for one node: ${nodeId}`);
+        console.warn(`multiple source for one node: ${nodeId}`);
       }
       parentId = sourceId;
     }
@@ -448,22 +515,23 @@ export const onLeaveNode =
  *   link active 状态 = true
  */
 export const onClickNode =
-  ({ linksRef, nodesRef }: TickBindRefs) =>
+  ({ linksRef, nodesRef }: TickBindRefs, cb?: ClickNodeCallback) =>
   (e: MouseEvent, d: PathNode) => {
     const { relativeLinks, relativeNodes } = calcRelativeItems(
       d,
       linksRef.current.data(),
     );
-    // fill activeColor & state active = true
+
+    /**
+     * 1. 关系 active
+     */
     const links = linksRef.current;
-    // clear old active
     _linksColor(
       links
         .filter((link) => link.store.active)
         .each((d) => (d.store.active = false)),
       false,
     );
-    // add new active
     _linksColor(
       links
         .filter((link) => relativeLinks.has(link))
@@ -471,6 +539,9 @@ export const onClickNode =
       true,
     );
 
+    /**
+     * 2. 节点 active
+     */
     const nodes = nodesRef.current;
     _nodesColor(
       nodes
@@ -484,6 +555,9 @@ export const onClickNode =
         .each((d) => (d.store.active = true)),
       SelectionType.Active,
     );
+
+    // invoke callback
+    cb && cb(d);
   };
 
 // ========== private common actions ==========
@@ -494,31 +568,35 @@ const _nodesColor = (nodes: NodesSelection, type: SelectionType) => {
   if (nodes.size() === 0) {
     return;
   }
-  console.log(`[_nodesColor]`, nodes);
   if (type === SelectionType.Active) {
-    // 激活 node
+    // active
     nodes.select('circle').attr('fill', (d) => d.store.activeColor);
     nodes.select('text').attr('fill', NodeTextColor.Active);
-    nodes.select('circle.user-mask').attr('opacity', 0);
+    nodes
+      .select('circle.user-mask')
+      .attr('opacity', NodeImageMaskOpacity.Active);
 
     const itemNodes = nodes.filter((d) => d.data.type !== EntityType.User);
-    itemNodes.select('circle').attr('stroke-width', 5);
+    itemNodes.select('circle').attr('stroke-width', (d) => d.store.strokeWidth);
   } else if (type === SelectionType.Hover) {
-    // hover node
-    // active 覆盖 hover 状态
+    // hover (active 覆盖 hover 状态)
     nodes = nodes.filter((node) => !node.store.active);
 
-    nodes.select('circle').attr('fill', (d) => d.store.activeColor);
+    nodes.select('circle').attr('fill', (d) => d.store.hoverColor);
     nodes.select('text').attr('fill', NodeTextColor.Active);
-    nodes.select('circle.user-mask').attr('opacity', 0.2);
+    nodes
+      .select('circle.user-mask')
+      .attr('opacity', NodeImageMaskOpacity.Hover);
   } else if (type === SelectionType.Inactive) {
-    // 取消激活 node
+    // inactive
     nodes.select('circle').attr('fill', (d) => d.store.color);
     nodes.select('text').attr('fill', NodeTextColor.Inactive);
-    nodes.select('circle.user-mask').attr('opacity', 0.5);
+    nodes
+      .select('circle.user-mask')
+      .attr('opacity', NodeImageMaskOpacity.Inactive);
 
     const itemNodes = nodes.filter((d) => d.data.type !== EntityType.User);
-    itemNodes.select('circle').attr('stroke-width', 0);
+    itemNodes.select('circle').attr('stroke-width', NodeStrokeWidth.Inactive);
   } else {
     console.error(`[_nodesColor] unknonw selection type: ${type}`);
   }
@@ -537,16 +615,16 @@ const _linksColor = (links: LinksSelection, active: boolean) => {
     gradients
       .select('stop[offset="0%"]')
       .attr('stop-color', (d) => d.store.activeColorStart)
-      .attr('stop-opacity', 0.7);
+      .attr('stop-opacity', LinkColorOpacity.Active);
     gradients
       .select('stop[offset="100%"]')
       .attr('stop-color', (d) => d.store.activeColorEnd)
-      .attr('stop-opacity', 0.7);
+      .attr('stop-opacity', LinkColorOpacity.Active);
   } else {
     // 取消激活 link
     gradients
       .selectAll('stop')
       .attr('stop-color', LinkColor.Inactive)
-      .attr('stop-opacity', 0.1);
+      .attr('stop-opacity', LinkColorOpacity.Inactive);
   }
 };

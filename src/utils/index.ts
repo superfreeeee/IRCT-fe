@@ -43,7 +43,7 @@ export const roundBy = (target: number, min?: number, max?: number) => {
 
 /**
  * 返回当前 hh:mm 时间
- * @returns 
+ * @returns
  */
 export const getCurrentTime = (): string => {
   const date = new Date();

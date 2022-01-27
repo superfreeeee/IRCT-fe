@@ -1,5 +1,9 @@
 import BoxIcon, { BoxIconType } from '@components/BoxIcon';
+import useClosestRef from '@hooks/useClosestRef';
 import React, { FC } from 'react';
+import { useSetRecoilState } from 'recoil';
+import { viewPointStackUpdater } from '../state/okrPath';
+import { ViewPointStackActionType } from '../state/type';
 import { PathBoardRef } from './PathBoard';
 import { OKRIconActions, OKRIconBtn } from './styles';
 
@@ -9,10 +13,14 @@ interface SideActionsProps {
 
 const SideActions: FC<SideActionsProps> = ({ boardRef }) => {
   /**
-   * 退出? 返回上一个视图?
+   * 返回上一个视图
    */
-  const exitPath = () => {
-    console.log(`[OKRPath.SideActions] exitPath`);
+  const updateStack = useSetRecoilState(viewPointStackUpdater);
+  const popRecord = () => {
+    console.log(`[OKRPath.SideActions] popRecord`);
+    updateStack({
+      type: ViewPointStackActionType.Pop,
+    });
   };
 
   /**
@@ -40,7 +48,7 @@ const SideActions: FC<SideActionsProps> = ({ boardRef }) => {
     <>
       {/* left-top actions */}
       <OKRIconActions style={{ left: 32, top: 24 }}>
-        <OKRIconBtn onClick={exitPath}>
+        <OKRIconBtn onClick={popRecord}>
           <BoxIcon type={BoxIconType.Undo} />
           {/* <img src={''} alt="" /> */}
         </OKRIconBtn>

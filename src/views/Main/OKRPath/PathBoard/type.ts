@@ -21,12 +21,21 @@ export enum NodeRadius {
 }
 
 /**
- * 节点图片 padding
+ * 节点图片边缘
  */
 export enum NodeImagePadding {
   L1 = 5,
   L2 = 3,
   L3 = 1,
+}
+
+/**
+ * 节点图片遮罩透明度
+ */
+export enum NodeImageMaskOpacity {
+  Inactive = 0.5,
+  Hover = 0.2,
+  Active = 0,
 }
 
 /**
@@ -40,16 +49,36 @@ export enum NodeColor {
   Project = '#F4F0FF',
   Todo = '#FFF8F3',
 
-  // 激活后颜色
-  ActiveO = '#8DBBBE',
-  ActiveKR = '#8DBBBE',
-  ActiveProject = '#9485BF',
-  ActiveTodo = '#BC8D73',
+  // Hover 颜色
+  HoverO = '#8DBBBE',
+  HoverKR = '#8DBBBE',
+  HoverProject = '#9485BF',
+  HoverTodo = '#BC8D73',
+
+  // Active 颜色
+  ActiveO = '#CEFCFF',
+  ActiveKR = '#CEFCFF',
+  ActiveProject = '#C2ADFF',
+  ActiveTodo = '#FCB993',
 }
 
+/**
+ * 节点文字颜色
+ */
 export enum NodeTextColor {
   Inactive = '#BABABA',
   Active = '#FFFFFF',
+}
+
+/**
+ * Active 状态下描边宽度
+ */
+export enum NodeStrokeWidth {
+  Inactive = 0,
+  O = 5,
+  KR = 4,
+  Project = 3,
+  Todo = 2,
 }
 
 /**
@@ -62,6 +91,14 @@ export enum LinkColor {
   KRSide = '#9CBDBF',
   ProjectSide = '#9485BF',
   TodoSide = '#BC8D73',
+}
+
+/**
+ * 关系颜色透明度
+ */
+export enum LinkColorOpacity {
+  Inactive = 0.1,
+  Active = 0.65,
 }
 
 /**
@@ -81,10 +118,13 @@ export interface PathNode extends d3.SimulationNodeDatum {
     // static init 初始化确定
     radius?: NodeRadius;
     color?: NodeColor;
+    hoverColor?: NodeColor;
     activeColor?: NodeColor;
     imageWidth?: number;
     imagePadding?: NodeImagePadding;
     text?: string;
+    fontSize?: number;
+    strokeWidth?: NodeStrokeWidth;
     // node state 动态状态
     active?: boolean;
   };
@@ -106,6 +146,11 @@ export interface PathLink extends d3.SimulationLinkDatum<PathNode> {
     // link state 动态状态
     active?: boolean;
   };
+}
+
+export interface PathBoardSource {
+  nodes: PathNode[];
+  links: PathLink[];
 }
 
 // ========== selections ==========
@@ -131,3 +176,8 @@ export interface TickBindRefs {
 }
 
 export type TransZoomBehavior = d3.ZoomBehavior<Element, any>;
+
+// ========== actions ==========
+export interface ClickNodeCallback {
+  (node: PathNode): void;
+}

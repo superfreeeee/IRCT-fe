@@ -89,10 +89,14 @@ export interface TodoRelProjectTable {
   projectId: number;
 }
 
+export type MergedEntity<E1, E2> = E1 & E2;
+
 // ========== api return types ==========
 export interface OrganizationViewPointEntity {
+  // common props
   type: EntityType.User | EntityType.O;
   id: string;
+  originId: string | number;
   // for user
   avatar?: string;
   name?: string;
@@ -106,8 +110,13 @@ export interface OrganizationViewPointRelation {
 }
 
 export interface PersonalViewPointEntity {
+  // common props
   type: EntityType;
   id: string;
+  originId: string | number;
+  // for user
+  avatar?: string;
+  // name?: string;
 }
 
 export interface PersonalViewPointRelation {

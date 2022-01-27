@@ -8,7 +8,6 @@ export const OKRPathContainer = styled.div`
   align-items: center;
   height: 100%;
   padding: 24px 32px;
-  /* background-color: rgba(255, 255, 255, 0.3); */
 
   &.hide {
     display: none;

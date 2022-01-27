@@ -8,3 +8,7 @@ export interface ObserveMouseActionsOptions {
 export type UnObserveMouseActions = {
   [key in keyof ObserveMouseActionsOptions]: () => void;
 };
+
+export interface PlainFn {
+  (): void;
+}

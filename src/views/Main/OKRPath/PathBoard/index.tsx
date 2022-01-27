@@ -1,16 +1,26 @@
-import React, { useEffect, useImperativeHandle, useRef } from 'react';
+import React, {
+  ForwardRefExoticComponent,
+  RefAttributes,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react';
 import * as d3 from 'd3';
 
-import { getOrganizationViewPoint } from '@views/Main/state/okrDB/api';
 import { EntityType, ViewPointType } from '@views/Main/state/okrDB/type';
 import { PathBoardContainer } from './styles';
 import {
   LinkColor,
+  LinkColorOpacity,
   LinksSelection,
   MaskSelection,
+  NodeImageMaskOpacity,
   NodesSelection,
+  NodeStrokeWidth,
   NodeTextColor,
-  PathLink,
+  PathBoardSource,
   PathNode,
   RootSelection,
   SVGSelection,
@@ -18,11 +28,6 @@ import {
   TransZoomBehavior,
 } from './type';
 import {
-  linkColor,
-  nodeColor,
-  nodeImageWidth,
-  nodeRadius,
-  nodeText,
   onClickNode,
   onDrag,
   onEnd,
@@ -33,6 +38,14 @@ import {
   onTransZoom,
   transition,
 } from './utils';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import {
+  viewPointCenterUserIdState,
+  viewPointStackUpdater,
+  viewPointTypeState,
+} from '@views/Main/state/okrPath';
+import useClosestRef from '@hooks/useClosestRef';
+import { ViewPointStackActionType } from '@views/Main/state/type';
 
 const BOARD_ID = 'path-board';
 
@@ -40,7 +53,24 @@ export interface PathBoardRef {
   resetZoom: () => void;
 }
 
-const PathBoard = React.forwardRef((props, ref) => {
+export interface PathBoardProps {
+  source: PathBoardSource;
+}
+
+const DEFAULT_SOURCE: PathBoardSource = {
+  nodes: [],
+  links: [],
+};
+
+const PathBoard: ForwardRefExoticComponent<
+  PathBoardProps & RefAttributes<PathBoardRef>
+> = React.forwardRef(({ source = DEFAULT_SOURCE }, ref) => {
+  // =============== state ===============
+  const viewPointType = useRecoilValue(viewPointTypeState);
+  const viewPointTypeRef = useClosestRef(viewPointType);
+  const centerUserId = useRecoilValue(viewPointCenterUserIdState);
+
+  // =============== refs ===============
   const containerRef = useRef<HTMLDivElement>(null);
 
   // svg elements selections
@@ -53,56 +83,115 @@ const PathBoard = React.forwardRef((props, ref) => {
   // bounding
   const boundTransZoomRef = useRef<TransZoomBehavior>(null);
 
+  // =============== actions ===============
+
   /**
-   * 初始化数据
+   * 重置成合适的缩放、中心用户平移到中央
+   */
+  const centerUserIdRef = useClosestRef(centerUserId);
+  const resetZoom = useCallback(() => {
+    const centerUserCircle = nodesRef.current
+      .filter((d) => d.data.id === centerUserIdRef.current)
+      .select('circle');
+
+    const x = centerUserCircle.attr('cx');
+    const y = centerUserCircle.attr('cy');
+
+    console.log(`center(userId = ${centerUserIdRef.current}) = (${x}, ${y})`);
+
+    maskRef.current
+      ?.transition()
+      .duration(750)
+      .call(
+        boundTransZoomRef.current.transform,
+        d3.zoomIdentity.scale(1).translate(-x, -y),
+      );
+  }, []);
+
+  /**
+   * 点击节点后外部事件(处理节点焦点)
+   */
+  const lastClickItemIdRef = useRef<string>('');
+  const updateStack = useSetRecoilState(viewPointStackUpdater);
+  const handleClickNode = useCallback((node: PathNode) => {
+    const currentId = node.id;
+    const lastId = lastClickItemIdRef.current;
+
+    console.log(`[PathBoard] onClickNode(${currentId})`, node);
+
+    if (lastId === currentId) {
+      console.log(`double click of ${currentId}!`);
+      // 双击某节点
+      if (
+        viewPointTypeRef.current === ViewPointType.Organization &&
+        node.data.type === EntityType.User
+      ) {
+        updateStack({
+          type: ViewPointStackActionType.Push,
+          record: {
+            type: ViewPointType.Personal,
+            centerUserId: currentId,
+          },
+        });
+      }
+    } else {
+      lastClickItemIdRef.current = currentId;
+    }
+  }, []);
+  const clearLastClickItemId = useCallback(() => {
+    lastClickItemIdRef.current = '';
+  }, []);
+  // 更新视图的时候重置
+  useEffect(clearLastClickItemId, [source]);
+
+  // =============== outer actions ===============
+  /**
+   * 外部操作
+   */
+  useImperativeHandle(ref, () => ({ resetZoom }), []);
+
+  // =============== effects ===============
+  /**
+   * 初始化
+   */
+  useEffect(() => {}, []);
+
+  /**
+   * 数据变动时重新渲染
    */
   useEffect(() => {
-    const orgVP = getOrganizationViewPoint();
-    console.log(`orgVP`, orgVP);
+    console.group(`[PathBoard] source change`);
+    console.log('source', source);
+    if (source === DEFAULT_SOURCE) {
+      console.log(`source === default, do nothing`);
+      console.groupEnd();
+      return;
+    }
+
+    const { nodes, links } = source;
+
+    console.log(`nodes`, nodes);
+    console.log(`links`, links);
+
+    console.groupEnd();
+
+    // render
 
     const { width, height } = containerRef.current.getBoundingClientRect();
 
     const boardWidth = width;
     const boardHeight = height;
 
-    // data transform
-    const nodes: PathNode[] = orgVP.entities.map((entity) => ({
-      id: entity.id,
-      data: entity,
-      store: {},
-      draggable: true,
-      // draggable: entity.type !== EntityType.User,
-    }));
-    const links: PathLink[] = orgVP.relations.map((rel) => ({
-      ...rel,
-      store: {},
-    }));
-
-    // calc node side data(store in d.store)
-    const _calcRadius = nodeRadius(ViewPointType.Organization);
-    const _calcWidth = nodeImageWidth(ViewPointType.Organization);
-    const _nodeMap = {}; // nodeId => node
-    nodes.forEach((node) => {
-      _calcRadius(node);
-      _calcWidth(node);
-      nodeColor(node);
-      _nodeMap[node.id] = node;
-    });
-    // calc link side data(store in d.store)
-    links.forEach((link) => {
-      linkColor(link, _nodeMap);
-      const linkId = (link.store.id = `link-${link.source}-${link.target}`);
-      link.store.colorId = `${linkId}-color`;
-    });
-
-    console.table(nodes);
-    console.table(links);
-
     // refs for function binding
     const tickBindRefs: TickBindRefs = {
       linksRef,
       nodesRef,
     };
+
+    // clear last binding
+    if (svgRef.current) {
+      svgRef.current.remove();
+    }
 
     /**
      * svg Element
@@ -119,13 +208,13 @@ const PathBoard = React.forwardRef((props, ref) => {
         boardHeight,
       ]));
 
-    const defs = svg.append('defs');
+    // const defs = svg.append('defs');
 
     /**
      * TranslateMask
      * 平移遮罩
      */
-    const boundMaskClick = onMaskClick(tickBindRefs);
+    const boundMaskClick = onMaskClick(tickBindRefs, clearLastClickItemId);
     const mask = (maskRef.current = svg
       .append('rect')
       .attr('class', 'mask')
@@ -149,8 +238,14 @@ const PathBoard = React.forwardRef((props, ref) => {
     const forceLinks = d3
       .forceLink(links)
       .id((d: PathNode) => d.id)
-      .strength(0.1);
-    const forceNodes = d3.forceManyBody().strength(-50);
+      .distance((d) => {
+        // link distance base on node radius
+        const t1 = (d.source as PathNode).store.radius;
+        const t2 = (d.target as PathNode).store.radius;
+        return Math.max(t1, t2) * 2 + 30;
+      })
+      .strength(1);
+    const forceNodes = d3.forceManyBody().strength(-30);
     const simulation = d3
       .forceSimulation(nodes)
       .force('link', forceLinks)
@@ -175,10 +270,10 @@ const PathBoard = React.forwardRef((props, ref) => {
         const r1 = (d.source as PathNode).store.radius;
         const r2 = (d.target as PathNode).store.radius;
         return `M0 0
-          V${r1}
-          Q1 0,2 ${r2}
-          V-${r2}
-          Q1 0,0 ${-r1} Z`;
+           V${r1}
+           Q1 0,2 ${r2}
+           V-${r2}
+           Q1 0,0 ${-r1} Z`;
       })
       .attr('fill', (d) => `url(#${d.store.colorId})`);
 
@@ -190,13 +285,13 @@ const PathBoard = React.forwardRef((props, ref) => {
       .append('stop')
       .attr('offset', '0%')
       .attr('stop-color', LinkColor.Inactive)
-      .attr('stop-opacity', 0.1)
+      .attr('stop-opacity', LinkColorOpacity.Inactive)
       .style('transition', transition('all'));
     gradients
       .append('stop')
       .attr('offset', '100%')
       .attr('stop-color', LinkColor.Inactive)
-      .attr('stop-opacity', 0.1)
+      .attr('stop-opacity', LinkColorOpacity.Inactive)
       .style('transition', transition('all'));
 
     /**
@@ -204,7 +299,7 @@ const PathBoard = React.forwardRef((props, ref) => {
      */
     const boundEnterNode = onEnterNode(tickBindRefs);
     const boundLeaveNode = onLeaveNode(tickBindRefs);
-    const boundClickNode = onClickNode(tickBindRefs);
+    const boundClickNode = onClickNode(tickBindRefs, handleClickNode);
     const boundDrag = onDrag(simulation);
 
     const nodesSelection = (nodesRef.current = root
@@ -250,7 +345,7 @@ const PathBoard = React.forwardRef((props, ref) => {
       .attr('class', 'user-mask')
       .attr('r', (d) => d.store.radius)
       .attr('fill', 'black')
-      .attr('opacity', 0.5)
+      .attr('opacity', NodeImageMaskOpacity.Inactive)
       .style('transition', transition('opacity'));
 
     // 节点文字
@@ -261,15 +356,16 @@ const PathBoard = React.forwardRef((props, ref) => {
     itemNodes
       .select('circle')
       .attr('stroke', '#FFFFFF')
-      .attr('stroke-width', 0);
+      .attr('stroke-width', NodeStrokeWidth.Inactive);
 
     itemNodes
       .append('text')
-      .text(nodeText)
+      .text((d) => d.store.text)
       .attr('fill', NodeTextColor.Inactive)
       .style('user-select', 'none')
       .style('dominant-baseline', 'middle')
       .style('text-anchor', 'middle')
+      .style('font-size', (d) => `${d.store.fontSize}px`)
       .style('transition', transition('fill'));
 
     // bind simulation tick
@@ -279,28 +375,13 @@ const PathBoard = React.forwardRef((props, ref) => {
     });
     simulation.on('tick', boundOnTick).on('end', onEnd(simulation));
     simulation.velocityDecay(0.1);
-  }, []);
 
-  /**
-   * 外部操作
-   */
-  useImperativeHandle(
-    ref,
-    () => {
-      const resetZoom = () => {
-        console.log(`[PathBoard] resetZoom`);
-        maskRef.current
-          .transition()
-          .duration(750)
-          .call(boundTransZoomRef.current.transform, d3.zoomIdentity.scale(1));
-      };
-
-      return {
-        resetZoom,
-      };
-    },
-    [],
-  );
+    // set center user center after 500ms
+    setTimeout(() => {
+      resetZoom();
+      simulation.velocityDecay(0.25);
+    }, 750);
+  }, [source]);
 
   return (
     <PathBoardContainer ref={containerRef}>

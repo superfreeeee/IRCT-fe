@@ -10,6 +10,8 @@ import _todoTable from "./todoTable.json";
 import _todoRelProjectTable from "./todoRelProjectTable.json";
 import { KREntity, OEntity, ORelEntity, ProjectEntity, ProjectRelKREntity, ProjectRelUserEntity, TodoEntity, TodoRelProjectTable, UserEntity, UserRelEntity } from "./type";
 
+export const CEO_ID = "user-666";
+
 /**
  * user 相关（汇报关系）
  */

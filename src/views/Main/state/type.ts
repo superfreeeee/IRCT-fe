@@ -1,3 +1,5 @@
+import { ViewPointType } from './okrDB/type';
+
 export enum StateNamespace {
   IM = 'im',
   User = 'user',
@@ -41,6 +43,13 @@ export enum VideoVoiceRate {
   LEVEL4 = 0,
 }
 
+export enum ViewPointStackActionType {
+  Clear = 'clear',
+  Push = 'push',
+  Pop = 'pop',
+  Null = 'null',
+}
+
 // ========== type / interface 对象类型 ==========
 export type RoomSpacePosition = [number, number];
 
@@ -64,4 +73,20 @@ export interface UserRoomSpaceFigure extends UserRoomSpaceInfo, UserBasicInfo {}
 
 export interface VideoRoomFigure extends UserRoomSpaceFigure {
   voiceRate: VideoVoiceRate;
+}
+
+/**
+ * 观察视图纪录
+ */
+export interface ViewPointRecord {
+  type: ViewPointType;
+  centerUserId?: string;
+}
+
+/**
+ * 操作观察视图纪录方法
+ */
+export interface ViewPointStackAction {
+  type: ViewPointStackActionType;
+  record?: ViewPointRecord;
 }

@@ -1,10 +1,10 @@
 import styled from 'styled-components';
 
 export const PathBoardContainer = styled.div`
+  flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100%;
   height: 100%;
   color: #fff;
   overflow: hidden;
