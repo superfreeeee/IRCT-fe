@@ -21,7 +21,6 @@ export const ItemTooltipWrapper = styled.div`
   /* for text */
   font-size: 12px;
   color: #fff;
-  text-align: center;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -38,5 +37,12 @@ export const ItemTooltipWrapper = styled.div`
     display: flex;
     align-items: center;
     gap: 6px;
+  }
+
+  .content {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 `;

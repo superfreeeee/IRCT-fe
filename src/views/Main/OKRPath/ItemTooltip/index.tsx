@@ -1,4 +1,4 @@
-import React, { FC, MutableRefObject, useEffect, useRef } from 'react';
+import React, { FC, MutableRefObject, useEffect, useMemo, useRef } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import classNames from 'classnames';
 
@@ -13,6 +13,7 @@ import { EntityType } from '@views/Main/state/okrDB/type';
 import { userStateFamily } from '@views/Main/state/user';
 import StatusPoint from '@components/StatusPoint';
 import BoxIcon, { BoxIconType } from '@components/BoxIcon';
+import ItemTypePoint from './ItemTypePoint';
 
 interface ItemTooltipProps {
   containerRef: MutableRefObject<HTMLDivElement>;
@@ -60,30 +61,45 @@ const ItemTooltip: FC<ItemTooltipProps> = ({ containerRef }) => {
   }, [visible]);
 
   // ========== 内容相关 ==========
-  const node = useRecoilValue(tooltipDataState);
-  const isUser = node && node.data.type === EntityType.User;
+  const item = useRecoilValue(tooltipDataState);
 
-  // for user
-  const userName = isUser && node.data.name;
-  const userState = useRecoilValue(userStateFamily(isUser && node.data.id));
+  const isUser = item && item.data.type === EntityType.User;
+  const userState = useRecoilValue(userStateFamily(item && item.data.id));
 
-  // for item
+  const contentEl = useMemo(() => {
+    // TODO clear console
+    // console.log(`[ItemTooltip] item`, item);
 
-  console.log(`[ItemTooltip] node`, node);
+    if (!item) {
+      return null;
+    }
 
-  const contentEl =
-    node &&
-    (isUser ? (
-      <>
-        <div className="user">
-          <BoxIcon type={BoxIconType.UserCircle} size={'xs'} />
-          <span>{userName}</span>
-        </div>
-        <StatusPoint state={userState} size={6} />
-      </>
-    ) : (
-      <>item</>
-    ));
+    if (isUser) {
+      // for user
+      const userName = isUser && item.data.name;
+
+      return (
+        <>
+          <div className="user">
+            <BoxIcon type={BoxIconType.UserCircle} size={'xs'} />
+            <span>{userName}</span>
+          </div>
+          <StatusPoint state={userState} size={6} />
+        </>
+      );
+    } else {
+      // for item
+      const itemColor = item.store.hoverColor;
+      const content = `${item.data.type}${item.data.originId}: ${item.data.content}`;
+
+      return (
+        <>
+          <ItemTypePoint color={itemColor} size={6} />
+          <span className="content">{content}</span>
+        </>
+      );
+    }
+  }, [item]);
 
   return (
     <ItemTooltipWrapper
@@ -92,7 +108,6 @@ const ItemTooltip: FC<ItemTooltipProps> = ({ containerRef }) => {
       style={{ ...position }}
     >
       {contentEl}
-      {/* KR43: 支持B产品开发上线，保障平台稳定，bug数量低于N */}
     </ItemTooltipWrapper>
   );
 };

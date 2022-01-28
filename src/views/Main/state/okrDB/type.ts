@@ -82,6 +82,7 @@ export interface TodoEntity {
   ddl: string;
   status: TodoStatus;
   userId: string;
+  name: string;
 }
 
 export interface TodoRelProjectTable {
@@ -118,6 +119,8 @@ export interface PersonalViewPointEntity {
   // for user
   avatar?: string;
   name?: string;
+  // for item
+  content?: string;
 }
 
 export interface PersonalViewPointRelation {

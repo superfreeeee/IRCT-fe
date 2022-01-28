@@ -15,6 +15,9 @@ import {
 import { CEO_ID, krTable, oRelTable, oTable, projectRelKRTable, projectTable, todoRelProjectTable, todoTable, userRelTable, userTable } from "./db";
 
 // ========== public ==========
+/**
+ * 组织视图数据
+ */
 export const getOrganizationViewPoint = (): ViewPointSource => {
   const entities: OrganizationViewPointEntity[] = [];
   const relations: OrganizationViewPointRelation[] = [];
@@ -87,17 +90,21 @@ export const getOrganizationViewPoint = (): ViewPointSource => {
   };
 };
 
+/**
+ * 个人视图数据
+ */
 export const getPersonalViewPoint = (centerUserId: string): ViewPointSource => {
   const entities: PersonalViewPointEntity[] = [];
   const relations: PersonalViewPointRelation[] = [];
 
   // add center User
-  const { avatar } = getUserEntityByUserId(centerUserId);
+  const { avatar, name } = getUserEntityByUserId(centerUserId);
   entities.push({
     type: EntityType.User,
     id: centerUserId,
     originId: centerUserId,
     avatar,
+    name,
   });
 
   const oList = getOsByUserId(centerUserId);
@@ -109,6 +116,7 @@ export const getPersonalViewPoint = (centerUserId: string): ViewPointSource => {
       type: EntityType.O,
       id: OId,
       originId: o.id,
+      content: o.content,
     });
 
     // add user-O relation
@@ -145,6 +153,7 @@ export const getPersonalViewPoint = (centerUserId: string): ViewPointSource => {
       type: EntityType.KR,
       id: krId,
       originId: kr.id,
+      content: kr.content,
     });
   });
 
@@ -183,6 +192,7 @@ export const getPersonalViewPoint = (centerUserId: string): ViewPointSource => {
       type: EntityType.Project,
       id: projectId,
       originId: p.id,
+      content: p.name,
     });
   });
 
@@ -221,6 +231,7 @@ export const getPersonalViewPoint = (centerUserId: string): ViewPointSource => {
       type: EntityType.Todo,
       id: todoId,
       originId: t.id,
+      content: t.name,
     });
   });
 
