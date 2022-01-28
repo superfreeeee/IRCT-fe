@@ -82,6 +82,16 @@ export enum NodeStrokeWidth {
 }
 
 /**
+ * 节点状态
+ */
+export enum NodeState {
+  Inactive = 'inactive',
+  Hover = 'hover',
+  Active = 'active',
+  Additional = 'additional',
+}
+
+/**
  * 关系渐层色
  */
 export enum LinkColor {
@@ -139,7 +149,7 @@ export interface PathNode extends d3.SimulationNodeDatum {
     fontSize?: number;
     strokeWidth?: NodeStrokeWidth;
     // node state 动态状态
-    active?: boolean;
+    state: NodeState;
   };
   draggable: boolean;
 }

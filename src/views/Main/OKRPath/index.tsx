@@ -16,7 +16,12 @@ import {
   getPersonalViewPoint,
 } from '../state/okrDB/api';
 import { ViewPointSource, ViewPointType } from '../state/okrDB/type';
-import { PathBoardSource, PathLink, PathNode } from './PathBoard/type';
+import {
+  NodeState,
+  PathBoardSource,
+  PathLink,
+  PathNode,
+} from './PathBoard/type';
 import {
   linkColor,
   linkId,
@@ -61,7 +66,9 @@ const OKRPath = () => {
     const nodes: PathNode[] = entities.map((entity) => ({
       id: entity.id,
       data: entity,
-      store: {},
+      store: {
+        state: NodeState.Inactive,
+      },
       draggable: true,
       // draggable: entity.type !== EntityType.User,
     }));

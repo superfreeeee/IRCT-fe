@@ -35,6 +35,7 @@
   - [x] 人物点 active
   - [x] O/KR/Project/Todo active 状态
   - [x] 组织视图 O-O 关系
+    - [x] 关联点 Hover
   - [x] pop record disabled
   - [x] pop stack bug fix(recoil 缓存到上一次的状态)
   - [ ] Hover tooltip 简单信息
