@@ -1,5 +1,5 @@
 import React, { FC, useMemo, useRef } from 'react';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import classNames from 'classnames';
 
 import {
@@ -7,7 +7,11 @@ import {
   roomDataFamily,
   roomLockedFamily,
 } from '@views/Main/state/room';
-import { UserState, RoomType } from '@views/Main/state/type';
+import {
+  UserState,
+  RoomType,
+  ViewPointStackActionType,
+} from '@views/Main/state/type';
 import { currentSpaceIdState } from '@views/Main/state/roomSpace';
 import { teamDataFamily } from '@views/Main/state/team';
 import {
@@ -16,6 +20,11 @@ import {
 } from '@views/Main/state/modals/createMeetingModal';
 import { selectUserModalControllerInfoState } from '@views/Main/state/modals/selectUserModal';
 import { SELECT_USER_MODAL_WIDTH } from '@views/Main/modals/SelectUserModal/styles';
+import {
+  okrPathVisibleState,
+  viewPointStackUpdater,
+} from '@views/Main/state/okrPath';
+import { ViewPointType } from '@views/Main/state/okrDB/type';
 import Avatar from '@components/Avatar';
 import BoxIcon, { BoxIconType } from '@components/BoxIcon';
 import AppIcon from '@components/AppIcon';
@@ -96,11 +105,15 @@ const Header: FC<HeaderProps> = ({ isRoom, expand }) => {
   const setSelectUserModalControllerInfo = useSetRecoilState(
     selectUserModalControllerInfoState,
   );
+  const setOKRPathVisible = useSetRecoilState(okrPathVisibleState);
+  const updateStack = useSetRecoilState(viewPointStackUpdater);
   const actionBtnRef = useRef<HTMLDivElement>(null); // 按钮位置信息
   const HeaderSideActionsEl = useMemo(() => {
     const { id: roomId, type, locked } = roomData;
     const isMeeting = type === RoomType.Meeting;
     const isTempMeeting = type === RoomType.TempMeeting;
+
+    const { id: teamId } = teamData;
 
     const MoreActionEl = (
       // ! Do Nothing
@@ -112,8 +125,15 @@ const Header: FC<HeaderProps> = ({ isRoom, expand }) => {
     if (!isRoom) {
       // 1. RoomSpace Header for Team
       const openPath = () => {
-        // TODO open Path
-        console.log(`[RoomSpace.Header] openPath`);
+        console.log(`[RoomSpace.Header] openPath: ${teamId}`);
+        setOKRPathVisible(true);
+        updateStack({
+          type: ViewPointStackActionType.Push,
+          record: {
+            type: ViewPointType.Personal,
+            centerUserId: teamId,
+          },
+        });
       };
 
       return (
@@ -126,7 +146,7 @@ const Header: FC<HeaderProps> = ({ isRoom, expand }) => {
     if (isTempMeeting) {
       // 2. RoomSpace Header for TempMeeting
       const openCreateModal = () => {
-        console.log(`[RoomSpace.Header] openCreateModal(roomId = ${roomId})`);
+        console.log(`[RoomSpace.Header] openCreateModal: ${roomId}`);
         setCreateMeetingModalVisible(true);
         setCreateMeetingModalInfo({ roomId });
       };
