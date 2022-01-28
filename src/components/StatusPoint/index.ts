@@ -27,7 +27,7 @@ const StatusPoint = styled.span<StatusPointProps>`
     ${({ size }) => overrideSize(size)}
     border-radius: 50%;
     background-color: ${({ state }) => stateToColor(state)};
-    transition: background-color 0.3s;
+    transition: background-color 0.1s;
   }
 `;
 

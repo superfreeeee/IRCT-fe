@@ -1,5 +1,6 @@
 import React, {
   ForwardRefExoticComponent,
+  MutableRefObject,
   RefAttributes,
   useCallback,
   useEffect,
@@ -40,12 +41,16 @@ import {
 } from './utils';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import {
+  tooltipDataState,
+  tooltipPositionState,
+  tooltipVisibleState,
   viewPointCenterUserIdState,
   viewPointStackUpdater,
   viewPointTypeState,
 } from '@views/Main/state/okrPath';
 import useClosestRef from '@hooks/useClosestRef';
 import { ViewPointStackActionType } from '@views/Main/state/type';
+import { deepCopy } from '@utils';
 
 const BOARD_ID = 'path-board';
 
@@ -55,6 +60,7 @@ export interface PathBoardRef {
 
 export interface PathBoardProps {
   source: PathBoardSource;
+  containerRef: MutableRefObject<HTMLDivElement>;
 }
 
 const DEFAULT_SOURCE: PathBoardSource = {
@@ -64,7 +70,7 @@ const DEFAULT_SOURCE: PathBoardSource = {
 
 const PathBoard: ForwardRefExoticComponent<
   PathBoardProps & RefAttributes<PathBoardRef>
-> = React.forwardRef(({ source = DEFAULT_SOURCE }, ref) => {
+> = React.forwardRef(({ source = DEFAULT_SOURCE, containerRef }, ref) => {
   // =============== state ===============
   const viewPointType = useRecoilValue(viewPointTypeState);
   const viewPointTypeRef = useClosestRef(viewPointType);
@@ -72,7 +78,7 @@ const PathBoard: ForwardRefExoticComponent<
   const centerUserIdRef = useClosestRef(centerUserId);
 
   // =============== refs ===============
-  const containerRef = useRef<HTMLDivElement>(null);
+  const boardContainerRef = useRef<HTMLDivElement>(null);
 
   // svg elements selections
   const svgRef = useRef<SVGSelection>(null);
@@ -142,6 +148,41 @@ const PathBoard: ForwardRefExoticComponent<
   // 更新视图的时候重置
   useEffect(clearLastClickItemId, [source]);
 
+  /**
+   * hover 时 tooltip
+   */
+  const setTooltipVisible = useSetRecoilState(tooltipVisibleState);
+  const setTooltipPosition = useSetRecoilState(tooltipPositionState);
+  const setTooltipData = useSetRecoilState(tooltipDataState);
+  const handleEnterNode = useCallback((e: MouseEvent, node: PathNode) => {
+    // console.group(`[PathBoard] handleEnterNode`);
+    // console.log('e', e);
+    // console.log('node', node);
+    // console.groupEnd();
+
+    const nodeEl = nodesRef.current
+      .filter((d) => d === node)
+      .node() as SVGGElement;
+
+    const { x: dx, height } = containerRef.current.getBoundingClientRect();
+    const { x, width, top } = nodeEl.getBoundingClientRect();
+
+    setTooltipVisible(true);
+    setTooltipPosition({
+      left: x - dx + width / 2,
+      bottom: height - top + 10,
+    });
+    setTooltipData(deepCopy(node));
+  }, []);
+  const handleLeaveNode = useCallback((e: MouseEvent, node: PathNode) => {
+    // console.group(`[PathBoard] handleLeaveNode`);
+    // console.log('e', e);
+    // console.log('node', node);
+    // console.groupEnd();
+    setTooltipVisible(false);
+    // setTooltipData(null);
+  }, []);
+
   // =============== outer actions ===============
   /**
    * 外部操作
@@ -175,7 +216,7 @@ const PathBoard: ForwardRefExoticComponent<
 
     // render
 
-    const { width, height } = containerRef.current.getBoundingClientRect();
+    const { width, height } = boardContainerRef.current.getBoundingClientRect();
 
     const boardWidth = width;
     const boardHeight = height;
@@ -307,8 +348,8 @@ const PathBoard: ForwardRefExoticComponent<
     /**
      * nodes
      */
-    const boundEnterNode = onEnterNode(tickBindRefs);
-    const boundLeaveNode = onLeaveNode(tickBindRefs);
+    const boundEnterNode = onEnterNode(tickBindRefs, handleEnterNode);
+    const boundLeaveNode = onLeaveNode(tickBindRefs, handleLeaveNode);
     const boundClickNode = onClickNode(tickBindRefs, handleClickNode);
     const boundDrag = onDrag(simulation);
 
@@ -394,7 +435,7 @@ const PathBoard: ForwardRefExoticComponent<
   }, [source]);
 
   return (
-    <PathBoardContainer ref={containerRef}>
+    <PathBoardContainer ref={boardContainerRef}>
       <div id={BOARD_ID}></div>
     </PathBoardContainer>
   );

@@ -50,3 +50,28 @@ export const getCurrentTime = (): string => {
   const time = `${date.getHours()}:${date.getMinutes()}`;
   return time;
 };
+
+/**
+ * 深拷贝
+ */
+export const deepCopy = (obj: any): any => {
+  if (typeof obj === 'object' && obj !== null) {
+    if (Array.isArray(obj)) {
+      // for array
+      const res = [];
+      for (const item of obj) {
+        res.push(deepCopy(item));
+      }
+      return res;
+    } else {
+      // for obj
+      const res = {};
+      for (const prop in obj) {
+        res[prop] = deepCopy(obj[prop]);
+      }
+      return res;
+    }
+  } else {
+    return obj;
+  }
+};

@@ -117,7 +117,7 @@ export interface PersonalViewPointEntity {
   originId: string | number;
   // for user
   avatar?: string;
-  // name?: string;
+  name?: string;
 }
 
 export interface PersonalViewPointRelation {

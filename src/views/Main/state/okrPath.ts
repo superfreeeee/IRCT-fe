@@ -1,7 +1,10 @@
 import { atom, selector } from 'recoil';
+import { PathNode } from '../OKRPath/PathBoard/type';
 
 import {
   DEFAULT_OKR_PATH_LIST_VISIBLE,
+  DEFAULT_OKR_PATH_TOOLTIP_POSITION,
+  DEFAULT_OKR_PATH_TOOLTIP_VISIBLE,
   DEFAULT_OKR_PATH_VISIBLE,
   DEFAULT_OKR_VIEW_POINT_CENTER_USER_ID,
   DEFAULT_OKR_VIEW_POINT_TYPE,
@@ -9,6 +12,7 @@ import {
 import { CEO_ID } from './okrDB/db';
 import { ViewPointType } from './okrDB/type';
 import {
+  PathTooltipPosition,
   StateNamespace,
   ViewPointRecord,
   ViewPointStackAction,
@@ -141,4 +145,37 @@ export const viewPointStackUpdater = selector<ViewPointStackAction>({
         break;
     }
   },
+});
+
+/**
+ * tooltip 位置信息
+ */
+export const tooltipPositionState = atom<PathTooltipPosition>({
+  key: prefixer('tooltipPosition'),
+  default: DEFAULT_OKR_PATH_TOOLTIP_POSITION,
+});
+
+/**
+ * tooltip 可见性
+ */
+const tooltipVisibleBaseState = atom<boolean>({
+  key: prefixer('tooltipVisibleBase'),
+  default: DEFAULT_OKR_PATH_TOOLTIP_VISIBLE,
+});
+export const tooltipVisibleState = selector<boolean>({
+  key: prefixer('tooltipVisible'),
+  get: ({ get }) => {
+    const selectNode = get(tooltipDataState);
+    const visibleBase = get(tooltipVisibleBaseState);
+    return selectNode && visibleBase;
+  },
+  set: ({ set }, visible) => set(tooltipVisibleBaseState, visible),
+});
+
+/**
+ * 展示内容
+ */
+export const tooltipDataState = atom<PathNode>({
+  key: prefixer('tooltipData'),
+  default: null,
 });

@@ -24,7 +24,11 @@ export const DEFAULT_SPACE_ID =
  */
 export const DEFAULT_OKR_PATH_VISIBLE = true;
 export const DEFAULT_OKR_PATH_LIST_VISIBLE = false;
+
 export const DEFAULT_OKR_VIEW_POINT_TYPE = ViewPointType.Organization;
+
 export const DEFAULT_OKR_VIEW_POINT_CENTER_USER_ID = '';
 // export const DEFAULT_OKR_VIEW_POINT_TYPE = ViewPointType.Personal;
 // export const DEFAULT_OKR_VIEW_POINT_CENTER_USER_ID = 'user-01';
+export const DEFAULT_OKR_PATH_TOOLTIP_POSITION = { left: 0, bottom: 0 };
+export const DEFAULT_OKR_PATH_TOOLTIP_VISIBLE = false;

@@ -207,6 +207,10 @@ export interface ClickNodeCallback {
   (node: PathNode): void;
 }
 
+export interface HoverNodeCallback {
+  (e: MouseEvent, node: PathNode): void;
+}
+
 export interface ItemsRefObj {
   linksRef: MutableRefObject<LinksSelection>;
   nodesRef: MutableRefObject<NodesSelection>;

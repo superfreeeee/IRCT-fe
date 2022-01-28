@@ -90,3 +90,8 @@ export interface ViewPointStackAction {
   type: ViewPointStackActionType;
   record?: ViewPointRecord;
 }
+
+export interface PathTooltipPosition {
+  left: number;
+  bottom: number;
+}

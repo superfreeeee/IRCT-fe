@@ -26,6 +26,7 @@ export enum BoxIconType {
   Setting = 'bx-cog',
   TargetLock = 'bx-target-lock',
   Undo = 'bx-undo',
+  UserCircle = 'bx-user-circle',
   Video = 'bxs-video',
   VideoOff = 'bxs-video-off',
   VoiceWave = 'bx-equalizer',

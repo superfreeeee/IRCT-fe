@@ -31,10 +31,12 @@ import {
   nodeStrokeWidth,
   nodeText,
 } from './PathBoard/utils';
+import ItemTooltip from './ItemTooltip';
 
 const OKRPath = () => {
   const visible = useRecoilValue(okrPathVisibleState);
 
+  const containerRef = useRef<HTMLDivElement>(null);
   const boardRef = useRef<PathBoardRef>(null);
 
   const viewPointType = useRecoilValue(viewPointTypeState);
@@ -110,13 +112,17 @@ const OKRPath = () => {
   }, [viewPointType, centerUserId]);
 
   return (
-    <OKRPathContainer className={classNames({ hide: !visible })}>
+    <OKRPathContainer
+      ref={containerRef}
+      className={classNames({ hide: !visible })}
+    >
       {/* 主板 */}
-      <PathBoard ref={boardRef} source={source} />
+      <PathBoard ref={boardRef} containerRef={containerRef} source={source} />
       {/* 右侧列表 */}
       <PathList />
       {/* Icon Btns */}
       <SideActions boardRef={boardRef} />
+      <ItemTooltip containerRef={containerRef} />
     </OKRPathContainer>
   );
 };

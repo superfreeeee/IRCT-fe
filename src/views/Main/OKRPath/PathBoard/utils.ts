@@ -4,6 +4,7 @@ import { EntityType, ViewPointType } from '@views/Main/state/okrDB/type';
 import { PlainFn } from '@utils/type';
 import {
   ClickNodeCallback,
+  HoverNodeCallback,
   ItemsRefObj,
   LinkColor,
   LinkColorOpacity,
@@ -407,15 +408,17 @@ export const onMaskClick =
  *   关联边着色
  */
 export const onEnterNode =
-  ({ linksRef, nodesRef }: TickBindRefs) =>
+  ({ linksRef, nodesRef }: TickBindRefs, cb?: HoverNodeCallback) =>
   (e: MouseEvent, targetNode: PathNode) => {
     updateItems({ linksRef, nodesRef }, MouseActionType.Enter, targetNode);
+    cb && cb(e, targetNode);
   };
 
 export const onLeaveNode =
-  ({ linksRef, nodesRef }: TickBindRefs) =>
+  ({ linksRef, nodesRef }: TickBindRefs, cb?: HoverNodeCallback) =>
   (e: MouseEvent, targetNode: PathNode) => {
     updateItems({ linksRef, nodesRef }, MouseActionType.Leave, targetNode);
+    cb && cb(e, targetNode);
   };
 
 /**
