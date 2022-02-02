@@ -41,6 +41,7 @@ import {
 } from './utils';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import {
+  okrPathListVisibleState,
   tooltipDataState,
   tooltipPositionState,
   tooltipVisibleState,
@@ -51,8 +52,6 @@ import {
 import useClosestRef from '@hooks/useClosestRef';
 import { ViewPointStackActionType } from '@views/Main/state/type';
 import { deepCopy } from '@utils';
-
-const BOARD_ID = 'path-board';
 
 export interface PathBoardRef {
   resetZoom: () => void;
@@ -117,19 +116,34 @@ const PathBoard: ForwardRefExoticComponent<
    */
   const lastClickItemIdRef = useRef<string>('');
   const updateStack = useSetRecoilState(viewPointStackUpdater);
+  const setOkrPathListVisible = useSetRecoilState(okrPathListVisibleState);
   const handleClickNode = useCallback((node: PathNode) => {
     const currentId = node.id;
     const lastId = lastClickItemIdRef.current;
 
-    console.log(`[PathBoard] onClickNode(${currentId})`, node);
+    console.log(
+      `[PathBoard] onClickNode(${currentId}), doubleClick: ${
+        lastId === currentId
+      }`,
+      node,
+    );
+    const isCurrentOrg =
+      viewPointTypeRef.current === ViewPointType.Organization;
+
+    /**
+     * 单击节点
+     */
+    // 1. 个人视图 => 展开 List 页面
+    if (!isCurrentOrg) {
+      setOkrPathListVisible(true);
+    }
 
     if (lastId === currentId) {
-      console.log(`double click of ${currentId}!`);
-      // 双击某节点
-      if (
-        viewPointTypeRef.current === ViewPointType.Organization &&
-        node.data.type === EntityType.User
-      ) {
+      /**
+       * 双击节点
+       */
+      if (isCurrentOrg && node.data.type === EntityType.User) {
+        // 1. 组织视图 + 双击人物  => 切换到个人视图
         updateStack({
           type: ViewPointStackActionType.Push,
           record: {
@@ -139,6 +153,9 @@ const PathBoard: ForwardRefExoticComponent<
         });
       }
     } else {
+      /**
+       * 单击节点（首次）
+       */
       lastClickItemIdRef.current = currentId;
     }
   }, []);
@@ -180,8 +197,11 @@ const PathBoard: ForwardRefExoticComponent<
     // console.log('node', node);
     // console.groupEnd();
     setTooltipVisible(false);
-    // setTooltipData(null);
   }, []);
+  // also clear when source change
+  useEffect(() => {
+    setTooltipVisible(false);
+  }, [source]);
 
   // =============== outer actions ===============
   /**
@@ -215,7 +235,6 @@ const PathBoard: ForwardRefExoticComponent<
     console.groupEnd();
 
     // render
-
     const { width, height } = boardContainerRef.current.getBoundingClientRect();
 
     const boardWidth = width;
@@ -236,7 +255,7 @@ const PathBoard: ForwardRefExoticComponent<
      * svg Element
      */
     const svg = (svgRef.current = d3
-      .select(`#${BOARD_ID}`)
+      .select(boardContainerRef.current)
       .append('svg')
       .attr('width', boardWidth)
       .attr('height', boardHeight)
@@ -315,9 +334,7 @@ const PathBoard: ForwardRefExoticComponent<
            V-${r2}
            Q1 0,0 ${-r1} Z`;
       })
-      .attr('fill', (d) =>
-        d.additional ? 'transparent' : `url(#${d.store.colorId})`,
-      );
+      .attr('fill', (d) => `url(#${d.store.colorId})`);
 
     // 关系颜色
     const gradients = linksSelection
@@ -434,11 +451,7 @@ const PathBoard: ForwardRefExoticComponent<
     }, 750);
   }, [source]);
 
-  return (
-    <PathBoardContainer ref={boardContainerRef}>
-      <div id={BOARD_ID}></div>
-    </PathBoardContainer>
-  );
+  return <PathBoardContainer ref={boardContainerRef} />;
 });
 
 export default PathBoard;

@@ -71,6 +71,17 @@ export enum NodeTextColor {
 }
 
 /**
+ * 节点文字大小
+ */
+export enum NodeTextSize {
+  Hidden = 0,
+  Default = 12,
+
+  O = 16,
+  KR = 10, // svg 好像可以突破 12px 限制
+}
+
+/**
  * Active 状态下描边宽度
  */
 export enum NodeStrokeWidth {
@@ -152,6 +163,7 @@ export interface PathNode extends d3.SimulationNodeDatum {
     state: NodeState;
   };
   draggable: boolean;
+  seq?: number;
 }
 
 export interface PathLink extends d3.SimulationLinkDatum<PathNode> {

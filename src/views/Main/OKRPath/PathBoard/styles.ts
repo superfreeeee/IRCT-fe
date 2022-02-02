@@ -8,4 +8,9 @@ export const PathBoardContainer = styled.div`
   height: 100%;
   color: #fff;
   overflow: hidden;
+
+  #path-board {
+    width: 100%;
+    height: 100%;
+  }
 `;

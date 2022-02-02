@@ -33,19 +33,24 @@ export const okrPathVisibleState = atom<boolean>({
 /**
  * OKR List 右侧详细列表 visible
  */
-export const okrPathListVisibleBaseState = atom<boolean>({
+const okrPathListVisibleBaseState = atom<boolean>({
   key: prefixer('okrPathListVisibleBase'),
   default: DEFAULT_OKR_PATH_LIST_VISIBLE,
 });
 export const okrPathListVisibleState = selector<boolean>({
   key: prefixer('okrPathListVisible'),
   get: ({ get }) => {
-    // can only visible with okrPath
-    // and in personal viewpoint
+    // can only visible when
+    //   okrPath visible
+    //   in personal viewpoint
     const pathVisible = get(okrPathVisibleState);
-    const isPersonalViewPoint = get(viewPointTypeState);
+    const isPersonalViewPoint =
+      get(viewPointTypeState) === ViewPointType.Personal;
     const listVisible = get(okrPathListVisibleBaseState);
     return pathVisible && isPersonalViewPoint && listVisible;
+  },
+  set: ({ set }, visible) => {
+    set(okrPathListVisibleBaseState, visible);
   },
 });
 
@@ -59,7 +64,14 @@ const viewPointTypeBaseState = atom<ViewPointType>({
 export const viewPointTypeState = selector<ViewPointType>({
   key: prefixer('viewPointType'),
   get: ({ get }) => get(viewPointTypeBaseState),
-  set: ({ set }, type) => set(viewPointTypeBaseState, type),
+  set: ({ set }, type) => {
+    set(viewPointTypeBaseState, type);
+
+    // 切换回组织视图时关闭 List
+    if (type === ViewPointType.Organization) {
+      set(okrPathListVisibleState, false);
+    }
+  },
 });
 
 /**
@@ -112,8 +124,8 @@ export const viewPointStackUpdater = selector<ViewPointStackAction>({
       // 清空记录 => 清空栈记录 & 重置为组织视图
       case ViewPointStackActionType.Clear:
         set(viewPointStackBaseState, []);
-        set(viewPointTypeBaseState, ViewPointType.Organization);
-        set(viewPointCenterUserIdBaseState, '');
+        set(viewPointTypeState, ViewPointType.Organization);
+        set(viewPointCenterUserIdState, '');
         break;
 
       // 弹出一项纪录
@@ -124,11 +136,11 @@ export const viewPointStackUpdater = selector<ViewPointStackAction>({
 
         if (records.length > 0) {
           ({ type, centerUserId } = records[records.length - 1]);
-          set(viewPointTypeBaseState, type);
-          set(viewPointCenterUserIdBaseState, centerUserId || '');
+          set(viewPointTypeState, type);
+          set(viewPointCenterUserIdState, centerUserId || '');
         } else {
-          set(viewPointTypeBaseState, ViewPointType.Organization);
-          set(viewPointCenterUserIdBaseState, '');
+          set(viewPointTypeState, ViewPointType.Organization);
+          set(viewPointCenterUserIdState, '');
         }
         break;
 
@@ -140,8 +152,8 @@ export const viewPointStackUpdater = selector<ViewPointStackAction>({
         records = [...records, { type, centerUserId }];
 
         set(viewPointStackBaseState, records);
-        set(viewPointTypeBaseState, type);
-        set(viewPointCenterUserIdBaseState, centerUserId);
+        set(viewPointTypeState, type);
+        set(viewPointCenterUserIdState, centerUserId);
         break;
     }
   },

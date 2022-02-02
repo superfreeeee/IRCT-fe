@@ -15,7 +15,11 @@ import {
   getOrganizationViewPoint,
   getPersonalViewPoint,
 } from '../state/okrDB/api';
-import { ViewPointSource, ViewPointType } from '../state/okrDB/type';
+import {
+  ViewPointEntity,
+  ViewPointSource,
+  ViewPointType,
+} from '../state/okrDB/type';
 import {
   NodeState,
   PathBoardSource,
@@ -46,11 +50,6 @@ const OKRPath = () => {
 
   // 视图/中心用户改变时重新渲染
   useEffect(() => {
-    console.group(`[OKRPath] view change`);
-    console.log(`viewPointType = ${viewPointType}`);
-    console.log(`centerUserId = ${centerUserId}`);
-    console.groupEnd();
-
     let viewPointData: ViewPointSource;
     if (viewPointType === ViewPointType.Organization) {
       viewPointData = getOrganizationViewPoint();
@@ -60,20 +59,31 @@ const OKRPath = () => {
 
     const { entities, relations } = viewPointData;
 
+    // TODO clear console
+    console.group(`[OKRPath] view change`);
+    console.log(`viewPointType = ${viewPointType}`);
+    console.log(`centerUserId = ${centerUserId}`);
+    console.log(`entities`, entities);
+    console.log(`relations`, relations);
+    console.groupEnd();
+
     /**
      * 1. 数据变换
      *    api => PathNode/PathLink
      */
     // data transform
-    const nodes: PathNode[] = entities.map((entity) => ({
-      id: entity.id,
-      data: entity,
-      store: {
-        state: NodeState.Inactive,
-      },
-      draggable: true,
-      // draggable: entity.type !== EntityType.User,
-    }));
+    const nodes: PathNode[] = entities.map(
+      (entity: ViewPointEntity): PathNode => ({
+        id: entity.id,
+        data: entity,
+        store: {
+          state: NodeState.Inactive,
+        },
+        draggable: true,
+        // draggable: entity.type !== EntityType.User,
+        seq: entity.seq,
+      }),
+    );
     const links: PathLink[] = relations.map((rel) => ({
       ...rel,
       store: {},

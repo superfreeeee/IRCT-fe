@@ -98,6 +98,7 @@ export interface OrganizationViewPointEntity {
   type: EntityType.User | EntityType.O;
   id: string;
   originId: string | number;
+  seq?: number;
   // for user
   avatar?: string;
   name?: string;
@@ -109,6 +110,7 @@ export interface OrganizationViewPointRelation {
   source: string;
   target: string;
   additional?: boolean;
+  force?: number;
 }
 
 export interface PersonalViewPointEntity {
@@ -116,6 +118,7 @@ export interface PersonalViewPointEntity {
   type: EntityType;
   id: string;
   originId: string | number;
+  seq?: number;
   // for user
   avatar?: string;
   name?: string;
@@ -128,6 +131,9 @@ export interface PersonalViewPointRelation {
   target: string;
   additional?: boolean;
 }
+
+export type ViewPointEntity = OrganizationViewPointEntity | PersonalViewPointEntity;
+export type ViewPointRelation = OrganizationViewPointRelation | PersonalViewPointRelation;
 
 export type ViewPointSource =
   | {

@@ -27,6 +27,8 @@
 
 ### Feature2
 
+- [ ] 跳转
+  - [x] 人物聊天页面跳转
 - [ ] 主视图
   - [x] 关系颜色渐层
   - [x] 人物节点透明度遮罩
@@ -40,6 +42,7 @@
   - [x] pop stack bug fix(recoil 缓存到上一次的状态)
   - [ ] Hover tooltip 简单信息
   - [ ] 视窗 resize/container size change => 更新 svg 大小
+  - [ ] 右键操作列表
 - [ ] 侧边栏
   - [ ] 侧边栏定位
   - [ ] 侧边栏填充数据（静态）

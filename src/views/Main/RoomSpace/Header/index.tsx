@@ -113,7 +113,7 @@ const Header: FC<HeaderProps> = ({ isRoom, expand }) => {
     const isMeeting = type === RoomType.Meeting;
     const isTempMeeting = type === RoomType.TempMeeting;
 
-    const { id: teamId } = teamData;
+    const { id: teamId, isGroup } = teamData;
 
     const MoreActionEl = (
       // ! Do Nothing
@@ -123,6 +123,10 @@ const Header: FC<HeaderProps> = ({ isRoom, expand }) => {
     );
 
     if (!isRoom) {
+      if (isGroup) {
+        return null;
+      }
+
       // 1. RoomSpace Header for Team
       const openPath = () => {
         console.log(`[RoomSpace.Header] openPath: ${teamId}`);

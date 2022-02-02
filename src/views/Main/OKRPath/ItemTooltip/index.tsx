@@ -90,7 +90,7 @@ const ItemTooltip: FC<ItemTooltipProps> = ({ containerRef }) => {
     } else {
       // for item
       const itemColor = item.store.hoverColor;
-      const content = `${item.data.type}${item.data.originId}: ${item.data.content}`;
+      const content = `${item.data.type}${item.seq}: ${item.data.content}`;
 
       return (
         <>

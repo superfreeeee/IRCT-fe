@@ -23,8 +23,8 @@ export const getOrganizationViewPoint = (): ViewPointSource => {
   const relations: OrganizationViewPointRelation[] = [];
 
   const userEntityMapper = createUserEntityMapper();
-  const oIdSet = new Set(); // collect all appeared O'id
-  const oIdMap = new Map();
+  const oIdSet = new Set<number>(); // collect all appeared O'id
+  const oIdMap = new Map<number, string>(); // O'id => Node.id
 
   const fromIdQueue = [CEO_ID]; // start with CEO
   const userAppeared = new Set<string>();
@@ -38,6 +38,7 @@ export const getOrganizationViewPoint = (): ViewPointSource => {
     // append User entity
     entities.push({ type: EntityType.User, ...userEntityMapper[fromId] });
 
+    let _oSeqForUser = 1;
     const oList = getOsByUserId(fromId);
     oList.forEach((o) => {
       const { id, content } = o;
@@ -50,8 +51,10 @@ export const getOrganizationViewPoint = (): ViewPointSource => {
         type: EntityType.O,
         id: oId,
         originId: id,
+        seq: _oSeqForUser,
         content,
       });
+      _oSeqForUser++;
 
       // append User-O relation
       relations.push({
@@ -80,6 +83,7 @@ export const getOrganizationViewPoint = (): ViewPointSource => {
         source: oIdMap.get(oRel.OId),
         target: oIdMap.get(oRel.upperOId),
         additional: true,
+        force: 0,
       });
     });
 
@@ -108,7 +112,7 @@ export const getPersonalViewPoint = (centerUserId: string): ViewPointSource => {
   });
 
   const oList = getOsByUserId(centerUserId);
-  oList.forEach((o) => {
+  oList.forEach((o, i) => {
     const OId = wrapId(EntityType.O, o.id);
 
     // add O entity
@@ -116,6 +120,7 @@ export const getPersonalViewPoint = (centerUserId: string): ViewPointSource => {
       type: EntityType.O,
       id: OId,
       originId: o.id,
+      seq: i + 1,
       content: o.content,
     });
 
@@ -146,13 +151,14 @@ export const getPersonalViewPoint = (centerUserId: string): ViewPointSource => {
       return krList;
     })
     .flat();
-  krList.forEach((kr) => {
+  krList.forEach((kr, i) => {
     // add KR entity
     const krId = wrapId(EntityType.KR, kr.id);
     entities.push({
       type: EntityType.KR,
       id: krId,
       originId: kr.id,
+      seq: i + 1,
       content: kr.content,
     });
   });
@@ -185,13 +191,14 @@ export const getPersonalViewPoint = (centerUserId: string): ViewPointSource => {
       return projectList;
     })
     .flat();
-  projectList.forEach((p) => {
+  projectList.forEach((p, i) => {
     // add Project entity
     const projectId = _projectIdMap.get(p);
     entities.push({
       type: EntityType.Project,
       id: projectId,
       originId: p.id,
+      seq: i + 1,
       content: p.name,
     });
   });
@@ -224,17 +231,19 @@ export const getPersonalViewPoint = (centerUserId: string): ViewPointSource => {
     })
     .flat();
 
-  todoList.forEach((t) => {
+  todoList.forEach((t, i) => {
     // add Todo entity
     const todoId = _todoIdMap.get(t);
     entities.push({
       type: EntityType.Todo,
       id: todoId,
       originId: t.id,
+      seq: i + 1,
       content: t.name,
     });
   });
 
+  // TODO clear console
   // console.group(`[getPersonalViewPoint] internal`);
   // console.log(`oList`, oList);
   // console.log(`krList`, krList);

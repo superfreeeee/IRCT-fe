@@ -18,6 +18,7 @@ import {
   NodeState,
   NodeStrokeWidth,
   NodeTextColor,
+  NodeTextSize,
   PathLink,
   PathNode,
   RootSelection,
@@ -181,22 +182,27 @@ export const nodeStrokeWidth = (node: PathNode) => {
  *   calc text
  */
 export const nodeText = (viewPointType: ViewPointType) => (d: PathNode) => {
-  const { type, id } = d.data;
+  const { type, id, seq } = d.data;
   let text: string, fontSize: number;
   if (
     viewPointType === ViewPointType.Organization ||
     ![EntityType.O, EntityType.KR].includes(type)
   ) {
+    // 组织视图 / 非 O,KR 节点
     text = '';
-    fontSize = 12;
+    fontSize = NodeTextSize.Hidden;
   } else {
-    text = `${type}${id.split('-')[1]}`;
+    // 个人视图
+    text = `${type}${seq}`;
     if (type === EntityType.O) {
-      fontSize = 16;
+      // + O 节点
+      fontSize = NodeTextSize.O;
     } else if (type === EntityType.KR) {
-      fontSize = 12;
+      // + KR 节点
+      fontSize = NodeTextSize.KR;
     } else {
-      fontSize = 12;
+      // + 其他节点
+      fontSize = NodeTextSize.Default;
     }
   }
 
@@ -542,7 +548,7 @@ const updateItems = (
     : nodes.filter((node) => relativeNodeSet.has(node));
 
   // 更新
-  updateNodes(nodes, relativeNodes, action);
+  updateNodes(nodes, relativeNodes, action, targetNode);
   updateLinks(links, relativeLinks, action, nodes, targetNode);
 };
 
@@ -550,6 +556,7 @@ const updateNodes = (
   nodes: NodesSelection,
   relativeNodes: NodesSelection,
   action: MouseActionType,
+  targetNode?: PathNode,
 ) => {
   if (action === MouseActionType.Click) {
     /**
@@ -558,10 +565,12 @@ const updateNodes = (
     _nodesColor(
       nodes.each((d) => (d.store.state = NodeState.Inactive)),
       SelectionType.Inactive,
+      targetNode,
     );
     _nodesColor(
       relativeNodes.each((d) => (d.store.state = NodeState.Active)),
       SelectionType.Active,
+      targetNode,
     );
   } else if (action === MouseActionType.Enter) {
     /**
@@ -572,6 +581,7 @@ const updateNodes = (
         .filter((node) => node.store.state !== NodeState.Active)
         .each((d) => (d.store.state = NodeState.Hover)),
       SelectionType.Hover,
+      targetNode,
     );
   } else if (action === MouseActionType.Leave) {
     /**
@@ -582,6 +592,7 @@ const updateNodes = (
         .filter((node) => node.store.state !== NodeState.Active)
         .each((d) => (d.store.state = NodeState.Inactive)),
       SelectionType.Inactive,
+      targetNode,
     );
   } else if (action === MouseActionType.Clear) {
     /**
@@ -592,6 +603,7 @@ const updateNodes = (
         .filter((node) => node.store.state !== NodeState.Inactive)
         .each((d) => (d.store.state = NodeState.Inactive)),
       SelectionType.Inactive,
+      targetNode,
     );
   }
 };
@@ -599,20 +611,31 @@ const updateNodes = (
 /**
  * 改变 node 颜色
  */
-const _nodesColor = (nodes: NodesSelection, type: SelectionType) => {
+const _nodesColor = (
+  nodes: NodesSelection,
+  type: SelectionType,
+  targetNode?: PathNode,
+) => {
   if (nodes.size() === 0) {
     return;
   }
   if (type === SelectionType.Active) {
     // active
-    nodes.select('circle').attr('fill', (d) => d.store.activeColor);
+    nodes
+      .select('circle')
+      .attr('fill', (d) =>
+        d === targetNode ? d.store.activeColor : d.store.hoverColor,
+      );
     nodes.select('text').attr('fill', NodeTextColor.Active);
     nodes
       .select('circle.user-mask')
       .attr('opacity', NodeImageMaskOpacity.Active);
 
     const itemNodes = nodes.filter((d) => d.data.type !== EntityType.User);
-    itemNodes.select('circle').attr('stroke-width', (d) => d.store.strokeWidth);
+    itemNodes
+      .filter((d) => d === targetNode)
+      .select('circle')
+      .attr('stroke-width', (d) => d.store.strokeWidth);
   } else if (type === SelectionType.Hover) {
     // hover (active 覆盖 hover 状态)
     nodes = nodes.filter((node) => node.store.state !== NodeState.Active);
@@ -752,6 +775,7 @@ const _addtionalLinksColor = (
     _nodesColor(
       additionalNodes.each((d) => (d.store.state = NodeState.Additional)),
       SelectionType.Hover,
+      targetNode,
     );
   } else if (action === MouseActionType.Enter) {
     // draw color only
@@ -761,6 +785,7 @@ const _addtionalLinksColor = (
     _nodesColor(
       nodes.filter((d) => d.store.state === NodeState.Additional),
       SelectionType.Inactive,
+      targetNode,
     );
 
     _nodesColor(additionalNodes, SelectionType.Hover);
@@ -776,12 +801,14 @@ const _addtionalLinksColor = (
         .filter((d) => d.store.state !== NodeState.Additional)
         .each((d) => (d.store.state = NodeState.Inactive)),
       SelectionType.Inactive,
+      targetNode,
     );
 
     // 恢复 additional 的 nodes
     _nodesColor(
       nodes.filter((d) => d.store.state === NodeState.Additional),
       SelectionType.Hover,
+      targetNode,
     );
   } else if (action === MouseActionType.Clear) {
   } else {
