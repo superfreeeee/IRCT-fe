@@ -1,9 +1,19 @@
-import React, { FC, MouseEvent, useMemo, useRef } from 'react';
+import React, {
+  FC,
+  MouseEvent,
+  MutableRefObject,
+  useMemo,
+  useRef,
+} from 'react';
 import { useSetRecoilState } from 'recoil';
 import classNames from 'classnames';
 
 import { EntityNode, EntityType } from '@views/Main/state/okrDB/type';
 import { useHideExpandBtn } from '@views/Main/state/hooks';
+import { ExpandBtnPosition } from '@views/Main/state/type';
+import { expandBtnIsOpenState } from '@views/Main/state/okrPath';
+import useShadowState from '@hooks/useShadowState';
+import { PathBoardRef } from '../PathBoard';
 import {
   DetailLayer,
   DetailLayerBanner,
@@ -11,13 +21,11 @@ import {
   RelativeUsers,
 } from './styles';
 import EnhanceItemTypePoint from './EnhanceItemTypePoint';
-import useShadowState from '@hooks/useShadowState';
-import { ExpandBtnPosition } from '@views/Main/state/type';
-import { expandBtnIsOpenState } from '@views/Main/state/okrPath';
 
 interface ItemDetailProps {
   node: EntityNode;
   hoverExpandBtn?: (position: ExpandBtnPosition, isExpand: boolean) => void;
+  boardRef: MutableRefObject<PathBoardRef>;
 }
 
 const ItemDetail: FC<ItemDetailProps> = ({
@@ -27,6 +35,7 @@ const ItemDetail: FC<ItemDetailProps> = ({
     expand,
   },
   hoverExpandBtn,
+  boardRef,
 }) => {
   // const title = [EntityType.Project, EntityType.Todo].includes(type) ?
 
@@ -56,6 +65,7 @@ const ItemDetail: FC<ItemDetailProps> = ({
           key={entityNode.node.id}
           node={entityNode}
           hoverExpandBtn={hoverExpandBtn}
+          boardRef={boardRef}
         />
       );
     });
@@ -82,16 +92,20 @@ const ItemDetail: FC<ItemDetailProps> = ({
     console.group(`[ItemDetail] onClickTitle: ${id}`);
     console.log(`title: ${title}`);
     console.groupEnd();
+
+    boardRef.current.clickNode(id);
   };
   const onMouseEnterTitle = () => {
     // console.group(`[ItemDetail] onMouseEnterTitle: ${id}`);
     // console.log(`title: ${title}`);
     // console.groupEnd();
+    boardRef.current.enterNode(id);
   };
   const onMouseLeaveTitle = () => {
     // console.group(`[ItemDetail] onMouseLeaveTitle: ${id}`);
     // console.log(`title: ${title}`);
     // console.groupEnd();
+    boardRef.current.leaveNode(id);
   };
 
   return (
@@ -99,7 +113,7 @@ const ItemDetail: FC<ItemDetailProps> = ({
       <DetailLayerBanner ref={bannerRef} type={type}>
         <EnhanceItemTypePoint
           type={type}
-          lightOn={!contentVisible}
+          lightOn={!contentVisible && canExpand} // 有内容才亮灯
           onClick={toggleVisible}
           onMouseEnter={onMouseEnterExpandBtn}
           onMouseLeave={hideExpandBtn}

@@ -3,13 +3,12 @@ import * as d3 from 'd3';
 import { EntityType, ViewPointType } from '@views/Main/state/okrDB/type';
 import { PlainFn } from '@utils/type';
 import {
-  ClickNodeCallback,
-  HoverNodeCallback,
   ItemsRefObj,
   LinkColor,
   LinkColorOpacity,
   LinksSelection,
   MouseActionType,
+  NodeActionCallback,
   NodeColor,
   NodeImageMaskOpacity,
   NodeImagePadding,
@@ -414,17 +413,17 @@ export const onMaskClick =
  *   关联边着色
  */
 export const onEnterNode =
-  ({ linksRef, nodesRef }: TickBindRefs, cb?: HoverNodeCallback) =>
+  ({ linksRef, nodesRef }: TickBindRefs, cb?: NodeActionCallback) =>
   (e: MouseEvent, targetNode: PathNode) => {
     updateItems({ linksRef, nodesRef }, MouseActionType.Enter, targetNode);
-    cb && cb(e, targetNode);
+    cb && cb(targetNode);
   };
 
 export const onLeaveNode =
-  ({ linksRef, nodesRef }: TickBindRefs, cb?: HoverNodeCallback) =>
+  ({ linksRef, nodesRef }: TickBindRefs, cb?: NodeActionCallback) =>
   (e: MouseEvent, targetNode: PathNode) => {
     updateItems({ linksRef, nodesRef }, MouseActionType.Leave, targetNode);
-    cb && cb(e, targetNode);
+    cb && cb(targetNode);
   };
 
 /**
@@ -433,7 +432,7 @@ export const onLeaveNode =
  *   link active 状态 = true
  */
 export const onClickNode =
-  ({ linksRef, nodesRef }: TickBindRefs, cb?: ClickNodeCallback) =>
+  ({ linksRef, nodesRef }: TickBindRefs, cb?: NodeActionCallback) =>
   (e: MouseEvent, targetNode: PathNode) => {
     updateItems({ linksRef, nodesRef }, MouseActionType.Click, targetNode);
 

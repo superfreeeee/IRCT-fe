@@ -134,7 +134,7 @@ const OKRPath = () => {
       {/* 主板 */}
       <PathBoard ref={boardRef} containerRef={containerRef} source={source} />
       {/* 右侧列表 */}
-      <PathList inheritTree={inheritTree} />
+      <PathList inheritTree={inheritTree} boardRef={boardRef} />
       {/* Icon Btns */}
       <SideActions boardRef={boardRef} />
       {/* Node hover tooltip */}

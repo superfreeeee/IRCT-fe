@@ -78,6 +78,7 @@ export const OKRListContent = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 `;
 
 /**
@@ -86,7 +87,7 @@ export const OKRListContent = styled.div`
 export const DetailList = styled.div`
   position: relative;
   flex: 1;
-  padding: 0 26px 0 35px;
+  padding: 0 26px 36px 35px; // 多空一行半
   overflow-x: visible;
   overflow-y: auto;
 `;

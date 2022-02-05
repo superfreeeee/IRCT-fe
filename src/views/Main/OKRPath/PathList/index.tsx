@@ -1,10 +1,14 @@
-import React, { FC, useEffect, useMemo, useRef } from 'react';
+import React, { FC, MutableRefObject, useEffect, useMemo, useRef } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import classNames from 'classnames';
 
 import { EntityType } from '@views/Main/state/okrDB/type';
+import { useShowExpandBtn } from '@views/Main/state/hooks';
+import { ExpandBtnPosition } from '@views/Main/state/type';
+import { PathBoardRef } from '../PathBoard';
 import Avatar from '@components/Avatar';
 import BoxIcon, { BoxIconType } from '@components/BoxIcon';
+import useShadowState from '@hooks/useShadowState';
 import { okrPathListVisibleState } from '../../state/okrPath';
 import { PathListSource } from '../type';
 import {
@@ -15,16 +19,14 @@ import {
 } from './styles';
 import CommentArea from './CommentArea';
 import ItemDetail from './ItemDetail';
-import useShadowState from '@hooks/useShadowState';
 import ExpandBtn from './ExpandBtn';
-import { useHideExpandBtn, useShowExpandBtn } from '@views/Main/state/hooks';
-import { ExpandBtnPosition } from '@views/Main/state/type';
 
 interface PathListProps {
   inheritTree: PathListSource;
+  boardRef: MutableRefObject<PathBoardRef>;
 }
 
-const PathList: FC<PathListProps> = ({ inheritTree }) => {
+const PathList: FC<PathListProps> = ({ inheritTree, boardRef }) => {
   const [shadowTree, setShadowTree] = useShadowState(inheritTree);
   const visible = useRecoilValue(okrPathListVisibleState);
 
@@ -71,12 +73,12 @@ const PathList: FC<PathListProps> = ({ inheritTree }) => {
     { left, top }: ExpandBtnPosition,
     isExpand: boolean,
   ) => {
-    const { left: baseLeft, top: baseTop } =
-      detailListRef.current.getBoundingClientRect();
+    const listEl = detailListRef.current;
+    const { left: baseLeft, top: baseTop } = listEl.getBoundingClientRect();
 
     const position: ExpandBtnPosition = {
       left: left - baseLeft,
-      top: top - baseTop,
+      top: top - baseTop + listEl.scrollTop,
     };
 
     showExpandBtn(position, isExpand);
@@ -93,6 +95,7 @@ const PathList: FC<PathListProps> = ({ inheritTree }) => {
                 key={oEntityNode.node.id}
                 node={oEntityNode}
                 hoverExpandBtn={hoverExpandBtn}
+                boardRef={boardRef}
               />
             ))}
           {/* <button onClick={() => setVisible(false)}>Close</button> */}

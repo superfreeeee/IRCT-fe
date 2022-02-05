@@ -214,13 +214,13 @@ export interface TickBindRefs {
 
 export type TransZoomBehavior = d3.ZoomBehavior<Element, any>;
 
-// ========== actions ==========
-export interface ClickNodeCallback {
-  (node: PathNode): void;
+export interface BoundNodeAction {
+  (e: MouseEvent, targetNode: PathNode): void;
 }
 
-export interface HoverNodeCallback {
-  (e: MouseEvent, node: PathNode): void;
+// ========== actions ==========
+export interface NodeActionCallback {
+  (node: PathNode): void;
 }
 
 export interface ItemsRefObj {

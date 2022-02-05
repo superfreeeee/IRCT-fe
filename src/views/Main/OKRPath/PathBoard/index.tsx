@@ -6,13 +6,26 @@ import React, {
   useEffect,
   useImperativeHandle,
   useRef,
-  useState,
 } from 'react';
 import * as d3 from 'd3';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { EntityType, ViewPointType } from '@views/Main/state/okrDB/type';
 import { PathBoardContainer } from './styles';
 import {
+  okrPathListVisibleState,
+  tooltipDataState,
+  tooltipPositionState,
+  tooltipVisibleState,
+  viewPointCenterUserIdState,
+  viewPointStackUpdater,
+  viewPointTypeState,
+} from '@views/Main/state/okrPath';
+import { ViewPointStackActionType } from '@views/Main/state/type';
+import useClosestRef from '@hooks/useClosestRef';
+import { deepCopy } from '@utils';
+import {
+  BoundNodeAction,
   LinkColor,
   LinkColorOpacity,
   LinksSelection,
@@ -39,22 +52,12 @@ import {
   onTransZoom,
   transition,
 } from './utils';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
-import {
-  okrPathListVisibleState,
-  tooltipDataState,
-  tooltipPositionState,
-  tooltipVisibleState,
-  viewPointCenterUserIdState,
-  viewPointStackUpdater,
-  viewPointTypeState,
-} from '@views/Main/state/okrPath';
-import useClosestRef from '@hooks/useClosestRef';
-import { ViewPointStackActionType } from '@views/Main/state/type';
-import { deepCopy } from '@utils';
 
 export interface PathBoardRef {
   resetZoom: () => void;
+  enterNode: (nodeId: string) => void;
+  leaveNode: (nodeId: string) => void;
+  clickNode: (nodeId: string) => void;
 }
 
 export interface PathBoardProps {
@@ -88,6 +91,9 @@ const PathBoard: ForwardRefExoticComponent<
 
   // bounding
   const boundTransZoomRef = useRef<TransZoomBehavior>(null);
+  const boundEnterNodeRef = useRef<BoundNodeAction>(null);
+  const boundLeaveNodeRef = useRef<BoundNodeAction>(null);
+  const boundClickNodeRef = useRef<BoundNodeAction>(null);
 
   // =============== actions ===============
 
@@ -171,7 +177,7 @@ const PathBoard: ForwardRefExoticComponent<
   const setTooltipVisible = useSetRecoilState(tooltipVisibleState);
   const setTooltipPosition = useSetRecoilState(tooltipPositionState);
   const setTooltipData = useSetRecoilState(tooltipDataState);
-  const handleEnterNode = useCallback((e: MouseEvent, node: PathNode) => {
+  const handleEnterNode = useCallback((node: PathNode) => {
     const nodeEl = nodesRef.current
       .filter((d) => d === node)
       .node() as SVGGElement;
@@ -186,7 +192,7 @@ const PathBoard: ForwardRefExoticComponent<
     });
     setTooltipData(deepCopy(node));
   }, []);
-  const handleLeaveNode = useCallback((e: MouseEvent, node: PathNode) => {
+  const handleLeaveNode = useCallback((node: PathNode) => {
     setTooltipVisible(false);
   }, []);
   // also clear when source change
@@ -198,7 +204,41 @@ const PathBoard: ForwardRefExoticComponent<
   /**
    * 外部操作
    */
-  useImperativeHandle(ref, () => ({ resetZoom }), []);
+  useImperativeHandle(
+    ref,
+    () => {
+      const findNode = (nodeId: string) => {
+        return nodesRef.current.data().find((node) => node.id === nodeId);
+      };
+
+      const enterNode = (nodeId: string) => {
+        const targetNode = findNode(nodeId);
+        if (targetNode) {
+          boundEnterNodeRef.current(null, targetNode);
+        } else {
+          console.error(`[PathBoard.enterNode] unknown id: ${nodeId}`);
+        }
+      };
+      const leaveNode = (nodeId: string) => {
+        const targetNode = findNode(nodeId);
+        if (targetNode) {
+          boundLeaveNodeRef.current(null, targetNode);
+        } else {
+          console.error(`[PathBoard.leaveNode] unknown id: ${nodeId}`);
+        }
+      };
+      const clickNode = (nodeId: string) => {
+        const targetNode = findNode(nodeId);
+        if (targetNode) {
+          boundClickNodeRef.current(null, targetNode);
+        } else {
+          console.error(`[PathBoard.clickNode] unknown id: ${nodeId}`);
+        }
+      };
+      return { resetZoom, enterNode, leaveNode, clickNode };
+    },
+    [],
+  );
 
   // =============== effects ===============
   /**
@@ -350,9 +390,18 @@ const PathBoard: ForwardRefExoticComponent<
     /**
      * nodes
      */
-    const boundEnterNode = onEnterNode(tickBindRefs, handleEnterNode);
-    const boundLeaveNode = onLeaveNode(tickBindRefs, handleLeaveNode);
-    const boundClickNode = onClickNode(tickBindRefs, handleClickNode);
+    const boundEnterNode = (boundEnterNodeRef.current = onEnterNode(
+      tickBindRefs,
+      handleEnterNode,
+    ));
+    const boundLeaveNode = (boundLeaveNodeRef.current = onLeaveNode(
+      tickBindRefs,
+      handleLeaveNode,
+    ));
+    const boundClickNode = (boundClickNodeRef.current = onClickNode(
+      tickBindRefs,
+      handleClickNode,
+    ));
     const boundDrag = onDrag(simulation);
 
     const nodesSelection = (nodesRef.current = root
