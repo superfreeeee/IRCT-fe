@@ -2,6 +2,7 @@ import React, {
   FC,
   MouseEvent,
   MutableRefObject,
+  useEffect,
   useMemo,
   useRef,
 } from 'react';
@@ -33,21 +34,19 @@ const ItemDetail: FC<ItemDetailProps> = ({
     node: { id, type, content, seq },
     children,
     expand,
+    isTarget,
   },
+  node,
   hoverExpandBtn,
   boardRef,
 }) => {
-  // const title = [EntityType.Project, EntityType.Todo].includes(type) ?
-
-  const [contentVisible, setContentVisible] = useShadowState(expand);
+  // inner controll switch: node 更新时同步 expand 状态
+  const [contentVisible, setContentVisible] = useShadowState(expand, [node]);
 
   const setExpandBtnIsOpen = useSetRecoilState(expandBtnIsOpenState);
   const toggleVisible = (e: MouseEvent) => {
     e.preventDefault();
-    // if (expand) {
-    //   // unabled to close selected one
-    //   return;
-    // }
+
     const next = !contentVisible;
     setContentVisible(next);
     setExpandBtnIsOpen(next);
@@ -109,7 +108,7 @@ const ItemDetail: FC<ItemDetailProps> = ({
   };
 
   return (
-    <DetailLayer className={classNames({ hideContent: !contentVisible })}>
+    <DetailLayer>
       <DetailLayerBanner ref={bannerRef} type={type}>
         <EnhanceItemTypePoint
           type={type}
@@ -119,7 +118,7 @@ const ItemDetail: FC<ItemDetailProps> = ({
           onMouseLeave={hideExpandBtn}
         />
         <span
-          className="title"
+          className={classNames('title', { isTarget })}
           onClick={onClickTitle}
           onMouseEnter={onMouseEnterTitle}
           onMouseLeave={onMouseLeaveTitle}

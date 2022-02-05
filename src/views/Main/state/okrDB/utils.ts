@@ -6,5 +6,6 @@ export const createEntityNode = (node: ViewPointEntity = null, relation: ViewPoi
     relation,
     children,
     expand: node.type === EntityType.O, // default expand for O Entity
+    isTarget: false,
   };
 };

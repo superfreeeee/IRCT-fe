@@ -69,6 +69,7 @@ export const viewPointTypeState = selector<ViewPointType>({
   get: ({ get }) => get(viewPointTypeBaseState),
   set: ({ set }, type) => {
     set(viewPointTypeBaseState, type);
+    set(activeNodeState, null); // 视图更新时重置
 
     // 切换回组织视图时关闭 List
     if (type === ViewPointType.Organization) {
@@ -95,7 +96,10 @@ export const viewPointCenterUserIdState = selector<string>({
       return get(viewPointCenterUserIdBaseState);
     }
   },
-  set: ({ set }, userId) => set(viewPointCenterUserIdBaseState, userId),
+  set: ({ set }, userId) => {
+    set(viewPointCenterUserIdBaseState, userId);
+    set(activeNodeState, null); // 视图更新时重置
+  },
 });
 
 /**
@@ -187,7 +191,6 @@ export const tooltipVisibleState = selector<boolean>({
   },
   set: ({ set }, visible) => {
     set(tooltipVisibleBaseState, visible);
-    set(tooltipPositionState, { left: 0, bottom: 0 });
   },
 });
 
@@ -243,4 +246,10 @@ export const expandBtnIsOpenState = selector<boolean>({
   key: prefixer('expandBtnIsOpen'),
   get: ({ get }) => get(expandBtnIsOpenBaseState),
   set: ({ set }, isOpen) => set(expandBtnIsOpenBaseState, isOpen),
+});
+
+// =============== board/path sync ===============
+export const activeNodeState = atom<PathNode>({
+  key: prefixer('activeNode'),
+  default: null,
 });

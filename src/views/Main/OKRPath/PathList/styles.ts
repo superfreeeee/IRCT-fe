@@ -113,8 +113,8 @@ export const DetailLayerBanner = styled.div<{ type: EntityType }>`
     text-overflow: ellipsis;
     white-space: nowrap;
 
-    /* // TODO change to active */
-    &:hover {
+    &:hover,
+    &.isTarget {
       background-color: ${({ type }) =>
         titleExpandColorMap[type] || 'transparent'};
     }

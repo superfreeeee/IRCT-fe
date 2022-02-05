@@ -220,7 +220,7 @@ export interface BoundNodeAction {
 
 // ========== actions ==========
 export interface NodeActionCallback {
-  (node: PathNode): void;
+  (node: PathNode, outerTrigger: boolean): void;
 }
 
 export interface ItemsRefObj {

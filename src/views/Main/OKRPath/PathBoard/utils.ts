@@ -416,14 +416,14 @@ export const onEnterNode =
   ({ linksRef, nodesRef }: TickBindRefs, cb?: NodeActionCallback) =>
   (e: MouseEvent, targetNode: PathNode) => {
     updateItems({ linksRef, nodesRef }, MouseActionType.Enter, targetNode);
-    cb && cb(targetNode);
+    cb && cb(targetNode, !e);
   };
 
 export const onLeaveNode =
   ({ linksRef, nodesRef }: TickBindRefs, cb?: NodeActionCallback) =>
   (e: MouseEvent, targetNode: PathNode) => {
     updateItems({ linksRef, nodesRef }, MouseActionType.Leave, targetNode);
-    cb && cb(targetNode);
+    cb && cb(targetNode, !e);
   };
 
 /**
@@ -437,7 +437,7 @@ export const onClickNode =
     updateItems({ linksRef, nodesRef }, MouseActionType.Click, targetNode);
 
     // invoke callback
-    cb && cb(targetNode);
+    cb && cb(targetNode, !e);
   };
 
 // ========== private common actions ==========

@@ -13,6 +13,7 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { EntityType, ViewPointType } from '@views/Main/state/okrDB/type';
 import { PathBoardContainer } from './styles';
 import {
+  activeNodeState,
   okrPathListVisibleState,
   tooltipDataState,
   tooltipPositionState,
@@ -23,13 +24,14 @@ import {
 } from '@views/Main/state/okrPath';
 import { ViewPointStackActionType } from '@views/Main/state/type';
 import useClosestRef from '@hooks/useClosestRef';
-import { deepCopy, simpleThrottle } from '@utils';
+import { deepCopy } from '@utils';
 import {
   BoundNodeAction,
   LinkColor,
   LinkColorOpacity,
   LinksSelection,
   MaskSelection,
+  NodeActionCallback,
   NodeImageMaskOpacity,
   NodesSelection,
   NodeStrokeWidth,
@@ -89,7 +91,7 @@ const PathBoard: ForwardRefExoticComponent<
   const linksRef = useRef<LinksSelection>(null);
   const nodesRef = useRef<NodesSelection>(null);
 
-  // bounding
+  // bound callback
   const boundTransZoomRef = useRef<TransZoomBehavior>(null);
   const boundEnterNodeRef = useRef<BoundNodeAction>(null);
   const boundLeaveNodeRef = useRef<BoundNodeAction>(null);
@@ -123,25 +125,28 @@ const PathBoard: ForwardRefExoticComponent<
   const lastClickItemIdRef = useRef<string>('');
   const updateStack = useSetRecoilState(viewPointStackUpdater);
   const setOkrPathListVisible = useSetRecoilState(okrPathListVisibleState);
-  const handleClickNode = useCallback((node: PathNode) => {
+  const setActiveNode = useSetRecoilState(activeNodeState);
+  const handleClickNode: NodeActionCallback = useCallback((node: PathNode) => {
     const currentId = node.id;
     const lastId = lastClickItemIdRef.current;
 
-    console.log(
-      `[PathBoard] onClickNode(${currentId}), doubleClick: ${
-        lastId === currentId
-      }`,
-      node,
-    );
+    // TODO clear console
+    // console.log(
+    //   `[PathBoard] onClickNode(${currentId}), doubleClick: ${
+    //     lastId === currentId
+    //   }`,
+    //   node,
+    // );
     const isCurrentOrg =
       viewPointTypeRef.current === ViewPointType.Organization;
 
     /**
      * 单击节点
      */
-    // 1. 个人视图 => 展开 List 页面
+    // 1. 个人视图 => 展开 List 页面, 保存 active 状态
     if (!isCurrentOrg) {
       setOkrPathListVisible(true);
+      setActiveNode(deepCopy(node));
     }
 
     if (lastId === currentId) {
@@ -168,40 +173,62 @@ const PathBoard: ForwardRefExoticComponent<
   const clearLastClickItemId = useCallback(() => {
     lastClickItemIdRef.current = '';
   }, []);
+  const handleClickMask = useCallback(() => {
+    clearLastClickItemId();
+    setActiveNode(null);
+  }, []);
   // 更新视图的时候重置
   useEffect(clearLastClickItemId, [source]);
 
   /**
    * hover 时 tooltip
    */
+  // =============== tooltip 相关 ===============
   const setTooltipVisible = useSetRecoilState(tooltipVisibleState);
   const setTooltipPosition = useSetRecoilState(tooltipPositionState);
   const setTooltipData = useSetRecoilState(tooltipDataState);
-  const handleEnterNode = useCallback((node: PathNode) => {
-    const nodeEl = nodesRef.current
-      .filter((d) => d === node)
-      .node() as SVGGElement;
+  const handleEnterNode: NodeActionCallback = useCallback(
+    (node: PathNode, outerTrigger: boolean) => {
+      if (outerTrigger) {
+        // dont show tooltip when trigger outer
+        return;
+      }
+      const nodeEl = nodesRef.current
+        .filter((d) => d === node)
+        .node() as SVGGElement;
 
-    const { x: dx, height } = containerRef.current.getBoundingClientRect();
-    const { x, width, top } = nodeEl.getBoundingClientRect();
+      const { x: dx, height } = containerRef.current.getBoundingClientRect();
+      const { x, width, top } = nodeEl.getBoundingClientRect();
 
-    setTooltipVisible(true);
-    setTooltipPosition({
-      left: x - dx + width / 2,
-      bottom: height - top + 10,
-    });
-    setTooltipData(deepCopy(node));
-  }, []);
-  const handleLeaveNode = useCallback((node: PathNode) => {
+      clearTimeout(resetPositionTimer.current);
+      setTooltipVisible(true);
+      setTooltipPosition({
+        left: x - dx + width / 2,
+        bottom: height - top + 10,
+      });
+      setTooltipData(deepCopy(node));
+    },
+    [],
+  );
+  const resetPositionTimer = useRef(null);
+  const closeTooltip = useCallback(() => {
     setTooltipVisible(false);
+    resetPositionTimer.current = setTimeout(() => {
+      setTooltipPosition({
+        left: 0,
+        bottom: 0,
+      });
+    }, 500);
+  }, []);
+  const handleLeaveNode: NodeActionCallback = useCallback((node: PathNode) => {
+    closeTooltip();
   }, []);
   const handleMouseDownNode = useCallback(() => {
-    setTooltipVisible(false); // 按下去的時候取消 tooltip 避免閃爍
+    closeTooltip(); // 按下去的時候取消 tooltip 避免閃爍
   }, []);
-
   // also clear when source change
   useEffect(() => {
-    setTooltipVisible(false);
+    closeTooltip();
   }, [source]);
 
   // =============== outer actions ===============
@@ -301,7 +328,7 @@ const PathBoard: ForwardRefExoticComponent<
      * TranslateMask
      * 平移遮罩
      */
-    const boundMaskClick = onMaskClick(tickBindRefs, clearLastClickItemId);
+    const boundMaskClick = onMaskClick(tickBindRefs, handleClickMask);
     const mask = (maskRef.current = svg
       .append('rect')
       .attr('class', 'mask')

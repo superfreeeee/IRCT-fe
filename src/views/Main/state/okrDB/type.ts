@@ -145,6 +145,7 @@ export interface EntityNode {
   relation?: ViewPointRelation;
   children: EntityNodeMap;
   expand?: boolean;
+  isTarget?: boolean;
 }
 
 export type ViewPointSource =

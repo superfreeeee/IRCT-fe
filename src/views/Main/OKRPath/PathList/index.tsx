@@ -2,14 +2,14 @@ import React, { FC, MutableRefObject, useEffect, useMemo, useRef } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import classNames from 'classnames';
 
-import { EntityType } from '@views/Main/state/okrDB/type';
+import { EntityNode, EntityType } from '@views/Main/state/okrDB/type';
 import { useShowExpandBtn } from '@views/Main/state/hooks';
 import { ExpandBtnPosition } from '@views/Main/state/type';
 import { PathBoardRef } from '../PathBoard';
 import Avatar from '@components/Avatar';
 import BoxIcon, { BoxIconType } from '@components/BoxIcon';
 import useShadowState from '@hooks/useShadowState';
-import { okrPathListVisibleState } from '../../state/okrPath';
+import { activeNodeState, okrPathListVisibleState } from '../../state/okrPath';
 import { PathListSource } from '../type';
 import {
   DetailList,
@@ -20,6 +20,8 @@ import {
 import CommentArea from './CommentArea';
 import ItemDetail from './ItemDetail';
 import ExpandBtn from './ExpandBtn';
+import { deepCopy } from '@utils';
+import usePrev from '@hooks/usePrev';
 
 interface PathListProps {
   inheritTree: PathListSource;
@@ -30,11 +32,71 @@ const PathList: FC<PathListProps> = ({ inheritTree, boardRef }) => {
   const [shadowTree, setShadowTree] = useShadowState(inheritTree);
   const visible = useRecoilValue(okrPathListVisibleState);
 
-  const setVisible = useSetRecoilState(okrPathListVisibleState);
+  /**
+   * 根据 activeNode 更新 expand状态
+   */
+  const activeNode = useRecoilValue(activeNodeState);
+  const prevActiveNode = usePrev(activeNode);
+  useEffect(() => {
+    if (!inheritTree) {
+      // 无继承树 => 组织视图
+      return;
+    }
+
+    /**
+     * 1. activeNode 为空
+     */
+    if (!activeNode) {
+      if (prevActiveNode != null) {
+        // 清理上一次的 active 状态
+        const newTree = deepCopy(shadowTree);
+        const clearIsTarget = (node: EntityNode) => {
+          node.isTarget = false;
+          Object.values(node.children).forEach((child) => clearIsTarget(child));
+        };
+        clearIsTarget(newTree);
+        setShadowTree(newTree);
+      }
+      return;
+    }
+
+    /**
+     * 2. activeNode 不为空
+     */
+    const targetId = activeNode.id;
+    // dfs EntityNode, if exists  => change expand
+    const newTree = deepCopy(shadowTree);
+    const walkThrough = (node: EntityNode): boolean => {
+      if (node.node.type === EntityType.O) {
+        node.expand = true; // default expand for O entity
+      } else {
+        node.expand = false; // clear expand first
+      }
+      node.isTarget = false;
+
+      /**
+       * walk through all nodes(self + children)
+       */
+      const isSelf = node.node.id === targetId;
+      const isInChildren = Object.values(node.children)
+        .map((child) => walkThrough(child))
+        .reduce((b1, b2) => b1 || b2, false);
+      if (isSelf || isInChildren) {
+        isSelf && (node.isTarget = true);
+        node.expand = true;
+        return true;
+      }
+
+      return false;
+    };
+    walkThrough(newTree);
+    setShadowTree(newTree);
+  }, [activeNode]);
 
   // handle inherit change
   useEffect(() => {
-    console.log(`[PathList] inheritTree change`, inheritTree);
+    // TODO clear console
+    // console.log(`[PathList] inheritTree change`, inheritTree);
   }, [inheritTree]);
 
   const hide = !visible || !inheritTree;
