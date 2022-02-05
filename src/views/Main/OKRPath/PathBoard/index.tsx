@@ -508,13 +508,16 @@ const PathBoard: ForwardRefExoticComponent<
       nodesRef,
     });
     simulation.on('tick', boundOnTick).on('end', onEnd(simulation));
+    simulation.alphaTarget(0.1);
     simulation.velocityDecay(0.1);
 
-    // set center user center after 500ms
     setTimeout(() => {
       resetZoom();
-      simulation.velocityDecay(0.25);
     }, 750);
+    setTimeout(() => {
+      simulation.alphaTarget(0);
+      simulation.velocityDecay(0.25);
+    }, 3000);
   }, [source]);
 
   return <PathBoardContainer ref={boardContainerRef} />;
