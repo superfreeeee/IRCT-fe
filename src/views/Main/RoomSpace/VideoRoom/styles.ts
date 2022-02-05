@@ -18,7 +18,7 @@ export const VideoRoomContainer = styled.div`
 export const VideoBlockContainer = styled.div`
   overflow: hidden;
   transform: translateX(0);
-  transition: transform 0.3s, opacity 0.2s;
+  transition: transform var(--trans_speed_level3), opacity var(--trans_speed_level2);
   animation: fadeIn 0.4s ease-in;
 
   @keyframes fadeIn {
@@ -81,7 +81,7 @@ export const VideoBlockContent = styled.div`
   border-radius: 5px;
   background-color: #666666;
   overflow: hidden;
-  transition: all 0.3s;
+  transition: all var(--trans_speed_level3);
 
   &.hide {
     background-color: #171717;
@@ -131,7 +131,7 @@ export const VideoBlockTitle = styled.div`
     width: 20px;
     height: 20px;
     margin-right: 5px;
-    transition: all 0.3s;
+    transition: all var(--trans_speed_level3);
 
     &.hideVideo {
       width: 0;

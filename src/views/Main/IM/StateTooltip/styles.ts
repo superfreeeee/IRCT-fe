@@ -15,7 +15,7 @@ export const StateTooltipWrapper = styled.div`
   color: #fff;
   background-color: var(--menu_item_tip_bg);
   transform: translate(-50%, -100%);
-  transition: all 0.2s;
+  transition: all var(--trans_speed_level2);
   z-index: 1000;
   user-select: none;
 
@@ -29,7 +29,7 @@ export const StateTooltipWrapper = styled.div`
     height: 0;
     border: 8px solid transparent;
     transform: translateX(-50%);
-    transition: all 0.2s;
+    transition: all var(--trans_speed_level2);
   }
 
   &.visible {

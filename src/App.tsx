@@ -34,6 +34,12 @@ const GlobalStyle = createGlobalStyle`
     --state_talking: #5ABED4;
     /* divider color */
     --divider_color_bg: rgba(129, 130, 132, 0.6);
+    /* transition speed */
+    --trans_speed_level1: 0.1s;
+    --trans_speed_level2: 0.2s;
+    --trans_speed_level3: 0.3s;
+    --trans_speed_level4: 0.4s;
+    --trans_speed_level5: 0.5s;
   }
 
   * {

@@ -95,3 +95,8 @@ export interface PathTooltipPosition {
   left: number;
   bottom: number;
 }
+
+export interface ExpandBtnPosition {
+  left: number;
+  top: number;
+}

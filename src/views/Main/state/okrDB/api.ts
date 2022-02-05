@@ -1,4 +1,5 @@
 import {
+  EntityNode,
   EntityType,
   KREntity,
   MergedEntity,
@@ -13,6 +14,7 @@ import {
 } from "./type";
 
 import { CEO_ID, krTable, oRelTable, oTable, projectRelKRTable, projectTable, todoRelProjectTable, todoTable, userRelTable, userTable } from "./db";
+import { createEntityNode } from "./utils";
 
 // ========== public ==========
 /**
@@ -76,6 +78,10 @@ export const getOrganizationViewPoint = (): ViewPointSource => {
     });
   }
 
+  /**
+   * O-O relation
+   *   force = 0
+   */
   oRelTable
     .filter((oRel) => oIdSet.has(oRel.OId) && oIdSet.has(oRel.upperOId))
     .forEach((oRel) => {
@@ -101,147 +107,214 @@ export const getPersonalViewPoint = (centerUserId: string): ViewPointSource => {
   const entities: PersonalViewPointEntity[] = [];
   const relations: PersonalViewPointRelation[] = [];
 
+  // ========== handle center user ==========
   // add center User
   const { avatar, name } = getUserEntityByUserId(centerUserId);
-  entities.push({
+  const userEntity: PersonalViewPointEntity = {
     type: EntityType.User,
     id: centerUserId,
     originId: centerUserId,
     avatar,
     name,
-  });
+  };
+  entities.push(userEntity);
+  // create center entity node
+  const inheritTree = createEntityNode(userEntity);
 
-  const oList = getOsByUserId(centerUserId);
-  oList.forEach((o, i) => {
-    const OId = wrapId(EntityType.O, o.id);
+  // ========== handle O ==========
+  const oEntityNodeMap = new Map<string, EntityNode>();
+  const oList = getOsByUserId(centerUserId)
+    .map((o) => {
+      const oId = wrapId(EntityType.O, o.id);
+      return {
+        ...o,
+        id: oId,
+        originId: o.id,
+      };
+    })
+    .map((o, i) => {
+      const { id: oId, originId } = o;
 
-    // add O entity
-    entities.push({
-      type: EntityType.O,
-      id: OId,
-      originId: o.id,
-      seq: i + 1,
-      content: o.content,
+      // add O entity
+      const oEntity: PersonalViewPointEntity = {
+        type: EntityType.O,
+        id: oId,
+        originId,
+        seq: i + 1,
+        content: o.content,
+      };
+      entities.push(oEntity);
+
+      // add user-O relation
+      const userORelation: PersonalViewPointRelation = {
+        source: centerUserId,
+        target: oId,
+      };
+      relations.push(userORelation);
+
+      // add o entity nodes
+      const entityNode = createEntityNode(oEntity, userORelation);
+      inheritTree.children[oId] = entityNode;
+
+      oEntityNodeMap.set(oId, entityNode);
+
+      return o;
     });
 
-    // add user-O relation
-    relations.push({
-      source: centerUserId,
-      target: OId,
-    });
-  });
-
+  // ========== handle KR ==========
+  const krEntityNodeMap = new Map<string, EntityNode>();
   const krList = oList
-    .map(({ id }) => ({
+    .map(({ id, originId }) => ({
       oId: id,
-      krList: getKRsByOId(id),
-    }))
-    .map(({ oId: OId, krList }) => {
-      const source = wrapId(EntityType.O, OId);
-
-      // add O-KR relation
-      krList.forEach((kr) => {
+      krList: getKRsByOId(originId).map((kr) => {
+        // transform id
         const krId = wrapId(EntityType.KR, kr.id);
-        relations.push({
+        return {
+          ...kr,
+          id: krId,
+          originId: kr.id,
+        };
+      }),
+    }))
+    .map(({ oId: source, krList }) => {
+      const oEntityNode = oEntityNodeMap.get(source);
+
+      krList.forEach((kr, i) => {
+        // add KR entity
+        const krEntity: PersonalViewPointEntity = {
+          type: EntityType.KR,
+          id: kr.id,
+          originId: kr.originId,
+          seq: i + 1,
+          content: kr.content,
+        };
+        entities.push(krEntity);
+
+        // add O-KR relation
+        const oKRRelation: PersonalViewPointRelation = {
           source,
-          target: krId,
-        });
+          target: kr.id,
+        };
+        relations.push(oKRRelation);
+
+        // add kr entity node
+        const krEntityNode = createEntityNode(krEntity, oKRRelation);
+        oEntityNode.children[kr.id] = krEntityNode;
+
+        krEntityNodeMap.set(kr.id, krEntityNode);
       });
 
       return krList;
     })
     .flat();
-  krList.forEach((kr, i) => {
-    // add KR entity
-    const krId = wrapId(EntityType.KR, kr.id);
-    entities.push({
-      type: EntityType.KR,
-      id: krId,
-      originId: kr.id,
-      seq: i + 1,
-      content: kr.content,
-    });
-  });
 
+  // ========== handle Project ==========
   // project could appear multiple times
-  const _projectCount = new Map();
-  const _projectIdMap = new Map();
+  const _projectCount = new Map<number, number>(); // id => count
+  const projectEntityNodeMap = new Map<string, EntityNode>(); // id(string) => EntityNode
   const projectList = krList
-    .map(({ id }) => ({
+    .map(({ id, originId }) => ({
       krId: id,
-      projectList: getProjectsByKRId(id),
+      projectList: getProjectsByKRId(originId).map((p) => {
+        // transform id, calc seq
+        const pId = p.id;
+        const count = (_projectCount.get(pId) || 0) + 1;
+        _projectCount.set(pId, count);
+
+        const projectId = wrapId(EntityType.Project, pId, count);
+
+        return {
+          ...p,
+          id: projectId,
+          originId: pId,
+        };
+      }),
     }))
-    .map(({ krId, projectList }) => {
-      const source = wrapId(EntityType.KR, krId);
+    .map(({ krId: source, projectList }) => {
+      const krEntityNode = krEntityNodeMap.get(source);
 
-      // add KR-Project relation
-      projectList.forEach((p) => {
-        const seq = (_projectCount.get(p.id) || 0) + 1;
-        _projectCount.set(p.id, seq);
+      projectList.forEach((p, i) => {
+        const { id, originId } = p;
 
-        const projectId = wrapId(EntityType.Project, p.id, seq);
-        _projectIdMap.set(p, projectId);
+        // add Project entity
+        const pEntity: PersonalViewPointEntity = {
+          type: EntityType.Project,
+          id,
+          originId,
+          seq: i + 1,
+          content: p.name,
+        };
+        entities.push(pEntity);
 
-        relations.push({
+        // add KR-Project relation
+        const krProjectRelation: PersonalViewPointRelation = {
           source,
-          target: projectId,
-        });
+          target: id,
+        };
+        relations.push(krProjectRelation);
+
+        // add project entity node
+        const pEntityNode = createEntityNode(pEntity, krProjectRelation);
+        krEntityNode.children[id] = pEntityNode;
+
+        projectEntityNodeMap.set(id, pEntityNode);
       });
 
       return projectList;
     })
     .flat();
-  projectList.forEach((p, i) => {
-    // add Project entity
-    const projectId = _projectIdMap.get(p);
-    entities.push({
-      type: EntityType.Project,
-      id: projectId,
-      originId: p.id,
-      seq: i + 1,
-      content: p.name,
-    });
-  });
 
+  // ========== handle Todo ==========
   const _todoCount = new Map();
-  const _todoIdMap = new Map();
   const todoList = projectList
-    .map((project) => ({
-      project,
-      todoList: getTodosByProjectId(project.id),
+    .map(({ id, originId }) => ({
+      id,
+      todoList: getTodosByProjectId(originId).map((t) => {
+        // transform id, calc seq
+        const tId = t.id;
+        const count = (_todoCount.get(tId) || 0) + 1;
+        _todoCount.set(t.id, count);
+
+        const todoId = wrapId(EntityType.Todo, tId, count);
+
+        return {
+          ...t,
+          id: todoId,
+          originId: tId,
+        };
+      }),
     }))
-    .map(({ project, todoList }) => {
-      const source = _projectIdMap.get(project);
+    .map(({ id: source, todoList }) => {
+      const pEntityNode = projectEntityNodeMap.get(source);
 
-      // add Project-Todo relation
-      todoList.forEach((t) => {
-        const seq = (_todoCount.get(t.id) || 0) + 1;
-        _todoCount.set(t.id, seq);
+      todoList.forEach((t, i) => {
+        const { id, originId } = t;
 
-        const todoId = wrapId(EntityType.Todo, t.id, seq);
-        _todoIdMap.set(t, todoId);
+        // add Todo entity
+        const todoEntity: PersonalViewPointEntity = {
+          type: EntityType.Todo,
+          id,
+          originId,
+          seq: i + 1,
+          content: t.name,
+        };
+        entities.push(todoEntity);
 
-        relations.push({
+        // add Project-Todo relation
+        const pTodoRelation: PersonalViewPointRelation = {
           source,
-          target: todoId,
-        });
+          target: id,
+        };
+        relations.push(pTodoRelation);
+
+        // add todo entity node
+        const todoEntityNode = createEntityNode(todoEntity, pTodoRelation);
+        pEntityNode.children[id] = todoEntityNode;
       });
 
       return todoList;
     })
     .flat();
-
-  todoList.forEach((t, i) => {
-    // add Todo entity
-    const todoId = _todoIdMap.get(t);
-    entities.push({
-      type: EntityType.Todo,
-      id: todoId,
-      originId: t.id,
-      seq: i + 1,
-      content: t.name,
-    });
-  });
 
   // TODO clear console
   // console.group(`[getPersonalViewPoint] internal`);
@@ -252,12 +325,14 @@ export const getPersonalViewPoint = (centerUserId: string): ViewPointSource => {
 
   // console.log(`entities`, entities);
   // console.log(`relations`, relations);
+  // console.log(`inheritTree`, inheritTree);
   // console.groupEnd();
 
   return {
     type: ViewPointType.Personal,
     entities,
     relations,
+    inheritTree,
   };
 };
 

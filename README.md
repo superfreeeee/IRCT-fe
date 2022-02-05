@@ -40,14 +40,14 @@
     - [x] 关联点 Hover
   - [x] pop record disabled
   - [x] pop stack bug fix(recoil 缓存到上一次的状态)
-  - [ ] Hover tooltip 简单信息
+  - [x] Hover tooltip 简单信息
   - [ ] 视窗 resize/container size change => 更新 svg 大小
   - [ ] 右键操作列表
 - [ ] 侧边栏
-  - [ ] 侧边栏定位
-  - [ ] 侧边栏填充数据（静态）
-  - [ ] 侧边栏折叠
-  - [ ] 侧边栏项hover
+  - [x] 侧边栏定位
+  - [x] 侧边栏填充数据（静态）
+  - [x] 侧边栏折叠
+  - [ ] 侧边栏项hover 联动
 - [ ] 编辑
   - [ ] 添加/删除节点
   - [ ] 添加/删除边

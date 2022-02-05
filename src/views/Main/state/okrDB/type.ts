@@ -130,19 +130,33 @@ export interface PersonalViewPointRelation {
   source: string;
   target: string;
   additional?: boolean;
+  force?: number;
 }
 
 export type ViewPointEntity = OrganizationViewPointEntity | PersonalViewPointEntity;
 export type ViewPointRelation = OrganizationViewPointRelation | PersonalViewPointRelation;
+
+export type EntityNodeMap = {
+  [id: string]: EntityNode;
+};
+
+export interface EntityNode {
+  node: ViewPointEntity;
+  relation?: ViewPointRelation;
+  children: EntityNodeMap;
+  expand?: boolean;
+}
 
 export type ViewPointSource =
   | {
       type: ViewPointType.Organization;
       entities: OrganizationViewPointEntity[];
       relations: OrganizationViewPointRelation[];
+      inheritTree?: EntityNode;
     }
   | {
       type: ViewPointType.Personal;
       entities: PersonalViewPointEntity[];
       relations: PersonalViewPointRelation[];
+      inheritTree: EntityNode;
     };

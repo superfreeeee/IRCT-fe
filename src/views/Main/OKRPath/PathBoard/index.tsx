@@ -172,11 +172,6 @@ const PathBoard: ForwardRefExoticComponent<
   const setTooltipPosition = useSetRecoilState(tooltipPositionState);
   const setTooltipData = useSetRecoilState(tooltipDataState);
   const handleEnterNode = useCallback((e: MouseEvent, node: PathNode) => {
-    // console.group(`[PathBoard] handleEnterNode`);
-    // console.log('e', e);
-    // console.log('node', node);
-    // console.groupEnd();
-
     const nodeEl = nodesRef.current
       .filter((d) => d === node)
       .node() as SVGGElement;
@@ -192,10 +187,6 @@ const PathBoard: ForwardRefExoticComponent<
     setTooltipData(deepCopy(node));
   }, []);
   const handleLeaveNode = useCallback((e: MouseEvent, node: PathNode) => {
-    // console.group(`[PathBoard] handleLeaveNode`);
-    // console.log('e', e);
-    // console.log('node', node);
-    // console.groupEnd();
     setTooltipVisible(false);
   }, []);
   // also clear when source change
@@ -213,26 +204,20 @@ const PathBoard: ForwardRefExoticComponent<
   /**
    * 初始化
    */
-  useEffect(() => {}, []);
+  // useEffect(() => {}, []);
 
   /**
    * 数据变动时重新渲染
    */
   useEffect(() => {
     console.group(`[PathBoard] source change`);
-    console.log('source', source);
+    console.log(`source(isDefault = ${source === DEFAULT_SOURCE})`, source);
+    console.groupEnd();
     if (source === DEFAULT_SOURCE) {
-      console.log(`source === default, do nothing`);
-      console.groupEnd();
       return;
     }
 
     const { nodes, links } = source;
-
-    console.log(`nodes`, nodes);
-    console.log(`links`, links);
-
-    console.groupEnd();
 
     // render
     const { width, height } = boardContainerRef.current.getBoundingClientRect();

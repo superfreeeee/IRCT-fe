@@ -2,6 +2,8 @@ import { atom, selector } from 'recoil';
 import { PathNode } from '../OKRPath/PathBoard/type';
 
 import {
+  DEFAULT_OKR_LIST_EXPAND_BTN_POSITION,
+  DEFAULT_OKR_LIST_EXPAND_BTN_VISIBLE,
   DEFAULT_OKR_PATH_LIST_VISIBLE,
   DEFAULT_OKR_PATH_TOOLTIP_POSITION,
   DEFAULT_OKR_PATH_TOOLTIP_VISIBLE,
@@ -12,6 +14,7 @@ import {
 import { CEO_ID } from './okrDB/db';
 import { ViewPointType } from './okrDB/type';
 import {
+  ExpandBtnPosition,
   PathTooltipPosition,
   StateNamespace,
   ViewPointRecord,
@@ -159,6 +162,7 @@ export const viewPointStackUpdater = selector<ViewPointStackAction>({
   },
 });
 
+// =============== Node tooltip ===============
 /**
  * tooltip 位置信息
  */
@@ -190,4 +194,50 @@ export const tooltipVisibleState = selector<boolean>({
 export const tooltipDataState = atom<PathNode>({
   key: prefixer('tooltipData'),
   default: null,
+});
+
+// =============== List Expand button ===============
+/**
+ * visible
+ */
+const expandBtnVisibleBaseState = atom<boolean>({
+  key: prefixer('expandBtnVisibleBase'),
+  default: DEFAULT_OKR_LIST_EXPAND_BTN_VISIBLE,
+});
+export const expandBtnVisibleState = selector<boolean>({
+  key: prefixer('expandBtnVisible'),
+  get: ({ get }) => {
+    const listVisible = get(okrPathListVisibleState);
+    const visible = get(expandBtnVisibleBaseState);
+
+    // visible when list is visible
+    return listVisible && visible;
+  },
+  set: ({ set }, visible) => set(expandBtnVisibleBaseState, visible),
+});
+
+/**
+ * position
+ */
+const expandBtnPositionBaseState = atom<ExpandBtnPosition>({
+  key: prefixer('expandBtnPositionBase'),
+  default: DEFAULT_OKR_LIST_EXPAND_BTN_POSITION,
+});
+export const expandBtnPositionState = selector<ExpandBtnPosition>({
+  key: prefixer('expandBtnPosition'),
+  get: ({ get }) => get(expandBtnPositionBaseState),
+  set: ({ set }, position) => set(expandBtnPositionBaseState, position),
+});
+
+/**
+ * isOpen
+ */
+const expandBtnIsOpenBaseState = atom<boolean>({
+  key: prefixer('expandBtnIsOpenBase'),
+  default: false,
+});
+export const expandBtnIsOpenState = selector<boolean>({
+  key: prefixer('expandBtnIsOpen'),
+  get: ({ get }) => get(expandBtnIsOpenBaseState),
+  set: ({ set }, isOpen) => set(expandBtnIsOpenBaseState, isOpen),
 });

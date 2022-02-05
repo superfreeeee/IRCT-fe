@@ -36,6 +36,7 @@ import {
   nodeText,
 } from './PathBoard/utils';
 import ItemTooltip from './ItemTooltip';
+import { PathListSource } from './type';
 
 const OKRPath = () => {
   const visible = useRecoilValue(okrPathVisibleState);
@@ -46,7 +47,9 @@ const OKRPath = () => {
   const viewPointType = useRecoilValue(viewPointTypeState);
   const centerUserId = useRecoilValue(viewPointCenterUserIdState);
 
+  // state for rendering
   const [source, setSource] = useState<PathBoardSource>(undefined);
+  const [inheritTree, setInheritTree] = useState<PathListSource>(undefined);
 
   // 视图/中心用户改变时重新渲染
   useEffect(() => {
@@ -57,7 +60,7 @@ const OKRPath = () => {
       viewPointData = getPersonalViewPoint(centerUserId);
     }
 
-    const { entities, relations } = viewPointData;
+    const { entities, relations, inheritTree } = viewPointData;
 
     // TODO clear console
     console.group(`[OKRPath] view change`);
@@ -65,6 +68,7 @@ const OKRPath = () => {
     console.log(`centerUserId = ${centerUserId}`);
     console.log(`entities`, entities);
     console.log(`relations`, relations);
+    console.log(`inheritTree`, inheritTree);
     console.groupEnd();
 
     /**
@@ -88,7 +92,7 @@ const OKRPath = () => {
       ...rel,
       store: {},
       additional: !!rel.additional,
-      force: rel.additional ? 0 : 1,
+      force: rel.force !== undefined ? rel.force : 1,
     }));
 
     /**
@@ -119,6 +123,7 @@ const OKRPath = () => {
      * 3. 更新 board source
      */
     setSource({ nodes, links });
+    setInheritTree(inheritTree);
   }, [viewPointType, centerUserId]);
 
   return (
@@ -129,9 +134,10 @@ const OKRPath = () => {
       {/* 主板 */}
       <PathBoard ref={boardRef} containerRef={containerRef} source={source} />
       {/* 右侧列表 */}
-      <PathList />
+      <PathList inheritTree={inheritTree} />
       {/* Icon Btns */}
       <SideActions boardRef={boardRef} />
+      {/* Node hover tooltip */}
       <ItemTooltip containerRef={containerRef} />
     </OKRPathContainer>
   );

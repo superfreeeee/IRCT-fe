@@ -12,7 +12,7 @@ export const AppSidebarContainer = styled.div`
   background-color: var(--app_sidebar_bg);
   overflow: hidden;
   transform: translateX(200%);
-  transition: all 0.3s;
+  transition: all var(--trans_speed_level3);
 
   &.isVisible {
     display: block;

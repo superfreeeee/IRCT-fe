@@ -67,9 +67,6 @@ const ItemTooltip: FC<ItemTooltipProps> = ({ containerRef }) => {
   const userState = useRecoilValue(userStateFamily(item && item.data.id));
 
   const contentEl = useMemo(() => {
-    // TODO clear console
-    // console.log(`[ItemTooltip] item`, item);
-
     if (!item) {
       return null;
     }

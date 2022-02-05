@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
-export const MAX_WIDTH = 250;
+const MIN_WIDTH = 85;
+export const MAX_WIDTH = 300;
 
 export const ItemTooltipWrapper = styled.div`
   /* position */
@@ -11,6 +12,7 @@ export const ItemTooltipWrapper = styled.div`
   gap: 8px;
 
   /* for box */
+  min-width: ${MIN_WIDTH}px;
   max-width: ${MAX_WIDTH}px;
   padding: 6px 15px;
   border: 1px solid rgba(255, 255, 255, 0.5);

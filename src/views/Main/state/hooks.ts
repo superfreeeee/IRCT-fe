@@ -9,7 +9,12 @@ import {
 } from './im';
 import { roomBasicInfoFamily, roomIdsState, roomUserIdsFamily } from './room';
 import { currentSpaceIdState } from './roomSpace';
-import { RoomType, TabOption, ViewPointRecord } from './type';
+import {
+  ExpandBtnPosition,
+  RoomType,
+  TabOption,
+  ViewPointRecord,
+} from './type';
 import {
   currentUserIdState,
   userCurrentRoomIdFamily,
@@ -19,6 +24,9 @@ import {
 import meetingTempAvatar from '@assets/img/meeting_temp.png';
 import { PlainFn } from '@utils/type';
 import {
+  expandBtnIsOpenState,
+  expandBtnPositionState,
+  expandBtnVisibleState,
   viewPointCenterUserIdState,
   viewPointStackState,
   viewPointTypeState,
@@ -88,14 +96,6 @@ export const useEnterRoom = (newRoomId: string, followeeId: string) => {
 
       // 更新 roomSpaceId
       setCurrentSpaceId(newRoomId);
-
-      // console.group(`[useEnterRoom] enterRoom`);
-      // console.log(`following = ${following && followeeId}`);
-      // console.log(`currentRoomId = ${currentRoomId}`);
-      // console.log(`newRoomId = ${newRoomId}`);
-      // console.log(`followeePosition = ${followeePosition}`);
-      // console.log(`newPosition = ${newPosition}`);
-      // console.groupEnd();
     },
     [
       isNewRoom,
@@ -265,4 +265,29 @@ export const useInviteToRoom = (roomId: string, targetUserId: string) => {
   };
 
   return inviteToRoom;
+};
+
+// ========== OKR List expand button ==========
+export const useShowExpandBtn = () => {
+  const setExpandBtnVisible = useSetRecoilState(expandBtnVisibleState);
+  const setExpandBtnPosition = useSetRecoilState(expandBtnPositionState);
+  const setExpandBtnIsOpen = useSetRecoilState(expandBtnIsOpenState);
+
+  const showExpandBtn = (position: ExpandBtnPosition, isOpen: boolean) => {
+    setExpandBtnVisible(true);
+    setExpandBtnPosition(position);
+    setExpandBtnIsOpen(isOpen);
+  };
+
+  return showExpandBtn;
+};
+
+export const useHideExpandBtn = () => {
+  const setExpandBtnVisible = useSetRecoilState(expandBtnVisibleState);
+
+  const hideExpandBtn = () => {
+    setExpandBtnVisible(false);
+  };
+
+  return hideExpandBtn;
 };

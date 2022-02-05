@@ -55,7 +55,7 @@ const SideActions: FC<SideActionsProps> = ({ boardRef }) => {
   return (
     <>
       {/* left-top actions */}
-      <OKRIconActions style={{ left: 32, top: 24 }}>
+      <OKRIconActions style={{ left: 22, top: 24 }}>
         <OKRIconBtn
           className={classNames({ disabled: popDisabled })}
           onClick={popRecord}
@@ -71,7 +71,7 @@ const SideActions: FC<SideActionsProps> = ({ boardRef }) => {
         </OKRIconBtn>
       </OKRIconActions>
       {/* left-bottom actions */}
-      <OKRIconActions style={{ left: 32, bottom: 22 }}>
+      <OKRIconActions style={{ left: 22, bottom: 22 }}>
         <OKRIconBtn onClick={startComment}>
           <BoxIcon type={BoxIconType.MessageDots} />
         </OKRIconBtn>

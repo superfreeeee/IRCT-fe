@@ -122,7 +122,7 @@ export const ItemActions = styled.div`
   );
   transform: translateX(100%);
   transform-origin: right;
-  transition: all 0.3s;
+  transition: all var(--trans_speed_level3);
 
   ${ItemContainer}:hover & {
     transform: translateX(0%);

@@ -63,7 +63,7 @@ export const MeetingActionBtn = styled.div`
   font-size: 22px;
   color: #474849;
   background-color: #f1f1f1;
-  transition: background-color 0.2s;
+  transition: background-color var(--trans_speed_level2);
   user-select: none;
 
   &.off {
