@@ -216,7 +216,7 @@ const PathBoard: ForwardRefExoticComponent<
     resetPositionTimer.current = setTimeout(() => {
       setTooltipPosition({
         left: 0,
-        bottom: 0,
+        bottom: 24,
       });
     }, 500);
   }, []);
