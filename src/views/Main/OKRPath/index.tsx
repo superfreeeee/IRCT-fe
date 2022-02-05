@@ -138,7 +138,7 @@ const OKRPath = () => {
       {/* Icon Btns */}
       <SideActions boardRef={boardRef} />
       {/* Node hover tooltip */}
-      <ItemTooltip containerRef={containerRef} />
+      <ItemTooltip />
     </OKRPathContainer>
   );
 };

@@ -23,7 +23,7 @@ import {
 } from '@views/Main/state/okrPath';
 import { ViewPointStackActionType } from '@views/Main/state/type';
 import useClosestRef from '@hooks/useClosestRef';
-import { deepCopy } from '@utils';
+import { deepCopy, simpleThrottle } from '@utils';
 import {
   BoundNodeAction,
   LinkColor,
@@ -195,6 +195,10 @@ const PathBoard: ForwardRefExoticComponent<
   const handleLeaveNode = useCallback((node: PathNode) => {
     setTooltipVisible(false);
   }, []);
+  const handleMouseDownNode = useCallback(() => {
+    setTooltipVisible(false); // 按下去的時候取消 tooltip 避免閃爍
+  }, []);
+
   // also clear when source change
   useEffect(() => {
     setTooltipVisible(false);
@@ -282,8 +286,8 @@ const PathBoard: ForwardRefExoticComponent<
     const svg = (svgRef.current = d3
       .select(boardContainerRef.current)
       .append('svg')
-      .attr('width', boardWidth)
-      .attr('height', boardHeight)
+      .style('width', '100%')
+      .style('height', '100%')
       .attr('viewBox', [
         -boardWidth / 2,
         -boardHeight / 2,
@@ -304,8 +308,8 @@ const PathBoard: ForwardRefExoticComponent<
       .style('fill', 'transparent') // 透明色
       .attr('x', -boardWidth / 2)
       .attr('y', -boardHeight / 2)
-      .attr('width', width)
-      .attr('height', height)
+      .style('width', boardWidth)
+      .style('height', boardHeight)
       .on('click', boundMaskClick));
 
     /**
@@ -412,6 +416,7 @@ const PathBoard: ForwardRefExoticComponent<
       .join('g')
       .attr('class', (d) => `node-${d.data.id}`)
       .on('click', boundClickNode)
+      .on('mousedown', handleMouseDownNode)
       .on('mouseenter', boundEnterNode)
       .on('mouseleave', boundLeaveNode)
       .call(boundDrag));

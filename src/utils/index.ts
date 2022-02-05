@@ -75,3 +75,14 @@ export const deepCopy = (obj: any): any => {
     return obj;
   }
 };
+
+/**
+ * 简单防抖
+ */
+export const simpleThrottle = (cb: Function, delay: number = 300) => {
+  let timer = null;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(cb, delay, ...args);
+  };
+};

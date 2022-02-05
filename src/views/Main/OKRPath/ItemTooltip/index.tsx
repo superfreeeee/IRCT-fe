@@ -7,49 +7,44 @@ import {
   tooltipPositionState,
   tooltipVisibleState,
 } from '@views/Main/state/okrPath';
-
-import { ItemTooltipWrapper } from './styles';
 import { EntityType } from '@views/Main/state/okrDB/type';
 import { userStateFamily } from '@views/Main/state/user';
 import StatusPoint from '@components/StatusPoint';
 import BoxIcon, { BoxIconType } from '@components/BoxIcon';
+import { ItemTooltipContainer, ItemTooltipWrapper } from './styles';
 import ItemTypePoint from './ItemTypePoint';
 
-interface ItemTooltipProps {
-  containerRef: MutableRefObject<HTMLDivElement>;
-}
+interface ItemTooltipProps {}
 
-const ItemTooltip: FC<ItemTooltipProps> = ({ containerRef }) => {
+const ItemTooltip: FC<ItemTooltipProps> = () => {
   // ========== 展示相关 ==========
   const visible = useRecoilValue(tooltipVisibleState);
   const [position, setPosition] = useRecoilState(tooltipPositionState);
+  const targetNode = useRecoilValue(tooltipDataState);
 
-  const wrapperRef = useRef<HTMLDivElement>(null);
+  const innerContainerRef = useRef<HTMLDivElement>(null);
   /**
    * 超出界限时重新定位 reshape
    */
   const reshapLockRef = useRef(false);
   useEffect(() => {
-    if (reshapLockRef.current) {
+    if (reshapLockRef.current || !targetNode) {
       return;
     }
     setTimeout(() => {
-      const { right: rightLimit, left: offsetX } =
-        containerRef.current.getBoundingClientRect();
-      const { x, y, width, right } = wrapperRef.current.getBoundingClientRect();
+      const { y } = innerContainerRef.current.getBoundingClientRect();
 
-      if (y < 0 || right >= rightLimit) {
-        const bottom = y < 0 ? position.bottom - 90 : position.bottom;
-        const left =
-          right >= rightLimit ? right - width - offsetX : position.left;
+      if (y < 0) {
+        const diameter = targetNode.store.radius * 2;
+        const newBottom = position.bottom - diameter;
         setPosition({
-          left,
-          bottom,
+          left: position.left,
+          bottom: newBottom,
         });
         reshapLockRef.current = true;
       }
     });
-  }, [position]);
+  }, [targetNode, position]);
 
   /**
    * 隐藏时重置锁
@@ -99,13 +94,13 @@ const ItemTooltip: FC<ItemTooltipProps> = ({ containerRef }) => {
   }, [item]);
 
   return (
-    <ItemTooltipWrapper
-      ref={wrapperRef}
-      className={classNames({ hide: !visible })}
+    <ItemTooltipContainer
+      ref={innerContainerRef}
+      className={classNames({ hide: !visible, turn: reshapLockRef.current })}
       style={{ ...position }}
     >
-      {contentEl}
-    </ItemTooltipWrapper>
+      <ItemTooltipWrapper>{contentEl}</ItemTooltipWrapper>
+    </ItemTooltipContainer>
   );
 };
 

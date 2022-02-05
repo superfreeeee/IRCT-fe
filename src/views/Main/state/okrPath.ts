@@ -185,7 +185,10 @@ export const tooltipVisibleState = selector<boolean>({
     const visibleBase = get(tooltipVisibleBaseState);
     return selectNode && visibleBase;
   },
-  set: ({ set }, visible) => set(tooltipVisibleBaseState, visible),
+  set: ({ set }, visible) => {
+    set(tooltipVisibleBaseState, visible);
+    set(tooltipPositionState, { left: 0, bottom: 0 });
+  },
 });
 
 /**
