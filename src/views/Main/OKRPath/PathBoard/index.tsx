@@ -137,6 +137,7 @@ const PathBoard: ForwardRefExoticComponent<
       const currentId = node.id;
       const lastId = lastClickItemIdRef.current;
 
+      isDraggingRef.current = false; // 点击事件也允许清理
       // TODO clear console
       // console.log(
       //   `[PathBoard] onClickNode(${currentId}), doubleClick: ${
@@ -253,7 +254,7 @@ const PathBoard: ForwardRefExoticComponent<
 
       if (e.button === 2) {
         // 右键点击事件
-        console.log(`[PathBoard] targetNode`, targetNode);
+        // console.log(`[PathBoard] targetNode`, targetNode);
         setContextMenuVisible(true);
         setContextMenuTarget(deepCopy(targetNode));
         const { clientX: left, clientY: top } = e;

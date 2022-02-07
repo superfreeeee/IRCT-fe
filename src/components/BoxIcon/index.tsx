@@ -11,6 +11,7 @@ export enum BoxIconType {
   File = 'bx-file',
   Group = 'bx-group',
   GroupFill = 'bxs-group',
+  Home = 'bxs-home',
   LastPage = 'bxs-chevrons-left',
   ListCheck = 'bx-list-check',
   MessageAdd = 'bx-message-square-add',

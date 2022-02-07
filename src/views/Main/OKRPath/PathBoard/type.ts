@@ -161,6 +161,7 @@ export interface PathNode extends d3.SimulationNodeDatum {
     strokeWidth?: NodeStrokeWidth;
     // node state 动态状态
     state: NodeState;
+    additional?: boolean; // 非直接关联同 id 节点
   };
   draggable: boolean;
   seq?: number;

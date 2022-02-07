@@ -334,7 +334,6 @@ export const onDrag = (
   let startX: number, startY: number;
 
   const dragStart = (e: D3DragEvent<any, PathNode, PathNode>, d: PathNode) => {
-    console.log(`drag start`);
     cb && cb(NodeDragType.Down, e.sourceEvent, d);
     if (!d.draggable) {
       return;
@@ -371,7 +370,6 @@ export const onDrag = (
   };
 
   const dragEnd = (e: D3DragEvent<any, PathNode, PathNode>, d: PathNode) => {
-    console.log(`drag end`);
     cb && cb(NodeDragType.Up, e.sourceEvent, d);
     if (!d.draggable) {
       return;
@@ -457,6 +455,7 @@ export const onClickNode =
  */
 const calcRelativeItems = (
   links: PathLink[],
+  nodes: PathNode[],
   targetNode?: PathNode,
 ): {
   relativeLinkSet: Set<PathLink>;
@@ -478,7 +477,7 @@ const calcRelativeItems = (
   // targetId => sourceId
   const relationMap = {};
 
-  // 1. calc children
+  // 1. check all links(calc children)
   links.forEach((link) => {
     if (link.additional) {
       return;
@@ -510,7 +509,7 @@ const calcRelativeItems = (
     parentId = relationMap[parentId] || null; // null if not exists
   }
 
-  // append self & ancestor
+  // append links between self & ancestor
   links.forEach((link) => {
     if (
       inheritIds.has((link.source as PathNode).id) &&
@@ -520,6 +519,7 @@ const calcRelativeItems = (
       relativeNodeSet.add(link.source as PathNode);
     }
   });
+  // add targetNode
   relativeNodeSet.add(targetNode);
 
   return {
@@ -545,6 +545,7 @@ const updateItems = (
   // 关联物件集合
   const { relativeLinkSet, relativeNodeSet } = calcRelativeItems(
     links.data(),
+    nodes.data(),
     targetNode,
   );
 
@@ -616,6 +617,27 @@ const updateNodes = (
       targetNode,
     );
   }
+
+  if (targetNode) {
+    const {
+      data: { type: targetType, id: targetId, originId: targetOriginId },
+    } = targetNode;
+    const addtionalNodes = nodes.filter((node) => {
+      const {
+        data: { type, id, originId },
+        store: { state },
+      } = node;
+      return (
+        type === targetType &&
+        originId === targetOriginId &&
+        id !== targetId &&
+        state === NodeState.Inactive // 不要选到 active 状态的
+      );
+    });
+    _additionalNodesColor(nodes, addtionalNodes, action);
+  } else {
+    _additionalNodesColor(nodes, null, action);
+  }
 };
 
 /**
@@ -667,6 +689,51 @@ const _nodesColor = (
     itemNodes.select('circle').attr('stroke-width', NodeStrokeWidth.Inactive);
   } else {
     console.error(`[_nodesColor] unknonw selection type: ${type}`);
+  }
+};
+
+const _additionalNodesColor = (
+  nodes: NodesSelection,
+  addtionalNodes: NodesSelection | null,
+  action: MouseActionType,
+) => {
+  const currentHoverNodes = nodes.filter((node) => {
+    const {
+      store: { additional, state },
+    } = node;
+    return additional && state === NodeState.Inactive;
+  });
+
+  if (action === MouseActionType.Click) {
+    // 颜色 + 状态
+    // 清理旧节点
+    currentHoverNodes
+      .each((d) => (d.store.additional = false))
+      .select('circle')
+      .attr('fill', (d) => d.store.color);
+    // 涂上新节点
+    addtionalNodes
+      .each((d) => (d.store.additional = true))
+      .select('circle')
+      .attr('fill', (d) => d.store.hoverColor);
+  } else if (action === MouseActionType.Enter) {
+    // 暂时删除 active 节点颜色
+    currentHoverNodes.select('circle').attr('fill', (d) => d.store.color);
+    // 涂上关联节点颜色
+    addtionalNodes &&
+      addtionalNodes.select('circle').attr('fill', (d) => d.store.hoverColor);
+  } else if (action === MouseActionType.Leave) {
+    // 清理关联节点颜色
+    addtionalNodes &&
+      addtionalNodes.select('circle').attr('fill', (d) => d.store.color);
+    // 重新涂上 active 节点颜色
+    currentHoverNodes.select('circle').attr('fill', (d) => d.store.hoverColor);
+  } else if (action === MouseActionType.Clear) {
+    // 清理状态 & 颜色
+    currentHoverNodes
+      .each((d) => (d.store.additional = false))
+      .select('circle')
+      .attr('fill', (d) => d.store.color);
   }
 };
 

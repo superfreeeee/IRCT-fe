@@ -26,17 +26,23 @@ const SideActions: FC<SideActionsProps> = ({ boardRef, listRef }) => {
   const popDisabled = viewPointStack.length === 0;
 
   /**
-   * 返回上一个视图
+   * 直接返回组织视图 & 清除栈记录
    */
   const updateStack = useSetRecoilState(viewPointStackUpdater);
+  const clearRecord = () => {
+    console.log(`[OKRPath.SideActions] clearRecord`);
+    updateStack({ type: ViewPointStackActionType.Clear });
+  };
+
+  /**
+   * 返回上一个视图
+   */
   const popRecord = () => {
     if (popDisabled) {
       return;
     }
     console.log(`[OKRPath.SideActions] popRecord`);
-    updateStack({
-      type: ViewPointStackActionType.Pop,
-    });
+    updateStack({ type: ViewPointStackActionType.Pop });
   };
 
   /**
@@ -44,6 +50,7 @@ const SideActions: FC<SideActionsProps> = ({ boardRef, listRef }) => {
    */
   const searchPath = () => {
     console.log(`[OKRPath.SideActions] searchPath`);
+    // TODO
   };
 
   /**
@@ -77,7 +84,12 @@ const SideActions: FC<SideActionsProps> = ({ boardRef, listRef }) => {
           onClick={popRecord}
         >
           <BoxIcon type={BoxIconType.Undo} />
-          {/* <img src={''} alt="" /> */}
+        </OKRIconBtn>
+        <OKRIconBtn
+          className={classNames({ disabled: popDisabled })}
+          onClick={clearRecord}
+        >
+          <BoxIcon type={BoxIconType.Home} />
         </OKRIconBtn>
         <OKRIconBtn onClick={searchPath}>
           <BoxIcon type={BoxIconType.SearchAlt} />

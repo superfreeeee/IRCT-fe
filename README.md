@@ -41,13 +41,20 @@
   - [x] pop record disabled
   - [x] pop stack bug fix(recoil 缓存到上一次的状态)
   - [x] Hover tooltip 简单信息
-  - [ ] 视窗 resize/container size change => 更新 svg 大小
-  - [ ] 右键操作列表
+  - [x] 视窗 resize/container size change => 更新 svg 大小
+    - [x] svg 使用 100% 可以解决
+    - [ ] mask 大小可能因为 viewpoint 被压缩
+  - [x] 右键操作列表
+  - [ ] 编辑模态框
+  - [ ] 编辑模态框数据联动
+  - [ ] 同 id Node 应该同时亮起
+  - [ ] O, KR, Project, Todo 关联人头
 - [ ] 侧边栏
   - [x] 侧边栏定位
   - [x] 侧边栏填充数据（静态）
   - [x] 侧边栏折叠
-  - [ ] 侧边栏项hover 联动
+  - [x] 侧边栏项hover 联动
+  - [ ] O, KR, Project, Todo 关联人头
 - [ ] 编辑
   - [ ] 添加/删除节点
   - [ ] 添加/删除边
