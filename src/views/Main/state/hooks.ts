@@ -10,7 +10,7 @@ import {
 import { roomBasicInfoFamily, roomIdsState, roomUserIdsFamily } from './room';
 import { currentSpaceIdState } from './roomSpace';
 import {
-  ExpandBtnPosition,
+  AbsolutePosition,
   RoomType,
   TabOption,
   ViewPointRecord,
@@ -273,7 +273,7 @@ export const useShowExpandBtn = () => {
   const setExpandBtnPosition = useSetRecoilState(expandBtnPositionState);
   const setExpandBtnIsOpen = useSetRecoilState(expandBtnIsOpenState);
 
-  const showExpandBtn = (position: ExpandBtnPosition, isOpen: boolean) => {
+  const showExpandBtn = (position: AbsolutePosition, isOpen: boolean) => {
     setExpandBtnVisible(true);
     setExpandBtnPosition(position);
     setExpandBtnIsOpen(isOpen);

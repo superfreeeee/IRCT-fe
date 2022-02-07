@@ -220,7 +220,17 @@ export interface BoundNodeAction {
 
 // ========== actions ==========
 export interface NodeActionCallback {
-  (node: PathNode, outerTrigger: boolean): void;
+  (node: PathNode, e?: MouseEvent): void;
+}
+
+export enum NodeDragType {
+  Down = 'dragstart',
+  Move = 'dragdrag',
+  Up = 'dragend',
+}
+
+export interface NodeDragCallback {
+  (type: NodeDragType, e: MouseEvent, targetNode: PathNode): void;
 }
 
 export interface ItemsRefObj {

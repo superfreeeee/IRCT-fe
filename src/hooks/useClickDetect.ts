@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import useClosestRef from './useClosestRef';
 
 interface ClickDetectListener {
-  (isOutside: boolean): void;
+  (isOutside: boolean, e: MouseEvent): void;
 }
 
 const useClickDetect = (
@@ -14,7 +14,7 @@ const useClickDetect = (
 
   useEffect(() => {
     if (active) {
-      const onDocumentClick = (e) => {
+      const onDocumentClick = (e: MouseEvent) => {
         let isOuteSide = true;
         let el = e.target as Node;
         while (el && el !== document.body) {
@@ -25,12 +25,12 @@ const useClickDetect = (
           el = el.parentNode;
         }
 
-        cbLive.current(isOuteSide);
+        cbLive.current(isOuteSide, e);
       };
 
-      document.addEventListener('click', onDocumentClick, true);
+      document.addEventListener('mousedown', onDocumentClick, true);
       return () => {
-        document.removeEventListener('click', onDocumentClick, true);
+        document.removeEventListener('mousedown', onDocumentClick, true);
       };
     }
   }, [active]);

@@ -10,7 +10,7 @@ import {
 import { OKRPathContainer } from './styles';
 import SideActions from './SideActions';
 import PathBoard, { PathBoardRef } from './PathBoard';
-import PathList from './PathList';
+import PathList, { PathListRef } from './PathList';
 import {
   getOrganizationViewPoint,
   getPersonalViewPoint,
@@ -37,12 +37,14 @@ import {
 } from './PathBoard/utils';
 import ItemTooltip from './ItemTooltip';
 import { PathListSource } from './type';
+import CustomContextMenu from './CustomContextMenu';
 
 const OKRPath = () => {
   const visible = useRecoilValue(okrPathVisibleState);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const boardRef = useRef<PathBoardRef>(null);
+  const listRef = useRef<PathListRef>(null);
 
   const viewPointType = useRecoilValue(viewPointTypeState);
   const centerUserId = useRecoilValue(viewPointCenterUserIdState);
@@ -134,11 +136,12 @@ const OKRPath = () => {
       {/* 主板 */}
       <PathBoard ref={boardRef} containerRef={containerRef} source={source} />
       {/* 右侧列表 */}
-      <PathList inheritTree={inheritTree} boardRef={boardRef} />
+      <PathList ref={listRef} inheritTree={inheritTree} boardRef={boardRef} />
       {/* Icon Btns */}
-      <SideActions boardRef={boardRef} />
+      <SideActions boardRef={boardRef} listRef={listRef} />
       {/* Node hover tooltip */}
       <ItemTooltip />
+      <CustomContextMenu listRef={listRef} />
     </OKRPathContainer>
   );
 };

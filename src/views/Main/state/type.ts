@@ -12,6 +12,7 @@ export enum StateNamespace {
   CallModal = 'callModal',
   CreateMeetingModal = 'createMeetingModal',
   SelectUserModal = 'selectUserModal',
+  ContextMenu = 'contextMenu',
 }
 
 // ========== enum 枚举类型 ==========
@@ -96,7 +97,9 @@ export interface PathTooltipPosition {
   bottom: number;
 }
 
-export interface ExpandBtnPosition {
-  left: number;
-  top: number;
+export interface AbsolutePosition {
+  left?: number;
+  top?: number;
+  bottom?: number;
+  right?: number;
 }

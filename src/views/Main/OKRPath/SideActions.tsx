@@ -1,18 +1,26 @@
-import React, { FC } from 'react';
+import React, { FC, MutableRefObject } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import BoxIcon, { BoxIconType } from '@components/BoxIcon';
-import { viewPointStackState, viewPointStackUpdater } from '../state/okrPath';
+import {
+  okrPathListVisibleState,
+  viewPointStackState,
+  viewPointStackUpdater,
+  viewPointTypeState,
+} from '../state/okrPath';
 import { ViewPointStackActionType } from '../state/type';
 import { PathBoardRef } from './PathBoard';
 import { OKRIconActions, OKRIconBtn } from './styles';
 import classNames from 'classnames';
+import { PathListRef } from './PathList';
+import { ViewPointType } from '../state/okrDB/type';
 
 interface SideActionsProps {
-  boardRef: React.MutableRefObject<PathBoardRef>;
+  boardRef: MutableRefObject<PathBoardRef>;
+  listRef: MutableRefObject<PathListRef>;
 }
 
-const SideActions: FC<SideActionsProps> = ({ boardRef }) => {
+const SideActions: FC<SideActionsProps> = ({ boardRef, listRef }) => {
   const viewPointStack = useRecoilValue(viewPointStackState);
 
   const popDisabled = viewPointStack.length === 0;
@@ -48,8 +56,16 @@ const SideActions: FC<SideActionsProps> = ({ boardRef }) => {
   /**
    * 去发评论
    */
+  const viewPointType = useRecoilValue(viewPointTypeState);
+  const setListVisible = useSetRecoilState(okrPathListVisibleState);
   const startComment = () => {
     console.log(`[OKRPath.SideActions] startComment`);
+    if (viewPointType === ViewPointType.Personal) {
+      setListVisible(true);
+      setTimeout(() => {
+        listRef.current.focusComment();
+      });
+    }
   };
 
   return (

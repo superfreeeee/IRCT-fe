@@ -7,11 +7,13 @@ import { typePointExpandColorMap } from './styles';
 import classNames from 'classnames';
 
 export const EnhanceItemTypePointWrapper = styled.div<{ type: EntityType }>`
+  align-self: flex-start;
   display: flex;
   justify-content: center;
   align-items: center;
   min-width: 14px;
   height: 14px;
+  margin-top: 5px;
   border-radius: 50%;
   border: 3px solid transparent;
   transition: border-color var(--trans_speed_level2);

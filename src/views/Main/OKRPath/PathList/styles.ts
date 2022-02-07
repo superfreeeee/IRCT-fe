@@ -4,6 +4,8 @@ import Avatar from '@components/Avatar';
 import { EntityType } from '@views/Main/state/okrDB/type';
 
 // ========== config ==========
+const DETAIL_LINE_HEIGHT = 20;
+
 enum TypePointExpandColor {
   None = 'transparent',
   O = '#6A7D7E',
@@ -42,7 +44,7 @@ const titleExpandColorMap: { [type in EntityType]: TitleExpandColor } = {
 export const OKRListContainer = styled.div`
   display: flex;
   flex-direction: column;
-  width: 280px;
+  width: 300px;
   height: 100%;
   border-radius: 10px;
   color: #fff;
@@ -87,7 +89,7 @@ export const OKRListContent = styled.div`
 export const DetailList = styled.div`
   position: relative;
   flex: 1;
-  padding: 0 26px 36px 35px; // 多空一行半
+  padding: 0 26px ${DETAIL_LINE_HEIGHT * 1.5}px 30px; // 多空一行半
   overflow-x: visible;
   overflow-y: auto;
 `;
@@ -101,17 +103,27 @@ export const DetailLayerBanner = styled.div<{ type: EntityType }>`
   display: flex;
   align-items: center;
   gap: 6px;
-  height: 24px;
+  min-height: ${DETAIL_LINE_HEIGHT}px; // 至少一行
   user-select: none;
 
   & > .title {
     padding: 0 3px;
+    margin: 2px 0;
     border-radius: 5px;
     font-size: 14px;
+    line-height: ${DETAIL_LINE_HEIGHT}px;
     transition: background-color var(--trans_speed_level2);
     overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+
+    /* 单行溢出 */
+    /* text-overflow: ellipsis; */
+    /* white-space: nowrap; */
+
+    /* 多行溢出效果（兼容性应该还行） */
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
 
     &:hover,
     &.isTarget {
@@ -157,5 +169,26 @@ export const RelativeUsers = styled.div`
  * 评论区
  */
 export const CommentAreaContainer = styled.div`
-  height: 250px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px 16px;
+
+  .submitBtn {
+    padding: 4px 6px;
+    border-radius: 6px;
+
+    &:hover {
+      background-color: rgb(71, 72, 73);
+    }
+  }
+`;
+
+export const CommentInput = styled.input`
+  flex: 1;
+  padding: 2px 7px;
+  border-radius: 10px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.6);
+  background-color: #474849;
 `;

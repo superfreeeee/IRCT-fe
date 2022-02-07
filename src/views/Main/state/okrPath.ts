@@ -14,7 +14,7 @@ import {
 import { CEO_ID } from './okrDB/db';
 import { ViewPointType } from './okrDB/type';
 import {
-  ExpandBtnPosition,
+  AbsolutePosition,
   PathTooltipPosition,
   StateNamespace,
   ViewPointRecord,
@@ -153,9 +153,15 @@ export const viewPointStackUpdater = selector<ViewPointStackAction>({
 
       // 推入一项纪录
       case ViewPointStackActionType.Push:
+        const currentType = get(viewPointTypeState);
+        const currentId = get(viewPointCenterUserIdState);
         records = get(viewPointStackBaseState);
 
         ({ type, centerUserId } = action.record);
+        if (currentType === type && currentId === centerUserId) {
+          break;
+        }
+
         records = [...records, { type, centerUserId }];
 
         set(viewPointStackBaseState, records);
@@ -225,11 +231,11 @@ export const expandBtnVisibleState = selector<boolean>({
 /**
  * position
  */
-const expandBtnPositionBaseState = atom<ExpandBtnPosition>({
+const expandBtnPositionBaseState = atom<AbsolutePosition>({
   key: prefixer('expandBtnPositionBase'),
   default: DEFAULT_OKR_LIST_EXPAND_BTN_POSITION,
 });
-export const expandBtnPositionState = selector<ExpandBtnPosition>({
+export const expandBtnPositionState = selector<AbsolutePosition>({
   key: prefixer('expandBtnPosition'),
   get: ({ get }) => get(expandBtnPositionBaseState),
   set: ({ set }, position) => set(expandBtnPositionBaseState, position),

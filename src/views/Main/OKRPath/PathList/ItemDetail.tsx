@@ -11,7 +11,7 @@ import classNames from 'classnames';
 
 import { EntityNode, EntityType } from '@views/Main/state/okrDB/type';
 import { useHideExpandBtn } from '@views/Main/state/hooks';
-import { ExpandBtnPosition } from '@views/Main/state/type';
+import { AbsolutePosition } from '@views/Main/state/type';
 import { expandBtnIsOpenState } from '@views/Main/state/okrPath';
 import useShadowState from '@hooks/useShadowState';
 import { PathBoardRef } from '../PathBoard';
@@ -25,7 +25,7 @@ import EnhanceItemTypePoint from './EnhanceItemTypePoint';
 
 interface ItemDetailProps {
   node: EntityNode;
-  hoverExpandBtn?: (position: ExpandBtnPosition, isExpand: boolean) => void;
+  hoverExpandBtn?: (position: AbsolutePosition, isExpand: boolean) => void;
   boardRef: MutableRefObject<PathBoardRef>;
 }
 

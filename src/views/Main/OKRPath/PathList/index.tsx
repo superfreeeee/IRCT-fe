@@ -1,14 +1,24 @@
-import React, { FC, MutableRefObject, useEffect, useMemo, useRef } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import React, {
+  ForwardRefExoticComponent,
+  MutableRefObject,
+  RefAttributes,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+} from 'react';
+import { useRecoilValue } from 'recoil';
 import classNames from 'classnames';
 
 import { EntityNode, EntityType } from '@views/Main/state/okrDB/type';
 import { useShowExpandBtn } from '@views/Main/state/hooks';
-import { ExpandBtnPosition } from '@views/Main/state/type';
-import { PathBoardRef } from '../PathBoard';
+import { AbsolutePosition } from '@views/Main/state/type';
+import useShadowState from '@hooks/useShadowState';
+import usePrev from '@hooks/usePrev';
 import Avatar from '@components/Avatar';
 import BoxIcon, { BoxIconType } from '@components/BoxIcon';
-import useShadowState from '@hooks/useShadowState';
+import { deepCopy } from '@utils';
+import { PathBoardRef } from '../PathBoard';
 import { activeNodeState, okrPathListVisibleState } from '../../state/okrPath';
 import { PathListSource } from '../type';
 import {
@@ -17,18 +27,20 @@ import {
   OKRListContent,
   OKRListHeader,
 } from './styles';
-import CommentArea from './CommentArea';
+import CommentArea, { CommentAreaRef } from './CommentArea';
 import ItemDetail from './ItemDetail';
 import ExpandBtn from './ExpandBtn';
-import { deepCopy } from '@utils';
-import usePrev from '@hooks/usePrev';
+
+export interface PathListRef extends CommentAreaRef {}
 
 interface PathListProps {
   inheritTree: PathListSource;
   boardRef: MutableRefObject<PathBoardRef>;
 }
 
-const PathList: FC<PathListProps> = ({ inheritTree, boardRef }) => {
+const PathList: ForwardRefExoticComponent<
+  PathListProps & RefAttributes<PathListRef>
+> = React.forwardRef(({ inheritTree, boardRef }, ref) => {
   const [shadowTree, setShadowTree] = useShadowState(inheritTree);
   const visible = useRecoilValue(okrPathListVisibleState);
 
@@ -132,19 +144,35 @@ const PathList: FC<PathListProps> = ({ inheritTree, boardRef }) => {
   const showExpandBtn = useShowExpandBtn();
   const detailListRef = useRef<HTMLDivElement>(null);
   const hoverExpandBtn = (
-    { left, top }: ExpandBtnPosition,
+    { left, top }: AbsolutePosition,
     isExpand: boolean,
   ) => {
     const listEl = detailListRef.current;
     const { left: baseLeft, top: baseTop } = listEl.getBoundingClientRect();
 
-    const position: ExpandBtnPosition = {
+    const position: AbsolutePosition = {
       left: left - baseLeft,
       top: top - baseTop + listEl.scrollTop,
     };
 
     showExpandBtn(position, isExpand);
   };
+
+  // ========== outer actions ==========
+  const commentAreaRef = useRef<CommentAreaRef>(null);
+  useImperativeHandle(
+    ref,
+    () => {
+      const focusComment = () => {
+        commentAreaRef.current.focusComment();
+      };
+
+      return {
+        focusComment,
+      };
+    },
+    [],
+  );
 
   return (
     <OKRListContainer className={classNames({ hide })}>
@@ -163,10 +191,10 @@ const PathList: FC<PathListProps> = ({ inheritTree, boardRef }) => {
           {/* <button onClick={() => setVisible(false)}>Close</button> */}
           <ExpandBtn />
         </DetailList>
-        <CommentArea />
+        <CommentArea ref={commentAreaRef} />
       </OKRListContent>
     </OKRListContainer>
   );
-};
+});
 
 export default PathList;

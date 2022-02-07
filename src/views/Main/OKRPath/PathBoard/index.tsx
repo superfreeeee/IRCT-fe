@@ -8,10 +8,9 @@ import React, {
   useRef,
 } from 'react';
 import * as d3 from 'd3';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { EntityType, ViewPointType } from '@views/Main/state/okrDB/type';
-import { PathBoardContainer } from './styles';
 import {
   activeNodeState,
   okrPathListVisibleState,
@@ -23,6 +22,11 @@ import {
   viewPointTypeState,
 } from '@views/Main/state/okrPath';
 import { ViewPointStackActionType } from '@views/Main/state/type';
+import {
+  contextMenuPositionState,
+  contextMenuTargetState,
+  contextMenuVisibleState,
+} from '@views/Main/state/modals/customContextMenu';
 import useClosestRef from '@hooks/useClosestRef';
 import { deepCopy } from '@utils';
 import {
@@ -54,6 +58,7 @@ import {
   onTransZoom,
   transition,
 } from './utils';
+import { PathBoardContainer } from './styles';
 
 export interface PathBoardRef {
   resetZoom: () => void;
@@ -125,57 +130,67 @@ const PathBoard: ForwardRefExoticComponent<
   const lastClickItemIdRef = useRef<string>('');
   const updateStack = useSetRecoilState(viewPointStackUpdater);
   const setOkrPathListVisible = useSetRecoilState(okrPathListVisibleState);
-  const setActiveNode = useSetRecoilState(activeNodeState);
-  const handleClickNode: NodeActionCallback = useCallback((node: PathNode) => {
-    const currentId = node.id;
-    const lastId = lastClickItemIdRef.current;
+  const [activeNode, setActiveNode] = useRecoilState(activeNodeState);
+  const activeNodeLive = useClosestRef(activeNode);
+  const handleClickNode: NodeActionCallback = useCallback(
+    (node: PathNode, e: MouseEvent) => {
+      const currentId = node.id;
+      const lastId = lastClickItemIdRef.current;
 
-    // TODO clear console
-    // console.log(
-    //   `[PathBoard] onClickNode(${currentId}), doubleClick: ${
-    //     lastId === currentId
-    //   }`,
-    //   node,
-    // );
-    const isCurrentOrg =
-      viewPointTypeRef.current === ViewPointType.Organization;
+      // TODO clear console
+      // console.log(
+      //   `[PathBoard] onClickNode(${currentId}), doubleClick: ${
+      //     lastId === currentId
+      //   }`,
+      //   node,
+      // );
+      const isCurrentOrg =
+        viewPointTypeRef.current === ViewPointType.Organization;
 
-    /**
-     * 单击节点
-     */
-    // 1. 个人视图 => 展开 List 页面, 保存 active 状态
-    if (!isCurrentOrg) {
-      setOkrPathListVisible(true);
-      setActiveNode(deepCopy(node));
-    }
-
-    if (lastId === currentId) {
       /**
-       * 双击节点
+       * 单击节点
        */
-      if (isCurrentOrg && node.data.type === EntityType.User) {
-        // 1. 组织视图 + 双击人物  => 切换到个人视图
-        updateStack({
-          type: ViewPointStackActionType.Push,
-          record: {
-            type: ViewPointType.Personal,
-            centerUserId: currentId,
-          },
-        });
+      // 1. 个人视图 => 展开 List 页面, 保存 active 状态
+      if (!isCurrentOrg) {
+        setOkrPathListVisible(true);
+        setActiveNode(deepCopy(node));
       }
-    } else {
-      /**
-       * 单击节点（首次）
-       */
-      lastClickItemIdRef.current = currentId;
-    }
-  }, []);
+
+      if (lastId === currentId) {
+        /**
+         * 双击节点
+         */
+        if (isCurrentOrg && node.data.type === EntityType.User) {
+          // 1. 组织视图 + 双击人物  => 切换到个人视图
+          updateStack({
+            type: ViewPointStackActionType.Push,
+            record: {
+              type: ViewPointType.Personal,
+              centerUserId: currentId,
+            },
+          });
+        }
+      } else {
+        /**
+         * 单击节点（首次）
+         */
+        lastClickItemIdRef.current = currentId;
+      }
+    },
+    [],
+  );
   const clearLastClickItemId = useCallback(() => {
     lastClickItemIdRef.current = '';
   }, []);
   const handleClickMask = useCallback(() => {
     clearLastClickItemId();
-    setActiveNode(null);
+    if (activeNodeLive.current === null) {
+      // activeNode 为 null 的情况下再点一次
+      //   => 关闭 path list
+      setOkrPathListVisible(false);
+    } else {
+      setActiveNode(null);
+    }
   }, []);
   // 更新视图的时候重置
   useEffect(clearLastClickItemId, [source]);
@@ -188,8 +203,8 @@ const PathBoard: ForwardRefExoticComponent<
   const setTooltipPosition = useSetRecoilState(tooltipPositionState);
   const setTooltipData = useSetRecoilState(tooltipDataState);
   const handleEnterNode: NodeActionCallback = useCallback(
-    (node: PathNode, outerTrigger: boolean) => {
-      if (outerTrigger) {
+    (node: PathNode, e: MouseEvent) => {
+      if (!e || isDraggingRef.current) {
         // dont show tooltip when trigger outer
         return;
       }
@@ -220,15 +235,44 @@ const PathBoard: ForwardRefExoticComponent<
       });
     }, 500);
   }, []);
-  const handleLeaveNode: NodeActionCallback = useCallback((node: PathNode) => {
+  const handleLeaveNode: NodeActionCallback = useCallback(() => {
     closeTooltip();
   }, []);
-  const handleMouseDownNode = useCallback(() => {
-    closeTooltip(); // 按下去的時候取消 tooltip 避免閃爍
-  }, []);
-  // also clear when source change
+
+  /**
+   * 右键列表相关
+   */
+  const isDraggingRef = useRef(false);
+  const setContextMenuVisible = useSetRecoilState(contextMenuVisibleState);
+  const setContextMenuPosition = useSetRecoilState(contextMenuPositionState);
+  const setContextMenuTarget = useSetRecoilState(contextMenuTargetState);
+  const handleMouseDownNode = useCallback(
+    (e: MouseEvent, targetNode: PathNode) => {
+      isDraggingRef.current = true;
+      closeTooltip(); // 按下去的時候取消 tooltip 避免閃爍
+
+      if (e.button === 2) {
+        // 右键点击事件
+        console.log(`[PathBoard] targetNode`, targetNode);
+        setContextMenuVisible(true);
+        setContextMenuTarget(deepCopy(targetNode));
+        const { clientX: left, clientY: top } = e;
+        setContextMenuPosition({ left, top });
+      }
+    },
+    [],
+  );
+  const handleMouseUpNode = useCallback(
+    (e: MouseEvent, targetNode: PathNode) => {
+      isDraggingRef.current = false;
+      handleEnterNode(targetNode, e); // 拖拽释放后可以重新触发一次
+    },
+    [],
+  );
+  // when source change
   useEffect(() => {
     closeTooltip();
+    isDraggingRef.current = false;
   }, [source]);
 
   // =============== outer actions ===============
@@ -274,8 +318,17 @@ const PathBoard: ForwardRefExoticComponent<
   // =============== effects ===============
   /**
    * 初始化
+   *   阻止默认 contextmenu 事件
    */
-  // useEffect(() => {}, []);
+  useEffect(() => {
+    const recent = document.oncontextmenu;
+    const instead = (e) => e.preventDefault();
+
+    document.oncontextmenu = instead;
+    () => {
+      document.oncontextmenu = recent;
+    };
+  }, []);
 
   /**
    * 数据变动时重新渲染
@@ -284,6 +337,7 @@ const PathBoard: ForwardRefExoticComponent<
     console.group(`[PathBoard] source change`);
     console.log(`source(isDefault = ${source === DEFAULT_SOURCE})`, source);
     console.groupEnd();
+
     if (source === DEFAULT_SOURCE) {
       return;
     }
@@ -443,9 +497,10 @@ const PathBoard: ForwardRefExoticComponent<
       .join('g')
       .attr('class', (d) => `node-${d.data.id}`)
       .on('click', boundClickNode)
-      .on('mousedown', handleMouseDownNode)
       .on('mouseenter', boundEnterNode)
       .on('mouseleave', boundLeaveNode)
+      .on('mousedown', handleMouseDownNode)
+      .on('mouseup', handleMouseUpNode)
       .call(boundDrag));
 
     // 节点背景

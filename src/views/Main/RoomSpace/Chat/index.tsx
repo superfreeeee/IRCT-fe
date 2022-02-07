@@ -109,6 +109,7 @@ const Chat: FC<ChatProps> = ({ isInRoom = false }) => {
       </ChatHistory>
       <ChatInputBar>
         <Input
+          placeholder="Write a message..."
           ref={chatInputRef}
           value={input}
           onChange={onInputChange}

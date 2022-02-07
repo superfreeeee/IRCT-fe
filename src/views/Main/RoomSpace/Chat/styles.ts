@@ -87,4 +87,6 @@ export const Input = styled.input`
   outline: 0;
   border-radius: 10px;
   font-size: 16px;
+  color: rgba(255, 255, 255, 0.6);
+  background-color: #474849;
 `;

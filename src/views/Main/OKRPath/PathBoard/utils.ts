@@ -10,6 +10,8 @@ import {
   MouseActionType,
   NodeActionCallback,
   NodeColor,
+  NodeDragCallback,
+  NodeDragType,
   NodeImageMaskOpacity,
   NodeImagePadding,
   NodeRadius,
@@ -24,6 +26,7 @@ import {
   SelectionType,
   TickBindRefs,
 } from './type';
+import { D3DragEvent } from 'd3';
 
 // ========== style / init props ==========
 /**
@@ -323,11 +326,16 @@ export const onEnd = (simulation: d3.Simulation<PathNode, any>) => () => {
 /**
  * 节点拖拽
  */
-export const onDrag = (simulation: d3.Simulation<PathNode, any>) => {
+export const onDrag = (
+  simulation: d3.Simulation<PathNode, any>,
+  cb?: NodeDragCallback,
+) => {
   let dragging = false;
   let startX: number, startY: number;
 
-  const dragStart = (e, d: PathNode) => {
+  const dragStart = (e: D3DragEvent<any, PathNode, PathNode>, d: PathNode) => {
+    console.log(`drag start`);
+    cb && cb(NodeDragType.Down, e.sourceEvent, d);
     if (!d.draggable) {
       return;
     }
@@ -337,7 +345,8 @@ export const onDrag = (simulation: d3.Simulation<PathNode, any>) => {
     startY = d.fy = y;
   };
 
-  const dragDrag = (e, d: PathNode) => {
+  const dragDrag = (e: D3DragEvent<any, PathNode, PathNode>, d: PathNode) => {
+    cb && cb(NodeDragType.Move, e.sourceEvent, d);
     if (!d.draggable) {
       return;
     }
@@ -361,7 +370,9 @@ export const onDrag = (simulation: d3.Simulation<PathNode, any>) => {
     d.fy = y;
   };
 
-  const dragEnd = (e, d: PathNode) => {
+  const dragEnd = (e: D3DragEvent<any, PathNode, PathNode>, d: PathNode) => {
+    console.log(`drag end`);
+    cb && cb(NodeDragType.Up, e.sourceEvent, d);
     if (!d.draggable) {
       return;
     }
@@ -416,14 +427,14 @@ export const onEnterNode =
   ({ linksRef, nodesRef }: TickBindRefs, cb?: NodeActionCallback) =>
   (e: MouseEvent, targetNode: PathNode) => {
     updateItems({ linksRef, nodesRef }, MouseActionType.Enter, targetNode);
-    cb && cb(targetNode, !e);
+    cb && cb(targetNode, e);
   };
 
 export const onLeaveNode =
   ({ linksRef, nodesRef }: TickBindRefs, cb?: NodeActionCallback) =>
   (e: MouseEvent, targetNode: PathNode) => {
     updateItems({ linksRef, nodesRef }, MouseActionType.Leave, targetNode);
-    cb && cb(targetNode, !e);
+    cb && cb(targetNode, e);
   };
 
 /**
@@ -437,7 +448,7 @@ export const onClickNode =
     updateItems({ linksRef, nodesRef }, MouseActionType.Click, targetNode);
 
     // invoke callback
-    cb && cb(targetNode, !e);
+    cb && cb(targetNode, e);
   };
 
 // ========== private common actions ==========
