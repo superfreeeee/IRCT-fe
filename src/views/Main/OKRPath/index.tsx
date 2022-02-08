@@ -84,6 +84,7 @@ const OKRPath = () => {
         data: entity,
         store: {
           state: NodeState.Inactive,
+          relative: entity.relative,
         },
         draggable: true,
         // draggable: entity.type !== EntityType.User,
@@ -94,7 +95,9 @@ const OKRPath = () => {
       ...rel,
       store: {},
       additional: !!rel.additional,
+      relative: rel.relative,
       force: rel.force !== undefined ? rel.force : 1,
+      distance: rel.relative ? 0 : 30,
     }));
 
     /**

@@ -8,13 +8,26 @@ import {
   OrganizationViewPointRelation,
   PersonalViewPointEntity,
   PersonalViewPointRelation,
+  ProjectDuty,
   UserEntity,
   ViewPointSource,
   ViewPointType,
-} from "./type";
+} from './type';
 
-import { CEO_ID, krTable, oRelTable, oTable, projectRelKRTable, projectTable, todoRelProjectTable, todoTable, userRelTable, userTable } from "./db";
-import { createEntityNode } from "./utils";
+import {
+  CEO_ID,
+  krTable,
+  oRelTable,
+  oTable,
+  projectRelKRTable,
+  projectRelUserTable,
+  projectTable,
+  todoRelProjectTable,
+  todoTable,
+  userRelTable,
+  userTable,
+} from './db';
+import { createEntityNode } from './utils';
 
 // ========== public ==========
 /**
@@ -135,6 +148,7 @@ export const getPersonalViewPoint = (centerUserId: string): ViewPointSource => {
     .map((o, i) => {
       const { id: oId, originId } = o;
 
+      // ========== 一级 O ==========
       // add O entity
       const oEntity: PersonalViewPointEntity = {
         type: EntityType.O,
@@ -157,6 +171,31 @@ export const getPersonalViewPoint = (centerUserId: string): ViewPointSource => {
       inheritTree.children[oId] = entityNode;
 
       oEntityNodeMap.set(oId, entityNode);
+
+      // ========== 关联用户 ==========
+      // add relativeUser
+      const relativeUsers = getRelativeUsersByOId(originId);
+      relativeUsers.forEach((user) => {
+        const id = `${oId}.${user.id}`;
+        // relativeUser entity
+        const userEntity: PersonalViewPointEntity = {
+          ...user,
+          type: EntityType.User,
+          id,
+          originId: user.id,
+          relative: EntityType.O,
+        };
+        entities.push(userEntity);
+
+        // O-relativeUser relation
+        const oUserRelation: PersonalViewPointRelation = {
+          source: oId,
+          target: id,
+          relative: EntityType.O,
+        };
+        relations.push(oUserRelation);
+        entityNode.relativeUsers.push(userEntity);
+      });
 
       return o;
     });
@@ -234,12 +273,12 @@ export const getPersonalViewPoint = (centerUserId: string): ViewPointSource => {
       const krEntityNode = krEntityNodeMap.get(source);
 
       projectList.forEach((p, i) => {
-        const { id, originId } = p;
+        const { id: pId, originId } = p;
 
         // add Project entity
         const pEntity: PersonalViewPointEntity = {
           type: EntityType.Project,
-          id,
+          id: pId,
           originId,
           seq: i + 1,
           content: p.name,
@@ -249,15 +288,39 @@ export const getPersonalViewPoint = (centerUserId: string): ViewPointSource => {
         // add KR-Project relation
         const krProjectRelation: PersonalViewPointRelation = {
           source,
-          target: id,
+          target: pId,
         };
         relations.push(krProjectRelation);
 
         // add project entity node
         const pEntityNode = createEntityNode(pEntity, krProjectRelation);
-        krEntityNode.children[id] = pEntityNode;
+        krEntityNode.children[pId] = pEntityNode;
 
-        projectEntityNodeMap.set(id, pEntityNode);
+        projectEntityNodeMap.set(pId, pEntityNode);
+
+        // ========== 关联用户 ==========
+        const relativeUsers = getRelativeUsersByProjectId(originId);
+        relativeUsers.forEach((user) => {
+          const id = `${pId}.${user.id}`;
+          // relativeUser entity
+          const userEntity: PersonalViewPointEntity = {
+            ...user,
+            type: EntityType.User,
+            id,
+            originId: user.id,
+            relative: EntityType.Project,
+          };
+          entities.push(userEntity);
+
+          // O-relativeUser relation
+          const projectUserRelation: PersonalViewPointRelation = {
+            source: pId,
+            target: id,
+            relative: EntityType.Project,
+          };
+          relations.push(projectUserRelation);
+          pEntityNode.relativeUsers.push(userEntity);
+        });
       });
 
       return projectList;
@@ -378,6 +441,51 @@ const getUserEntityByUserId = (userId: string): UserEntity => {
 };
 
 /**
+ * User 相关
+ *   获取 O 关联用户
+ */
+const getRelativeUsersByOId = (targetOId: number): UserEntity[] => {
+  const relOSet = oRelTable
+    .filter(({ OId }) => OId === targetOId)
+    .reduce((set, nextORel) => {
+      return set.add(nextORel.upperOId);
+    }, new Set<number>());
+
+  const userIdSet = oTable
+    .filter(({ id }) => relOSet.has(id))
+    .reduce((set, nextO) => {
+      return set.add(nextO.userId);
+    }, new Set<string>());
+
+  const users = userTable.filter(({ id }) => userIdSet.has(id));
+
+  return users;
+};
+
+/**
+ * User 相关
+ *   获取 Project 关联用户
+ */
+const getRelativeUsersByProjectId = (targetProjectId: number): UserEntity[] => {
+  const dutyMap = new Map<string, ProjectDuty>();
+  const userIdSet = projectRelUserTable
+    .filter(({ projectId }) => projectId === targetProjectId)
+    .reduce((set, { userId, duty }) => {
+      dutyMap.set(userId, duty);
+      return set.add(userId);
+    }, new Set<string>());
+
+  const users = userTable
+    .filter(({ id }) => userIdSet.has(id))
+    .map((user) => ({
+      ...user,
+      duty: dutyMap.get(user.id) || ProjectDuty.Unkonwn,
+    }));
+
+  return users;
+};
+
+/**
  * O 相关
  * 找出指定 User 关联的 Os
  */
@@ -398,7 +506,9 @@ const getKRsByOId = (OId: number): KREntity[] => {
  * 找出指定 KR 关联的 Projects
  */
 const getProjectsByKRId = (KRId: number) => {
-  const projectWithRelKRTable = joinTables(projectTable, projectRelKRTable, [{ col1: "id", col2: "projectId" }]);
+  const projectWithRelKRTable = joinTables(projectTable, projectRelKRTable, [
+    { col1: 'id', col2: 'projectId' },
+  ]);
   return projectWithRelKRTable.filter((p) => p.KRId === KRId);
 };
 
@@ -407,7 +517,9 @@ const getProjectsByKRId = (KRId: number) => {
  * 找出指定 Project 关联的 Todos
  */
 const getTodosByProjectId = (projectId: number) => {
-  const todoWithRelProjectTable = joinTables(todoTable, todoRelProjectTable, [{ col1: "id", col2: "todoId" }]);
+  const todoWithRelProjectTable = joinTables(todoTable, todoRelProjectTable, [
+    { col1: 'id', col2: 'todoId' },
+  ]);
   return todoWithRelProjectTable.filter((t) => t.projectId === projectId);
 };
 
@@ -415,7 +527,11 @@ interface JoinTablesColumnMap {
   col1: string;
   col2: string;
 }
-const joinTables = <E1, E2>(t1: E1[], t2: E2[], mapList: JoinTablesColumnMap | JoinTablesColumnMap[] = []): MergedEntity<E1, E2>[] => {
+const joinTables = <E1, E2>(
+  t1: E1[],
+  t2: E2[],
+  mapList: JoinTablesColumnMap | JoinTablesColumnMap[] = [],
+): MergedEntity<E1, E2>[] => {
   // ensure mapList to be a list
   if (!Array.isArray(mapList)) {
     mapList = [mapList];
@@ -435,10 +551,19 @@ const joinTables = <E1, E2>(t1: E1[], t2: E2[], mapList: JoinTablesColumnMap | J
         }
       }
       if (match) {
-        entities.push({
+        const joinedEntity = {
           ...o1,
           ...o2,
-        });
+        };
+        // restore o1 attributes
+        for (const prop in o1) {
+          if (prop in o2) {
+            const key = `o1.${prop}`;
+            joinedEntity[key] = o1[prop];
+          }
+        }
+
+        entities.push(joinedEntity);
       }
     }
   }

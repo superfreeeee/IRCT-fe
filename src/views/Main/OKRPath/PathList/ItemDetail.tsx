@@ -22,6 +22,7 @@ import {
   RelativeUsers,
 } from './styles';
 import EnhanceItemTypePoint from './EnhanceItemTypePoint';
+import Avatar from '@components/Avatar';
 
 interface ItemDetailProps {
   node: EntityNode;
@@ -33,6 +34,7 @@ const ItemDetail: FC<ItemDetailProps> = ({
   node: {
     node: { id, type, content, seq },
     children,
+    relativeUsers,
     expand,
     isTarget,
   },
@@ -53,6 +55,21 @@ const ItemDetail: FC<ItemDetailProps> = ({
   };
 
   const hideExpandLine = [EntityType.Project, EntityType.Todo].includes(type);
+
+  // ========== render relativeUsers ==========
+  const relativeUsersEl = useMemo(() => {
+    return (
+      <RelativeUsers>
+        {relativeUsers.map((user) => {
+          return (
+            <Avatar key={user.id}>
+              <img src={user.avatar} width={'100%'} />
+            </Avatar>
+          );
+        })}
+      </RelativeUsers>
+    );
+  }, [relativeUsers]);
 
   // ========== render children ==========
   const childrenNodes = Object.values(children);
@@ -131,7 +148,7 @@ const ItemDetail: FC<ItemDetailProps> = ({
           className={classNames('expandLine', { hide: hideExpandLine })}
         ></div>
         <div className="detail">
-          <RelativeUsers></RelativeUsers>
+          {relativeUsersEl}
           {childrenEl}
         </div>
       </DetailLayerContent>

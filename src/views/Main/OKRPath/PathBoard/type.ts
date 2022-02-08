@@ -2,6 +2,7 @@ import { BaseType } from 'd3';
 import { MutableRefObject } from 'react';
 
 import {
+  EntityType,
   OrganizationViewPointEntity,
   PersonalViewPointEntity,
 } from '@views/Main/state/okrDB/type';
@@ -13,7 +14,7 @@ import {
 export enum NodeRadius {
   CenterUser = 39,
   SideUser = 29,
-  ExtraUser = 10,
+  RelativeUser = 10,
   O = 22,
   KR = 17,
   Project = 12,
@@ -26,7 +27,7 @@ export enum NodeRadius {
 export enum NodeImagePadding {
   L1 = 5,
   L2 = 3,
-  L3 = 1,
+  L3 = 2,
 }
 
 /**
@@ -159,6 +160,7 @@ export interface PathNode extends d3.SimulationNodeDatum {
     text?: string;
     fontSize?: number;
     strokeWidth?: NodeStrokeWidth;
+    relative?: EntityType; // O, Project 多余的 User
     // node state 动态状态
     state: NodeState;
     additional?: boolean; // 非直接关联同 id 节点
@@ -183,7 +185,9 @@ export interface PathLink extends d3.SimulationLinkDatum<PathNode> {
     active?: boolean;
   };
   additional: boolean;
+  relative?: EntityType; // O, Project 多余的 User
   force: number;
+  distance?: number;
 }
 
 export interface PathBoardSource {

@@ -68,7 +68,13 @@ export const nodeRadius = (viewPointType: ViewPointType): CalcNodeRadius => {
       [EntityType.Project]: NodeRadius.Project,
       [EntityType.Todo]: NodeRadius.Todo,
     };
-    const calcRadius = (d: PathNode) => map[d.data.type] || NodeRadius.Todo;
+    const calcRadius = ({ data: { type }, store: { relative } }: PathNode) => {
+      if (relative) {
+        return NodeRadius.RelativeUser;
+      }
+
+      return map[type] || NodeRadius.Todo;
+    };
 
     return calcAndStoreRadius(calcRadius);
   }
@@ -85,13 +91,17 @@ export const nodeImageWidth = (
 ): CalcNodeImageWidth => {
   const calcWidth = (d: PathNode) => {
     const { type, id } = d.data;
+    const isRelative = d.store.relative;
     if (type !== EntityType.User) {
       // image only for user
       return 0;
     }
 
     let width: number, padding: NodeImagePadding;
-    if (viewPointType === ViewPointType.Organization) {
+    if (isRelative) {
+      padding = NodeImagePadding.L3;
+      width = (NodeRadius.RelativeUser - padding) * 2;
+    } else if (viewPointType === ViewPointType.Organization) {
       if (id === 'user-666') {
         padding = NodeImagePadding.L1;
         width = (NodeRadius.CenterUser - padding) * 2;

@@ -59,7 +59,9 @@ const ItemTooltip: FC<ItemTooltipProps> = () => {
   const item = useRecoilValue(tooltipDataState);
 
   const isUser = item && item.data.type === EntityType.User;
-  const userState = useRecoilValue(userStateFamily(item && item.data.id));
+  const userState = useRecoilValue(
+    userStateFamily(item && (item.data.originId as string)),
+  );
 
   const contentEl = useMemo(() => {
     if (!item) {

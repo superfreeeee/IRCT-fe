@@ -1,34 +1,34 @@
 // ========== enum ==========
 export enum ProjectType {
-  Product = "产品需求",
-  Design = "设计需求",
-  Technique = "技术需求",
-  Unkonwn = "__ProjectType",
+  Product = '产品需求',
+  Design = '设计需求',
+  Technique = '技术需求',
+  Unkonwn = '__ProjectType',
 }
 
 export enum ProjectDuty {
-  Product = "产品",
-  Design = "设计",
-  Technique = "技术",
-  Unkonwn = "__ProjectDuty",
+  Product = '产品',
+  Design = '设计',
+  Technique = '技术',
+  Unkonwn = '__ProjectDuty',
 }
 
 export enum TodoStatus {
-  Done = "已完成",
-  Incomplete = "未完成",
+  Done = '已完成',
+  Incomplete = '未完成',
 }
 
 export enum ViewPointType {
-  Organization = "organization", // 组织视图
-  Personal = "personal", //         个人视图
+  Organization = 'organization', // 组织视图
+  Personal = 'personal', //         个人视图
 }
 
 export enum EntityType {
-  User = "User",
-  O = "O",
-  KR = "KR",
-  Project = "Project",
-  Todo = "Todo",
+  User = 'User',
+  O = 'O',
+  KR = 'KR',
+  Project = 'Project',
+  Todo = 'Todo',
 }
 
 // ========== entity types ==========
@@ -36,6 +36,7 @@ export interface UserEntity {
   id: string;
   avatar: string;
   name: string;
+  duty?: ProjectDuty;
 }
 
 export interface UserRelEntity {
@@ -90,7 +91,7 @@ export interface TodoRelProjectTable {
   projectId: number;
 }
 
-export type MergedEntity<E1, E2> = E1 & E2;
+export type MergedEntity<E1, E2> = E1 & E2 & { [other: string]: any };
 
 // ========== api return types ==========
 export interface OrganizationViewPointEntity {
@@ -102,6 +103,7 @@ export interface OrganizationViewPointEntity {
   // for user
   avatar?: string;
   name?: string;
+  relative?: EntityType;
   // for O
   content?: string;
 }
@@ -110,6 +112,7 @@ export interface OrganizationViewPointRelation {
   source: string;
   target: string;
   additional?: boolean;
+  relative?: EntityType;
   force?: number;
 }
 
@@ -122,6 +125,7 @@ export interface PersonalViewPointEntity {
   // for user
   avatar?: string;
   name?: string;
+  relative?: EntityType; // for personal + relative user
   // for item
   content?: string;
 }
@@ -130,11 +134,16 @@ export interface PersonalViewPointRelation {
   source: string;
   target: string;
   additional?: boolean;
+  relative?: EntityType;
   force?: number;
 }
 
-export type ViewPointEntity = OrganizationViewPointEntity | PersonalViewPointEntity;
-export type ViewPointRelation = OrganizationViewPointRelation | PersonalViewPointRelation;
+export type ViewPointEntity =
+  | OrganizationViewPointEntity
+  | PersonalViewPointEntity;
+export type ViewPointRelation =
+  | OrganizationViewPointRelation
+  | PersonalViewPointRelation;
 
 export type EntityNodeMap = {
   [id: string]: EntityNode;
@@ -144,6 +153,7 @@ export interface EntityNode {
   node: ViewPointEntity;
   relation?: ViewPointRelation;
   children: EntityNodeMap;
+  relativeUsers: ViewPointEntity[];
   expand?: boolean;
   isTarget?: boolean;
 }

@@ -91,7 +91,7 @@ const config = {
     new WebpackBar(),
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
-      title: 'IRCT',
+      title: 'Crafteam',
       template: './public/index.html',
       filename: 'index.html',
       favicon: './public/favicon32.png',

@@ -64,8 +64,9 @@ export const OKRListHeader = styled.div`
   margin-bottom: 5px;
 
   ${Avatar} {
-    width: 32px;
-    height: 32px;
+    width: 38px;
+    height: 38px;
+    border: 3px solid #fff;
   }
 
   .info {
@@ -161,8 +162,16 @@ export const DetailLayerContent = styled.div`
 
 export const RelativeUsers = styled.div`
   display: flex;
-  align-items: center;
   flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 3px 0;
+
+  ${Avatar} {
+    width: 24px;
+    height: 24px;
+    border: 2px solid #fff;
+  }
 `;
 
 /**

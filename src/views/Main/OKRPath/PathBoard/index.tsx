@@ -344,6 +344,22 @@ const PathBoard: ForwardRefExoticComponent<
     }
 
     const { nodes, links } = source;
+    const displayNodeIdSet = new Set<string>();
+    const displayNodes = nodes
+      .filter(
+        ({ store: { relative } }) =>
+          !(relative && relative === EntityType.Project),
+      )
+      .map((node) => {
+        displayNodeIdSet.add(node.id);
+        return node;
+      });
+    const displayLinks = links.filter(({ source, target }) => {
+      return (
+        displayNodeIdSet.has(source as string) &&
+        displayNodeIdSet.has(target as string)
+      );
+    });
 
     // render
     const { width, height } = boardContainerRef.current.getBoundingClientRect();
@@ -405,18 +421,18 @@ const PathBoard: ForwardRefExoticComponent<
      * create simulation
      */
     const forceLinks = d3
-      .forceLink(links)
+      .forceLink(displayLinks)
       .id((d: PathNode) => d.id)
       .distance((d) => {
         // link distance base on node radius
         const t1 = (d.source as PathNode).store.radius;
         const t2 = (d.target as PathNode).store.radius;
-        return Math.max(t1, t2) * 2 + 30;
+        return Math.max(t1, t2) * 2 + d.distance;
       })
       .strength((d) => d.force);
     const forceNodes = d3.forceManyBody().strength(-30);
     const simulation = d3
-      .forceSimulation(nodes)
+      .forceSimulation(displayNodes)
       .force('link', forceLinks)
       .force('center', d3.forceCenter(0, 0))
       .force('charge', forceNodes);
@@ -428,13 +444,13 @@ const PathBoard: ForwardRefExoticComponent<
       .append('g')
       .attr('class', 'links')
       .selectAll('g')
-      .data(links)
+      .data(displayLinks)
       .join('g')
       .attr('class', (d) => d.store.id));
 
     // 关系图形
     linksSelection
-      .filter((link) => !link.additional) // 主边
+      .filter((link) => !link.additional && !link.relative) // 主边
       .append('path')
       .attr('d', (d) => {
         const r1 = (d.source as PathNode).store.radius;
@@ -494,7 +510,7 @@ const PathBoard: ForwardRefExoticComponent<
       .append('g')
       .attr('class', 'nodes')
       .selectAll('g')
-      .data(nodes)
+      .data(displayNodes)
       .join('g')
       .attr('class', (d) => `node-${d.data.id}`)
       .on('click', boundClickNode)

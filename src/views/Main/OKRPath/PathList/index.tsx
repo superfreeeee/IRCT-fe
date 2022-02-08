@@ -93,7 +93,10 @@ const PathList: ForwardRefExoticComponent<
       const isInChildren = Object.values(node.children)
         .map((child) => walkThrough(child))
         .reduce((b1, b2) => b1 || b2, false);
-      if (isSelf || isInChildren) {
+      const isInRelativeUsers = node.relativeUsers.some(
+        (user) => user.id === targetId,
+      );
+      if (isSelf || isInChildren || isInRelativeUsers) {
         isSelf && (node.isTarget = true);
         node.expand = true;
         return true;
