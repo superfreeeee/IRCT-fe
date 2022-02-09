@@ -108,12 +108,6 @@ const PathList: ForwardRefExoticComponent<
     setShadowTree(newTree);
   }, [activeNode]);
 
-  // handle inherit change
-  useEffect(() => {
-    // TODO clear console
-    // console.log(`[PathList] inheritTree change`, inheritTree);
-  }, [inheritTree]);
-
   const hide = !visible || !inheritTree;
 
   // ========== header ==========

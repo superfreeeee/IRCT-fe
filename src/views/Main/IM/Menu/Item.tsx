@@ -158,7 +158,6 @@ const Item: FC<ItemProps> = ({ currentTab, selected, data, onSelect }) => {
       setCallModalVisible(true);
     } else {
       // 2. 直接语音
-      console.log('direct call');
       createTempMeeting();
     }
   };

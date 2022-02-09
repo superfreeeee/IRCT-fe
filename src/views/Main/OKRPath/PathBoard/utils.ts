@@ -1,4 +1,5 @@
 import * as d3 from 'd3';
+import { D3DragEvent } from 'd3';
 
 import { EntityType, ViewPointType } from '@views/Main/state/okrDB/type';
 import { PlainFn } from '@utils/type';
@@ -26,7 +27,6 @@ import {
   SelectionType,
   TickBindRefs,
 } from './type';
-import { D3DragEvent } from 'd3';
 
 // ========== style / init props ==========
 /**
@@ -453,6 +453,17 @@ export const onLeaveNode =
 export const onClickNode =
   ({ linksRef, nodesRef }: TickBindRefs, cb?: NodeActionCallback) =>
   (e: MouseEvent, targetNode: PathNode) => {
+    if (targetNode.store.relative === EntityType.O) {
+      const sourceO = linksRef.current
+        .data()
+        .find((link) => link.target === targetNode).source as PathNode;
+      if (!sourceO) {
+        console.warn(`[onClickNode] source not found for`, targetNode);
+      } else {
+        targetNode = sourceO;
+      }
+    }
+
     updateItems({ linksRef, nodesRef }, MouseActionType.Click, targetNode);
 
     // invoke callback
@@ -465,7 +476,6 @@ export const onClickNode =
  */
 const calcRelativeItems = (
   links: PathLink[],
-  nodes: PathNode[],
   targetNode?: PathNode,
 ): {
   relativeLinkSet: Set<PathLink>;
@@ -555,7 +565,6 @@ const updateItems = (
   // 关联物件集合
   const { relativeLinkSet, relativeNodeSet } = calcRelativeItems(
     links.data(),
-    nodes.data(),
     targetNode,
   );
 

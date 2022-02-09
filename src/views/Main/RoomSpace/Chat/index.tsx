@@ -50,8 +50,6 @@ const Chat: FC<ChatProps> = ({ isInRoom = false }) => {
     chatRecordsFamily(selectedId),
   );
   const sendMessage = (input: string) => {
-    console.log(`[Chat] send message = ${input}`);
-
     // only send when input not empty
     if (input) {
       // 添加记录

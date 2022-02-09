@@ -129,7 +129,6 @@ const Header: FC<HeaderProps> = ({ isRoom, expand }) => {
 
       // 1. RoomSpace Header for Team
       const openPath = () => {
-        console.log(`[RoomSpace.Header] openPath: ${teamId}`);
         setOKRPathVisible(true);
         updateStack({
           type: ViewPointStackActionType.Push,
@@ -150,7 +149,6 @@ const Header: FC<HeaderProps> = ({ isRoom, expand }) => {
     if (isTempMeeting) {
       // 2. RoomSpace Header for TempMeeting
       const openCreateModal = () => {
-        console.log(`[RoomSpace.Header] openCreateModal: ${roomId}`);
         setCreateMeetingModalVisible(true);
         setCreateMeetingModalInfo({ roomId });
       };

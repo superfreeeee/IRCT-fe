@@ -6,7 +6,7 @@ const useCheckbox = (
   const [checked, setChecked] = useState(initChecked);
 
   const onCheckboxChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    console.log(`onCheckboxChange = ${e.target.checked}`);
+    // console.log(`onCheckboxChange = ${e.target.checked}`);
     setChecked(e.target.checked);
   }, []);
 

@@ -71,8 +71,6 @@ const StatusBar = () => {
    */
   const exitRoom = useExitRoom();
   const exitVideoRoom = () => {
-    console.log(`[StatusBar] exitVideoRoom`);
-
     exitRoom();
   };
 
@@ -82,8 +80,6 @@ const StatusBar = () => {
   const setCurrentTab = useSetRecoilState(currentTabState);
   const setCurrentSpaceId = useSetRecoilState(currentSpaceIdState);
   const jumpAndExpandRoomSpace = () => {
-    console.log(`[StatusBar] jumpToRoomSpace`);
-
     setCurrentTab(TabOption.Room);
     setCurrentSpaceId(selectedRoomId);
     setExpandVideoRoom(true);

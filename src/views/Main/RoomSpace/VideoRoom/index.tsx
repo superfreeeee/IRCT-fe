@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { selectedRoomTypeState } from '@views/Main/state/im';
@@ -12,11 +12,6 @@ const VideoRoom = () => {
 
   const nearbyFigures = useRecoilValue(nearbyFiguresState);
   const count = nearbyFigures.length;
-
-  // TODO clear console
-  // useEffect(() => {
-  //   console.log(`VideoRoom currentFigures`, count);
-  // }, [count]);
 
   return (
     <VideoRoomContainer>

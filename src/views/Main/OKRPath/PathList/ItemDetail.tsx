@@ -54,10 +54,12 @@ const ItemDetail: FC<ItemDetailProps> = ({
     setExpandBtnIsOpen(next);
   };
 
-  const hideExpandLine = [EntityType.Project, EntityType.Todo].includes(type);
-
   // ========== render relativeUsers ==========
   const relativeUsersEl = useMemo(() => {
+    if (relativeUsers.length === 0) {
+      return null;
+    }
+
     return (
       <RelativeUsers>
         {relativeUsers.map((user) => {
@@ -87,14 +89,18 @@ const ItemDetail: FC<ItemDetailProps> = ({
     });
   }, [childrenNodes]);
 
-  // ========== render title ==========
+  // ========== render props ==========
+  // state
+  const hideExpandLine = [EntityType.Project, EntityType.Todo].includes(type);
+  const hasContent = childrenNodes.length > 0 || relativeUsers.length > 0;
+
+  // content
   const title = `${type}${seq}：${content}`;
 
   // ========== hover item type point(to show expand btn) ==========
   const bannerRef = useRef<HTMLDivElement>(null);
-  const canExpand = type !== EntityType.Todo && childrenNodes.length > 0;
   const onMouseEnterExpandBtn = () => {
-    if (!canExpand) {
+    if (!hasContent) {
       return;
     }
     const { left, top } = bannerRef.current.getBoundingClientRect();
@@ -105,22 +111,12 @@ const ItemDetail: FC<ItemDetailProps> = ({
 
   // ========== hover/click title(sync with graph actions) ==========
   const onClickTitle = () => {
-    console.group(`[ItemDetail] onClickTitle: ${id}`);
-    console.log(`title: ${title}`);
-    console.groupEnd();
-
     boardRef.current.clickNode(id);
   };
   const onMouseEnterTitle = () => {
-    // console.group(`[ItemDetail] onMouseEnterTitle: ${id}`);
-    // console.log(`title: ${title}`);
-    // console.groupEnd();
     boardRef.current.enterNode(id);
   };
   const onMouseLeaveTitle = () => {
-    // console.group(`[ItemDetail] onMouseLeaveTitle: ${id}`);
-    // console.log(`title: ${title}`);
-    // console.groupEnd();
     boardRef.current.leaveNode(id);
   };
 
@@ -129,7 +125,7 @@ const ItemDetail: FC<ItemDetailProps> = ({
       <DetailLayerBanner ref={bannerRef} type={type}>
         <EnhanceItemTypePoint
           type={type}
-          lightOn={!contentVisible && canExpand} // 有内容才亮灯
+          lightOn={!contentVisible && hasContent} // 有内容才亮灯
           onClick={toggleVisible}
           onMouseEnter={onMouseEnterExpandBtn}
           onMouseLeave={hideExpandBtn}

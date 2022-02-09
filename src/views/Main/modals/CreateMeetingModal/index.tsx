@@ -44,7 +44,6 @@ const CreateMeetingModal = () => {
       title: title || 'New Meeting Room',
       locked: !unlocked,
     };
-    console.table(roomData);
     setRoomData(roomData);
     setVisible(false);
   };

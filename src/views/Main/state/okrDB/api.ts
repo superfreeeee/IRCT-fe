@@ -301,6 +301,9 @@ export const getPersonalViewPoint = (centerUserId: string): ViewPointSource => {
         // ========== 关联用户 ==========
         const relativeUsers = getRelativeUsersByProjectId(originId);
         relativeUsers.forEach((user) => {
+          if (user.id === centerUserId) {
+            return;
+          }
           const id = `${pId}.${user.id}`;
           // relativeUser entity
           const userEntity: PersonalViewPointEntity = {
@@ -378,18 +381,6 @@ export const getPersonalViewPoint = (centerUserId: string): ViewPointSource => {
       return todoList;
     })
     .flat();
-
-  // TODO clear console
-  // console.group(`[getPersonalViewPoint] internal`);
-  // console.log(`oList`, oList);
-  // console.log(`krList`, krList);
-  // console.log(`projectList`, projectList);
-  // console.log(`todoList`, todoList);
-
-  // console.log(`entities`, entities);
-  // console.log(`relations`, relations);
-  // console.log(`inheritTree`, inheritTree);
-  // console.groupEnd();
 
   return {
     type: ViewPointType.Personal,

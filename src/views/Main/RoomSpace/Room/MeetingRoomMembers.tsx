@@ -40,7 +40,6 @@ const MeetingRoomMembers = () => {
     useRecoilState(selectUserModalControllerInfoState);
   const waitingResponseRef = useRef(false);
   const addNewMember = () => {
-    console.log(`[MeetingRoomMembers] addNewMember`);
     const { right, top } = addBtnRef.current.getBoundingClientRect();
     const position = { left: right + 10, top };
     setSelectUserModalControllerInfo({
@@ -59,7 +58,6 @@ const MeetingRoomMembers = () => {
     !modalVisible,
     () => {
       if (selectedUserId) {
-        console.log(`[MeetingRoomMembers] select ${selectedUserId}`);
         inviteToRoom();
         waitingResponseRef.current = false;
       }

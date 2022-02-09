@@ -217,7 +217,11 @@ export interface TickBindRefs {
   nodesRef: MutableRefObject<NodesSelection>;
 }
 
+export type ForceSimulation = d3.Simulation<PathNode, PathLink>;
+export type ForceLinks = d3.ForceLink<d3.SimulationNodeDatum, PathLink>;
+
 export type TransZoomBehavior = d3.ZoomBehavior<Element, any>;
+export type DragBehavior = d3.DragBehavior<any, PathNode, any>;
 
 export interface BoundNodeAction {
   (e: MouseEvent, targetNode: PathNode): void;

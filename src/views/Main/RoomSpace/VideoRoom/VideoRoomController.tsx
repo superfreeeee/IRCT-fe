@@ -35,7 +35,6 @@ const VideoRoomController = () => {
    */
   const exitRoom = useExitRoom();
   const exitVideoRoom = () => {
-    console.log(`[StatusBar] exitVideoRoom`);
     exitRoom();
   };
 

@@ -33,12 +33,6 @@ const StateTooltip = () => {
 
   const currentRoom = room && `${stateText} in ${room}`;
 
-  useEffect(() => {
-    if (visible) {
-      console.log(`[StateTooltip] visible: ${state}, ${room}, ${usingApp}`);
-    }
-  }, [visible]);
-
   return (
     <StateTooltipWrapper
       className={classNames({ visible })}

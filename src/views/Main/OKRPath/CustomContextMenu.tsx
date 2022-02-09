@@ -102,7 +102,7 @@ const CustomContextMenu: FC<CustomContextMenuProps> = ({ listRef }) => {
 
     // ========== state ==========
     const {
-      data: { id, originId, type },
+      data: { originId, type },
     } = targetNode;
 
     // ========== actions ==========
@@ -122,7 +122,7 @@ const CustomContextMenu: FC<CustomContextMenuProps> = ({ listRef }) => {
         type: ViewPointStackActionType.Push,
         record: {
           type: ViewPointType.Personal,
-          centerUserId: id,
+          centerUserId: originId as string, // userId
         },
       });
       closeMenu();

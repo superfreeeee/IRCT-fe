@@ -30,7 +30,6 @@ const SideActions: FC<SideActionsProps> = ({ boardRef, listRef }) => {
    */
   const updateStack = useSetRecoilState(viewPointStackUpdater);
   const clearRecord = () => {
-    console.log(`[OKRPath.SideActions] clearRecord`);
     updateStack({ type: ViewPointStackActionType.Clear });
   };
 
@@ -41,7 +40,6 @@ const SideActions: FC<SideActionsProps> = ({ boardRef, listRef }) => {
     if (popDisabled) {
       return;
     }
-    console.log(`[OKRPath.SideActions] popRecord`);
     updateStack({ type: ViewPointStackActionType.Pop });
   };
 

@@ -65,9 +65,6 @@ const VideoBlock: FC<VideoBlockProps> = ({
   // 音频控制
   useEffect(() => {
     videoRef.current.volume = voiceRate / 100;
-    // console.log(
-    //   `[VideoBlock] user(${id}), voiceRate = ${videoRef.current.volume}`,
-    // );
   }, [voiceRate]);
 
   return (
