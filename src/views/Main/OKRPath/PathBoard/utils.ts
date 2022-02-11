@@ -434,6 +434,8 @@ export const onMaskClick =
 export const onEnterNode =
   ({ linksRef, nodesRef }: TickBindRefs, cb?: NodeActionCallback) =>
   (e: MouseEvent, targetNode: PathNode) => {
+    e.stopPropagation(); // prevent mask event
+
     updateItems({ linksRef, nodesRef }, MouseActionType.Enter, targetNode);
     cb && cb(targetNode, e);
   };
@@ -441,6 +443,8 @@ export const onEnterNode =
 export const onLeaveNode =
   ({ linksRef, nodesRef }: TickBindRefs, cb?: NodeActionCallback) =>
   (e: MouseEvent, targetNode: PathNode) => {
+    e.stopPropagation(); // prevent mask event
+
     updateItems({ linksRef, nodesRef }, MouseActionType.Leave, targetNode);
     cb && cb(targetNode, e);
   };
@@ -453,6 +457,8 @@ export const onLeaveNode =
 export const onClickNode =
   ({ linksRef, nodesRef }: TickBindRefs, cb?: NodeActionCallback) =>
   (e: MouseEvent, targetNode: PathNode) => {
+    e.stopPropagation(); // prevent mask event
+
     if (targetNode.store.relative === EntityType.O) {
       const sourceO = linksRef.current
         .data()
@@ -672,11 +678,8 @@ const _nodesColor = (
   }
   if (type === SelectionType.Active) {
     // active
-    nodes
-      .select('circle')
-      .attr('fill', (d) =>
-        d === targetNode ? d.store.activeColor : d.store.hoverColor,
-      );
+    nodes.select('circle').attr('fill', (d) => d.store.hoverColor);
+    // d === targetNode ? d.store.activeColor : d.store.hoverColor // 暂时都先使用 hover 颜色
     nodes.select('text').attr('fill', NodeTextColor.Active);
     nodes
       .select('circle.user-mask')

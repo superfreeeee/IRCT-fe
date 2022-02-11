@@ -37,8 +37,5 @@ export const DEFAULT_OKR_LIST_EXPAND_BTN_POSITION = { left: 0, top: 0 };
 /**
  * defaults for CustomContextMenu
  */
-// export const DEFAULT_CONTEXT_MENU_VISIBLE = false;
-// export const DEFAULT_CONTEXT_MENU_POSITION = { left: 0, top: 0 };
-// TODO clear mock
-export const DEFAULT_CONTEXT_MENU_VISIBLE = true;
-export const DEFAULT_CONTEXT_MENU_POSITION = { left: 700, top: 300 };
+export const DEFAULT_CONTEXT_MENU_VISIBLE = false;
+export const DEFAULT_CONTEXT_MENU_POSITION = { left: 0, top: 0 };

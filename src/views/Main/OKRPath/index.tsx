@@ -38,6 +38,7 @@ import {
 import ItemTooltip from './ItemTooltip';
 import { PathListSource } from './type';
 import CustomContextMenu from './CustomContextMenu';
+import EditEntityModal from './EditEntityModal';
 
 const OKRPath = () => {
   const visible = useRecoilValue(okrPathVisibleState);
@@ -144,7 +145,10 @@ const OKRPath = () => {
       <SideActions boardRef={boardRef} listRef={listRef} />
       {/* Node hover tooltip */}
       <ItemTooltip />
+      {/* 右键列表 */}
       <CustomContextMenu listRef={listRef} />
+      {/* 新增、添加、删除 Modal */}
+      <EditEntityModal />
     </OKRPathContainer>
   );
 };

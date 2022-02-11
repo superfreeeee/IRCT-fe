@@ -37,7 +37,6 @@ import {
   LinkColor,
   LinkColorOpacity,
   LinksSelection,
-  MaskSelection,
   NodeActionCallback,
   NodeImageMaskOpacity,
   NodesSelection,
@@ -94,7 +93,6 @@ const PathBoard: ForwardRefExoticComponent<
 
   // svg elements selections
   const svgRef = useRef<SVGSelection>(null);
-  const maskRef = useRef<MaskSelection>(null);
   const rootRef = useRef<RootSelection>(null);
   const linksRef = useRef<LinksSelection>(null);
   const nodesRef = useRef<NodesSelection>(null);
@@ -122,7 +120,7 @@ const PathBoard: ForwardRefExoticComponent<
     const x = centerUserCircle.attr('cx');
     const y = centerUserCircle.attr('cy');
 
-    maskRef.current
+    svgRef.current
       ?.transition()
       .duration(750)
       .call(
@@ -539,6 +537,7 @@ const PathBoard: ForwardRefExoticComponent<
     /**
      * svg Element
      */
+    const boundMaskClick = onMaskClick(tickBindRefs, handleClickMask);
     const svg = (svgRef.current = d3
       .select(boardContainerRef.current)
       .append('svg')
@@ -549,31 +548,14 @@ const PathBoard: ForwardRefExoticComponent<
         -boardHeight / 2,
         boardWidth,
         boardHeight,
-      ]));
-
-    // const defs = svg.append('defs');
-
-    /**
-     * TranslateMask
-     * 平移遮罩
-     */
-    const boundMaskClick = onMaskClick(tickBindRefs, handleClickMask);
-    const mask = (maskRef.current = svg
-      .append('rect')
-      .attr('class', 'mask')
-      .style('fill', 'transparent') // 透明色
-      .attr('x', -boardWidth / 2)
-      .attr('y', -boardHeight / 2)
-      .style('width', boardWidth)
-      .style('height', boardHeight)
-      .on('click', boundMaskClick));
+      ])).on('click', boundMaskClick);
 
     /**
      * 根组合
      */
     const root = (rootRef.current = svg.append('g').attr('class', 'root'));
     const boundTransZoom = (boundTransZoomRef.current = onTransZoom(root));
-    mask.call(boundTransZoom);
+    svg.call(boundTransZoom);
 
     /**
      * create simulation

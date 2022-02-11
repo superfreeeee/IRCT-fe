@@ -12,12 +12,15 @@ interface InputActions {
   resetInput: () => void;
 }
 
+type InputElement = HTMLInputElement | HTMLTextAreaElement;
+
 const useInput = (
   initValue: string = '',
-): [string, ChangeEventHandler<HTMLInputElement>, InputActions] => {
+): [string, ChangeEventHandler<InputElement>, InputActions] => {
   const [input, setInput] = useState(initValue);
 
-  const onInputChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+  const onInputChange = useCallback((e: ChangeEvent<InputElement>) => {
+    console.log(`onInputChange: ${e.target.value}`, e);
     setInput(e.target.value);
   }, []);
 

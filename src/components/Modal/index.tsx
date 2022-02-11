@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import React, { FC } from 'react';
+import React, { CSSProperties, FC } from 'react';
 import styled from 'styled-components';
 
 const ModalContainer = styled.div`
@@ -17,11 +17,12 @@ const ModalContainer = styled.div`
 interface ModalProps {
   visible: boolean;
   className?: string;
+  style?: CSSProperties;
 }
 
-const Modal: FC<ModalProps> = ({ visible, children }) => {
+const Modal: FC<ModalProps> = ({ visible, children, style }) => {
   return (
-    <ModalContainer className={classNames({ hide: !visible })}>
+    <ModalContainer className={classNames({ hide: !visible })} style={style}>
       {children}
     </ModalContainer>
   );

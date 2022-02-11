@@ -204,7 +204,6 @@ type SimpleSelection<E extends BaseType> = d3.Selection<
 >;
 
 export type SVGSelection = SimpleSelection<SVGSVGElement>;
-export type MaskSelection = SimpleSelection<SVGRectElement>;
 export type RootSelection = SimpleSelection<SVGGElement>;
 
 export type LinksSelection = d3.Selection<any, PathLink, any, any>;

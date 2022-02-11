@@ -19,8 +19,6 @@ export const contextMenuVisibleState = selector<boolean>({
   key: prefixer('contextMenuVisible'),
   get: ({ get }) => {
     const visible = get(contextMenuVisibleBaseState);
-    // TODO clear mock
-    return visible;
     const hasTarget = get(contextMenuTargetState);
 
     return !!hasTarget && visible;

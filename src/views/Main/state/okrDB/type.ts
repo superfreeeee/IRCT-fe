@@ -55,6 +55,10 @@ export interface ORelEntity {
   upperOId: number;
 }
 
+export interface OEntityDetail extends OEntity {
+  relOs: ORelEntity[];
+}
+
 export interface KREntity {
   id: number;
   content: string;
@@ -78,6 +82,11 @@ export interface ProjectRelKREntity {
   KRId: number;
 }
 
+export interface ProjectEntityDetail extends ProjectEntity {
+  relUsers: ProjectRelUserEntity[];
+  relKRs: ProjectRelKREntity[];
+}
+
 export interface TodoEntity {
   id: number;
   ddl: string;
@@ -89,6 +98,10 @@ export interface TodoEntity {
 export interface TodoRelProjectTable {
   todoId: number;
   projectId: number;
+}
+
+export interface TodoEntityDetail extends TodoEntity {
+  relProjects: TodoRelProjectTable[];
 }
 
 export type MergedEntity<E1, E2> = E1 & E2 & { [other: string]: any };

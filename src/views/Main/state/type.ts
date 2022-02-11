@@ -1,4 +1,5 @@
-import { ViewPointType } from './okrDB/type';
+import { PathNode } from '../OKRPath/PathBoard/type';
+import { EntityType, ViewPointType } from './okrDB/type';
 
 export enum StateNamespace {
   IM = 'im',
@@ -12,6 +13,8 @@ export enum StateNamespace {
   CallModal = 'callModal',
   CreateMeetingModal = 'createMeetingModal',
   SelectUserModal = 'selectUserModal',
+  EditEntityModal = 'editEntityModal',
+
   ContextMenu = 'contextMenu',
 }
 
@@ -49,6 +52,19 @@ export enum ViewPointStackActionType {
   Push = 'push',
   Pop = 'pop',
   Null = 'null',
+}
+
+export enum EditEntityModalActionType {
+  Idle = 'idle',
+  Create = 'create',
+  Edit = 'edit',
+  Delete = 'delete',
+}
+
+export enum EditEntityModalResponseStatus {
+  Confirm = 'confirm',
+  Cancel = 'cancel',
+  Waiting = 'empty',
 }
 
 // ========== type / interface 对象类型 ==========
@@ -102,4 +118,16 @@ export interface AbsolutePosition {
   top?: number;
   bottom?: number;
   right?: number;
+}
+
+export interface OpenEditModalParams {
+  actionType: EditEntityModalActionType;
+  targetType: EntityType;
+  source: PathNode;
+  nextSeq?: number;
+}
+
+export interface EditEntityModalResult {
+  status: EditEntityModalResponseStatus;
+  payload?: any;
 }

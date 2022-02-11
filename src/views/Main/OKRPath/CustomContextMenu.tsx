@@ -19,10 +19,17 @@ import BoxIcon, { BoxIconType } from '@components/BoxIcon';
 import { EntityType, ViewPointType } from '../state/okrDB/type';
 import { ContextMenuOption } from './type';
 import { okrPathVisibleState, viewPointStackUpdater } from '../state/okrPath';
-import { TabOption, ViewPointStackActionType } from '../state/type';
+import {
+  EditEntityModalActionType,
+  TabOption,
+  ViewPointStackActionType,
+} from '../state/type';
 import { PathListRef } from './PathList';
 import { currentSpaceIdState } from '../state/roomSpace';
 import { currentTabState, selectedTeamIdState } from '../state/im';
+import { useOpenEditEntityModal } from '../state/modals/hooks';
+import { deepCopy } from '@utils';
+import { getEntityChildNextSeq } from '../state/okrDB/api';
 
 const CustomContextMenuContainer = styled.div`
   position: fixed;
@@ -95,6 +102,7 @@ const CustomContextMenu: FC<CustomContextMenuProps> = ({ listRef }) => {
   const setTab = useSetRecoilState(currentTabState);
   const setSelectedTeamId = useSetRecoilState(selectedTeamIdState);
   const setCurrentSpaceId = useSetRecoilState(currentSpaceIdState);
+  const openModal = useOpenEditEntityModal();
   const optionsEl = useMemo(() => {
     if (!targetNode) {
       return null;
@@ -102,7 +110,7 @@ const CustomContextMenu: FC<CustomContextMenuProps> = ({ listRef }) => {
 
     // ========== state ==========
     const {
-      data: { originId, type },
+      data: { originId, type, relative },
     } = targetNode;
 
     // ========== actions ==========
@@ -130,14 +138,61 @@ const CustomContextMenu: FC<CustomContextMenuProps> = ({ listRef }) => {
 
     const editNode = () => {
       console.log(`[CustomContextMenu] editNode`);
+      openModal({
+        actionType: EditEntityModalActionType.Edit,
+        targetType: type,
+        source: deepCopy(targetNode),
+      });
+      closeMenu();
     };
 
     const createNode = () => {
       console.log(`[CustomContextMenu] createNode`);
+      let targetType: EntityType;
+      switch (type) {
+        case EntityType.User:
+          targetType = EntityType.O;
+          break;
+
+        case EntityType.O:
+          targetType = EntityType.KR;
+          break;
+
+        case EntityType.KR:
+          targetType = EntityType.Project;
+          break;
+
+        case EntityType.Project:
+          targetType = EntityType.Todo;
+          break;
+
+        case EntityType.Todo:
+        default:
+          break;
+      }
+      if (!targetType) {
+        console.error(`[CustomContextMenu] invalid createNode base on Todo`);
+        closeMenu();
+        return;
+      }
+
+      openModal({
+        actionType: EditEntityModalActionType.Create,
+        targetType,
+        source: deepCopy(targetNode),
+        nextSeq: getEntityChildNextSeq({ type, id: originId }),
+      });
+      closeMenu();
     };
 
     const deleteNode = () => {
       console.log(`[CustomContextMenu] deleteNode`);
+      openModal({
+        actionType: EditEntityModalActionType.Delete,
+        targetType: type,
+        source: deepCopy(targetNode),
+      });
+      closeMenu();
     };
 
     // ========== options ==========
@@ -162,7 +217,7 @@ const CustomContextMenu: FC<CustomContextMenuProps> = ({ listRef }) => {
         },
         {
           iconType: BoxIconType.MessageAdd,
-          title: '新增 O',
+          title: '新增 KR',
           onClick: createNode,
         },
       ],
@@ -174,7 +229,7 @@ const CustomContextMenu: FC<CustomContextMenuProps> = ({ listRef }) => {
         },
         {
           iconType: BoxIconType.MessageAdd,
-          title: '新增 KR',
+          title: '新增项目',
           onClick: createNode,
         },
       ],
@@ -186,7 +241,7 @@ const CustomContextMenu: FC<CustomContextMenuProps> = ({ listRef }) => {
         },
         {
           iconType: BoxIconType.MessageAdd,
-          title: '新增项目',
+          title: '新增 Todo',
           onClick: createNode,
         },
       ],
@@ -197,11 +252,6 @@ const CustomContextMenu: FC<CustomContextMenuProps> = ({ listRef }) => {
           onClick: editNode,
         },
         {
-          iconType: BoxIconType.MessageAdd,
-          title: '新增 Todo',
-          onClick: createNode,
-        },
-        {
           iconType: BoxIconType.Trash,
           title: '删除',
           onClick: deleteNode,
@@ -210,6 +260,14 @@ const CustomContextMenu: FC<CustomContextMenuProps> = ({ listRef }) => {
     };
 
     const options = optionsMap[type];
+
+    if (type === EntityType.User && !relative) {
+      options.push({
+        iconType: BoxIconType.MessageAdd,
+        title: '新增 O',
+        onClick: createNode,
+      });
+    }
 
     // ========== render ==========
     return (

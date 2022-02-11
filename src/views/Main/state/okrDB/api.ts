@@ -390,6 +390,27 @@ export const getPersonalViewPoint = (centerUserId: string): ViewPointSource => {
   };
 };
 
+export const getEntityChildNextSeq = ({
+  type,
+  id,
+}: {
+  type: EntityType;
+  id: string | number;
+}): number => {
+  if (type === EntityType.User) {
+    return oTable.filter((o) => o.userId === id).length + 1;
+  } else if (type === EntityType.O) {
+    return krTable.filter((kr) => kr.upperOId === id).length + 1;
+  } else if (type === EntityType.KR) {
+    return projectRelKRTable.filter((rel) => rel.KRId === id).length + 1;
+  } else if (type === EntityType.Project) {
+    return todoRelProjectTable.filter((rel) => rel.projectId === id).length + 1;
+  } else {
+    console.error(`[getEntityChildNextSeq] todo shouldn't have any child`);
+    return -1;
+  }
+};
+
 // ========== id with entity type ==========
 const wrapId = (type: EntityType, id: number, seq?: number) => {
   const wrappedId = `${type}-${id}`.toLowerCase();
