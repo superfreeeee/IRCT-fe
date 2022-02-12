@@ -21,7 +21,12 @@ import {
   viewPointStackUpdater,
   viewPointTypeState,
 } from '@views/Main/state/okrPath';
-import { ViewPointStackActionType } from '@views/Main/state/type';
+import {
+  EditEntityModalActionType,
+  EditEntityModalResponseStatus,
+  EditEntityModalResultPayload,
+  ViewPointStackActionType,
+} from '@views/Main/state/type';
 import {
   contextMenuPositionState,
   contextMenuTargetState,
@@ -50,6 +55,7 @@ import {
   TransZoomBehavior,
 } from './type';
 import {
+  isTargetNode,
   onClickNode,
   onDrag,
   onEnd,
@@ -61,6 +67,15 @@ import {
   transition,
 } from './utils';
 import { PathBoardContainer } from './styles';
+import {
+  editEntityModalActionTypeState,
+  editEntityModalResultState,
+  editEntityModalSourceState,
+  editEntityModalTargetTypeState,
+  editEntityModalVisibleState,
+} from '@views/Main/state/modals/editEntityModal';
+import useWaitFor from '@hooks/useWaitFor';
+import { deleteTodo, editO } from '@views/Main/state/okrDB/crud';
 
 export interface PathBoardRef {
   resetZoom: () => void;
@@ -101,6 +116,7 @@ const PathBoard: ForwardRefExoticComponent<
   const simulationRef = useRef<ForceSimulation>(null);
   const forceLinksRef = useRef<ForceLinks>(null);
 
+  const boundMaskClickRef = useRef<(e: MouseEvent) => void>(null);
   const boundTransZoomRef = useRef<TransZoomBehavior>(null);
   const boundEnterNodeRef = useRef<BoundNodeAction>(null);
   const boundLeaveNodeRef = useRef<BoundNodeAction>(null);
@@ -108,7 +124,6 @@ const PathBoard: ForwardRefExoticComponent<
   const boundDragRef = useRef<DragBehavior>(null);
 
   // =============== actions ===============
-
   /**
    * 重置成合适的缩放、中心用户平移到中央
    */
@@ -247,6 +262,7 @@ const PathBoard: ForwardRefExoticComponent<
             })
             .append('g')
             .attr('class', (d) => `node-${d.data.id}`)
+            .on('click', (e: MouseEvent) => e.stopPropagation())
             .on('mouseenter', boundEnterNodeRef.current)
             .on('mouseleave', boundLeaveNodeRef.current)
             .on('mousedown', handleMouseDownNode)
@@ -400,6 +416,7 @@ const PathBoard: ForwardRefExoticComponent<
     closeTooltip();
   }, []);
 
+  // =============== customContextMenu 相关 ===============
   /**
    * 右键列表相关
    */
@@ -418,6 +435,8 @@ const PathBoard: ForwardRefExoticComponent<
         setContextMenuTarget(deepCopy(targetNode));
         const { clientX: left, clientY: top } = e;
         setContextMenuPosition({ left, top });
+
+        waitingEditRef.current = true;
       }
     },
     [],
@@ -434,6 +453,140 @@ const PathBoard: ForwardRefExoticComponent<
     closeTooltip();
     isDraggingRef.current = false;
   }, [source]);
+
+  // =============== editEntityModal 相关 ===============
+  const waitingEditRef = useRef(false);
+  const editModalVisible = useRecoilValue(editEntityModalVisibleState);
+  const editModalActionType = useRecoilValue(editEntityModalActionTypeState);
+  const editModalTargetType = useRecoilValue(editEntityModalTargetTypeState);
+  const editModalSource = useRecoilValue(editEntityModalSourceState);
+  const editModalResult = useRecoilValue(editEntityModalResultState);
+  const createNode = (payload: EditEntityModalResultPayload) => {
+    console.log(`[PathBoard] createNode, payload:`, payload);
+    // update db
+    // TODO
+
+    // update graph
+    // TODO
+
+    // update inherit tree
+    // TODO
+  };
+  const editNode = (payload: EditEntityModalResultPayload) => {
+    console.log(`[PathBoard] editNode, payload:`, payload);
+    const {
+      entity: { originId, content },
+      selectedUsers,
+    } = payload;
+    // update db
+    switch (editModalTargetType) {
+      case EntityType.O:
+        editO({
+          entity: { id: originId as number, content, userId: '' },
+          relativeUserIds: selectedUsers.map((user) => user.id),
+        });
+        break;
+
+      case EntityType.KR:
+        // TODO
+        break;
+
+      case EntityType.Project:
+        // TODO
+        break;
+
+      case EntityType.Todo:
+        // TODO
+        break;
+
+      case EntityType.User:
+        console.warn(`[PathBoard] editNode: unsable to edit user`, payload);
+      default:
+        break;
+    }
+
+    // update graph
+    // TODO
+
+    // update inherit tree
+    // TODO
+  };
+  const deleteNode = () => {
+    const {
+      data: { type, originId },
+    } = editModalSource;
+
+    // update db
+    if (type === EntityType.Todo) {
+      // 1. Delete Todo
+      deleteTodo(originId as number);
+    } else {
+      //
+      console.warn(
+        `[PathBoard] deleteNode: current only support delete Todo, targetType=${type}`,
+      );
+    }
+
+    const boundIsTargetNode = isTargetNode({
+      type,
+      originId: originId as number,
+    });
+
+    // update graph
+    if (activeNode.data.originId === originId) {
+      // 删除当前 active 节点
+      boundMaskClickRef.current(null);
+    }
+
+    linksRef.current
+      .filter((d) => boundIsTargetNode(d.target as PathNode))
+      .remove();
+    const restLinksSelection = (linksRef.current = linksRef.current.filter(
+      (d) => !boundIsTargetNode(d.target as PathNode),
+    ));
+    nodesRef.current.filter(boundIsTargetNode).remove();
+    const restNodesSelection = (nodesRef.current = nodesRef.current.filter(
+      (d) => !boundIsTargetNode(d),
+    ));
+
+    forceLinksRef.current.links(restLinksSelection.data());
+    simulationRef.current.nodes(restNodesSelection.data()).alpha(0.2).restart();
+
+    // update inherit tree
+    // TODO
+  };
+  useWaitFor(
+    !editModalVisible,
+    () => {
+      console.log(`[PathBoard] status ${editModalResult.status}`);
+      switch (editModalResult.status) {
+        case EditEntityModalResponseStatus.Confirm:
+          if (editModalActionType === EditEntityModalActionType.Create) {
+            createNode(editModalResult.payload);
+          } else if (editModalActionType === EditEntityModalActionType.Edit) {
+            editNode(editModalResult.payload);
+          } else if (editModalActionType === EditEntityModalActionType.Delete) {
+            deleteNode();
+          } else {
+            console.warn(
+              `[PathBoard] unknown action type ${editModalActionType}`,
+            );
+          }
+          waitingEditRef.current = false;
+          break;
+
+        case EditEntityModalResponseStatus.Waiting:
+          return; // keep waiting
+
+        default:
+          console.warn(`[PathBoard] unknown status ${editModalResult.status}`);
+        case EditEntityModalResponseStatus.Cancel:
+          waitingEditRef.current = false;
+          break;
+      }
+    },
+    waitingEditRef.current,
+  );
 
   // =============== outer actions ===============
   /**
@@ -537,7 +690,10 @@ const PathBoard: ForwardRefExoticComponent<
     /**
      * svg Element
      */
-    const boundMaskClick = onMaskClick(tickBindRefs, handleClickMask);
+    const boundMaskClick = (boundMaskClickRef.current = onMaskClick(
+      tickBindRefs,
+      handleClickMask,
+    ));
     const svg = (svgRef.current = d3
       .select(boardContainerRef.current)
       .append('svg')

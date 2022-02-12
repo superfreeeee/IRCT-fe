@@ -9,17 +9,21 @@ const OUTER_PADDING = 5;
 
 export const SelectUserModalContainer = styled.div`
   position: fixed;
+
   display: none;
   flex-direction: column;
   justify-content: flex-start;
   align-items: stretch;
+
   width: ${SELECT_USER_MODAL_WIDTH}px;
   max-height: 200px;
   border-radius: 5px;
   border: 1px solid #626466;
+
   color: #fff;
   background-color: #2e2e2f;
   overflow: hidden;
+  z-index: var(--z_index_level2);
 
   &.visible {
     display: flex;

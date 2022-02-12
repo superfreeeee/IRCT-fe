@@ -1,3 +1,5 @@
+import Avatar from '@components/Avatar';
+import { I } from '@components/BoxIcon/styles';
 import { EntityType } from '@views/Main/state/okrDB/type';
 import styled from 'styled-components';
 
@@ -94,6 +96,7 @@ export const EditEntityModalBtn = styled.button`
 `;
 
 export const EditContentTextArea = styled.textarea`
+  display: block;
   width: 100%;
   padding: 6px 10px;
   margin: 0;
@@ -104,4 +107,55 @@ export const EditContentTextArea = styled.textarea`
   background-color: rgba(37, 37, 37, 0.6);
   box-shadow: 0 2px 5px inset rgba(0, 0, 0, 0.32);
   resize: none;
+`;
+
+export const EditContentUserList = styled.div`
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  padding-left: 10px;
+  margin: 6px 0 10px;
+
+  font-size: 12px;
+
+  &.reverIcon > ${I} {
+    transform: rotate(180deg);
+  }
+
+  ${Avatar} {
+    position: relative;
+
+    width: 20px;
+    height: 20px;
+
+    .removeMask {
+      position: absolute;
+
+      display: none;
+      justify-content: center;
+      align-items: center;
+
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    &:hover .removeMask {
+      display: flex;
+    }
+  }
+
+  .addNewBtn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    color: #fff;
+    background-color: #474849;
+  }
 `;

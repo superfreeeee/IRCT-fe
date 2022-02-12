@@ -1,15 +1,15 @@
 import React, { useCallback, useEffect, useRef } from 'react';
 import { useRecoilState } from 'recoil';
 import { CandidatesList, SearchBar, SelectUserModalContainer } from './styles';
+import classNames from 'classnames';
 
 import { selectUserModalControllerInfoState } from '@views/Main/state/modals/selectUserModal';
-import Candidate from './Candidate';
+import { TeamData } from '@views/Main/state/team';
 import BoxIcon, { BoxIconType } from '@components/BoxIcon';
 import useInput from '@hooks/useInput';
-import { TeamData } from '@views/Main/state/team';
-import classNames from 'classnames';
 import useClickDetect from '@hooks/useClickDetect';
 import useKeyDetect from '@hooks/useKeyDetect';
+import Candidate from './Candidate';
 
 /**
  * 选人组件
@@ -65,6 +65,16 @@ const SelectUserModal = () => {
     visible,
   );
 
+  const listRef = useRef<HTMLUListElement>(null);
+  useEffect(() => {
+    if (visible) {
+      // 新打开时回滚到顶部
+      if (listRef.current.scrollTop > 0) {
+        listRef.current.scrollTop = 0;
+      }
+    }
+  }, [visible]);
+
   return (
     <SelectUserModalContainer
       ref={containerRef}
@@ -82,21 +92,10 @@ const SelectUserModal = () => {
           onChange={onTextChange}
         />
       </SearchBar>
-      <CandidatesList className={classNames({ selectable })}>
+      <CandidatesList ref={listRef} className={classNames({ selectable })}>
         {filteredUsers.map(({ id: userId }) => (
           <Candidate key={userId} userId={userId} onSelected={onSelected} />
         ))}
-        {/* <div>123</div>
-        <div>123</div>
-        <div>123</div>
-        <div>123</div>
-        <div>123</div>
-        <div>123</div>
-        <div>123</div>
-        <div>123</div>
-        <div>123</div>
-        <div>123</div>
-        <div>123</div> */}
       </CandidatesList>
     </SelectUserModalContainer>
   );

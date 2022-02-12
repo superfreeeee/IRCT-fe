@@ -434,7 +434,7 @@ export const onMaskClick =
 export const onEnterNode =
   ({ linksRef, nodesRef }: TickBindRefs, cb?: NodeActionCallback) =>
   (e: MouseEvent, targetNode: PathNode) => {
-    e.stopPropagation(); // prevent mask event
+    e && e.stopPropagation(); // prevent mask event
 
     updateItems({ linksRef, nodesRef }, MouseActionType.Enter, targetNode);
     cb && cb(targetNode, e);
@@ -443,7 +443,7 @@ export const onEnterNode =
 export const onLeaveNode =
   ({ linksRef, nodesRef }: TickBindRefs, cb?: NodeActionCallback) =>
   (e: MouseEvent, targetNode: PathNode) => {
-    e.stopPropagation(); // prevent mask event
+    e && e.stopPropagation(); // prevent mask event
 
     updateItems({ linksRef, nodesRef }, MouseActionType.Leave, targetNode);
     cb && cb(targetNode, e);
@@ -457,7 +457,7 @@ export const onLeaveNode =
 export const onClickNode =
   ({ linksRef, nodesRef }: TickBindRefs, cb?: NodeActionCallback) =>
   (e: MouseEvent, targetNode: PathNode) => {
-    e.stopPropagation(); // prevent mask event
+    e && e.stopPropagation(); // prevent mask event
 
     if (targetNode.store.relative === EntityType.O) {
       const sourceO = linksRef.current
@@ -474,6 +474,13 @@ export const onClickNode =
 
     // invoke callback
     cb && cb(targetNode, e);
+  };
+
+// ========== public utils ==========
+export const isTargetNode =
+  ({ type, originId }: { type: EntityType; originId: number }) =>
+  (d: PathNode) => {
+    return d.data.type === type && d.data.originId === originId;
   };
 
 // ========== private common actions ==========

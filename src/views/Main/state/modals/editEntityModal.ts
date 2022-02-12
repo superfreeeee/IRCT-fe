@@ -12,7 +12,7 @@ import { EntityType } from '../okrDB/type';
 
 const prefixer = createPrefixer(StateNamespace.EditEntityModal);
 
-export const editEntityModalVisibleBaseState = atom<boolean>({
+const editEntityModalVisibleBaseState = atom<boolean>({
   key: prefixer('editEntityModalVisibleBase'),
   default: true,
 });

@@ -20,7 +20,6 @@ const useInput = (
   const [input, setInput] = useState(initValue);
 
   const onInputChange = useCallback((e: ChangeEvent<InputElement>) => {
-    console.log(`onInputChange: ${e.target.value}`, e);
     setInput(e.target.value);
   }, []);
 

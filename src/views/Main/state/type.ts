@@ -1,5 +1,11 @@
 import { PathNode } from '../OKRPath/PathBoard/type';
-import { EntityType, ViewPointType } from './okrDB/type';
+import {
+  EntityType,
+  UserEntity,
+  ViewPointEntity,
+  ViewPointRelation,
+  ViewPointType,
+} from './okrDB/type';
 
 export enum StateNamespace {
   IM = 'im',
@@ -127,7 +133,13 @@ export interface OpenEditModalParams {
   nextSeq?: number;
 }
 
+export interface EditEntityModalResultPayload {
+  entity: ViewPointEntity;
+  relation?: ViewPointRelation;
+  selectedUsers: UserEntity[];
+}
+
 export interface EditEntityModalResult {
   status: EditEntityModalResponseStatus;
-  payload?: any;
+  payload?: EditEntityModalResultPayload;
 }

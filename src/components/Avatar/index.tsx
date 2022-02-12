@@ -18,9 +18,11 @@ const Avatar: StyledComponent<
   display: flex;
   justify-content: center;
   align-items: center;
+
   width: 50px;
   height: 50px;
   border-radius: 50%;
+
   overflow: hidden;
   object-fit: fill;
 

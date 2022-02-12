@@ -10,6 +10,8 @@ import {
   editEntityModalNextSeqState,
 } from '@views/Main/state/modals/editEntityModal';
 import {
+  EntityType,
+  UserEntity,
   ViewPointEntity,
   ViewPointRelation,
 } from '@views/Main/state/okrDB/type';
@@ -32,6 +34,10 @@ import {
   headerPointColorMap,
 } from './styles';
 import EditContent from './EditContent';
+import SelectedUserList from './SelectedUserList';
+import { selectUserModalVisibleState } from '@views/Main/state/modals/selectUserModal';
+import { getRelativeUsers } from '@views/Main/state/okrDB/api';
+import { viewPointCenterUserIdState } from '@views/Main/state/okrPath';
 
 const EditEntityModal = () => {
   // outer state
@@ -44,12 +50,8 @@ const EditEntityModal = () => {
   const sourceDeps = [actionType, targetType, source, nextSeq];
 
   // form state
-  const [content, onContentChange, { setInput: setContent }] = useInput();
-  const contentRef = useRef<HTMLTextAreaElement>(null);
-
-  useEffect(() => {
-    setContent('');
-  }, sourceDeps);
+  const contentRef = useRef<string>('');
+  const usersRef = useRef<UserEntity[]>([]);
 
   // ========== actions ==========
   const closeModal = useCloseEditEntityModal();
@@ -74,9 +76,13 @@ const EditEntityModal = () => {
       return;
     }
 
-    const content = contentRef.current.value;
+    const content = contentRef.current;
+    const users = usersRef.current;
 
     if (actionType === EditEntityModalActionType.Create) {
+      /**
+       * 新增节点、边
+       */
       const entity: ViewPointEntity = {
         type: targetType,
         id: '',
@@ -93,7 +99,14 @@ const EditEntityModal = () => {
       const result = {
         entity,
         relation,
+        selectedUsers: undefined,
       };
+
+      if (
+        [EntityType.O, EntityType.Project, EntityType.Todo].includes(targetType)
+      ) {
+        result.selectedUsers = users;
+      }
 
       console.log(`[EditEntityModal] confirm`, result);
 
@@ -102,6 +115,9 @@ const EditEntityModal = () => {
         payload: result,
       });
     } else if (actionType === EditEntityModalActionType.Edit) {
+      /**
+       * 修改节点、边
+       */
       const {
         data: { type, id, originId, seq },
       } = source;
@@ -115,7 +131,14 @@ const EditEntityModal = () => {
 
       const result = {
         entity,
+        selectedUsers: undefined,
       };
+
+      if (
+        [EntityType.O, EntityType.Project, EntityType.Todo].includes(targetType)
+      ) {
+        result.selectedUsers = users;
+      }
 
       console.log(`[EditEntityModal] confirm`, result);
 
@@ -132,6 +155,7 @@ const EditEntityModal = () => {
 
   // ========== outside click detect ==========
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const selectUserModalVisible = useRecoilValue(selectUserModalVisibleState);
   useClickDetect(
     wrapperRef,
     (isOutside) => {
@@ -139,7 +163,7 @@ const EditEntityModal = () => {
         cancel();
       }
     },
-    visible,
+    visible && !selectUserModalVisible,
   );
 
   // ========== render header ==========
@@ -186,8 +210,12 @@ const EditEntityModal = () => {
   }, sourceDeps);
 
   // ========== render Main ==========
+  const centerUserId = useRecoilValue(viewPointCenterUserIdState);
   const mainEl = useMemo(() => {
     if (actionType === EditEntityModalActionType.Idle) {
+      /**
+       * 0. Idle => 无作为
+       */
       return null;
     }
 
@@ -201,6 +229,9 @@ const EditEntityModal = () => {
     );
 
     if (actionType === EditEntityModalActionType.Delete) {
+      /**
+       * 1. 删除
+       */
       return (
         <EditEntityModalMain>
           <div className="deleteText">Are you sure to delete the node?</div>
@@ -209,14 +240,55 @@ const EditEntityModal = () => {
       );
     }
 
+    /**
+     * 2. 编辑 / 新建
+     */
+    const {
+      data: { originId, content },
+    } = source;
+    let relativeUsers: UserEntity[];
+    if (
+      [EntityType.KR, EntityType.User].includes(targetType) ||
+      (actionType === EditEntityModalActionType.Create &&
+        [EntityType.O, EntityType.Project].includes(targetType))
+    ) {
+      /**
+       * 2.1
+       *   User, KR 无关联用户
+       *
+       * 2.2
+       *   新建 O、Project 时无关联人物
+       */
+      relativeUsers = [];
+    } else {
+      /**
+       * 2.3 其他
+       *   编辑 O、Project、Todo
+       *   新建 Todo
+       */
+      const id = targetType === EntityType.Todo ? centerUserId : originId;
+      relativeUsers = getRelativeUsers({
+        type: targetType,
+        id,
+        action: actionType,
+      });
+    }
+
+    const initContent =
+      actionType === EditEntityModalActionType.Create ? '' : content;
+
     return (
       <EditEntityModalMain>
-        <EditContent inputRef={contentRef} />
-        <div>{actionType} entity</div>
+        <EditContent content={initContent} contentRef={contentRef} />
+        <SelectedUserList
+          targetType={targetType}
+          users={relativeUsers}
+          usersRef={usersRef}
+        />
         {mainActionsEl}
       </EditEntityModalMain>
     );
-  }, [sourceDeps, content, onContentChange]);
+  }, [...sourceDeps, centerUserId]);
 
   useEffect(() => {
     console.log(`[EditEntityModal] source`, source);

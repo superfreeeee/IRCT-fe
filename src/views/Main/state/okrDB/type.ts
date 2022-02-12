@@ -59,6 +59,11 @@ export interface OEntityDetail extends OEntity {
   relOs: ORelEntity[];
 }
 
+export interface EditOPayload {
+  entity: OEntity;
+  relativeUserIds: string[];
+}
+
 export interface KREntity {
   id: number;
   content: string;

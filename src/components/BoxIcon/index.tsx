@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import { I } from './styles';
 
 export enum BoxIconType {
+  ArrowDownLeft = 'bx-subdirectory-left',
   Branch = 'bx-git-branch',
   Calender = 'bx-calendar',
   Edit = 'bx-edit-alt',
@@ -29,8 +30,10 @@ export enum BoxIconType {
   Send = 'bx-send',
   Setting = 'bx-cog',
   TargetLock = 'bx-target-lock',
+  TransferAlt = 'bx-transfer-alt',
   Trash = 'bx-trash',
   Undo = 'bx-undo',
+  User = 'bx-user',
   UserCircle = 'bx-user-circle',
   Video = 'bxs-video',
   VideoOff = 'bxs-video-off',

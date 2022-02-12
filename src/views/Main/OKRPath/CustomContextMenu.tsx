@@ -70,6 +70,14 @@ const CustomContextMenuItem = styled.div`
   }
 `;
 
+const _createTargetTypeMap: { [sourceType in EntityType]: EntityType } = {
+  [EntityType.User]: EntityType.O,
+  [EntityType.O]: EntityType.KR,
+  [EntityType.KR]: EntityType.Project,
+  [EntityType.Project]: EntityType.Todo,
+  [EntityType.Todo]: null,
+};
+
 interface CustomContextMenuProps {
   listRef: MutableRefObject<PathListRef>;
 }
@@ -148,28 +156,7 @@ const CustomContextMenu: FC<CustomContextMenuProps> = ({ listRef }) => {
 
     const createNode = () => {
       console.log(`[CustomContextMenu] createNode`);
-      let targetType: EntityType;
-      switch (type) {
-        case EntityType.User:
-          targetType = EntityType.O;
-          break;
-
-        case EntityType.O:
-          targetType = EntityType.KR;
-          break;
-
-        case EntityType.KR:
-          targetType = EntityType.Project;
-          break;
-
-        case EntityType.Project:
-          targetType = EntityType.Todo;
-          break;
-
-        case EntityType.Todo:
-        default:
-          break;
-      }
+      const targetType = _createTargetTypeMap[type];
       if (!targetType) {
         console.error(`[CustomContextMenu] invalid createNode base on Todo`);
         closeMenu();

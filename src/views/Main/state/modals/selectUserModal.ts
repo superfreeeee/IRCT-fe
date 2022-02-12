@@ -43,8 +43,8 @@ export const selectUserModalCandidateScopeState = atom<string>({
   default: '',
 });
 
-export const selectUserModalCandidateUserIdsState = atom<string[]>({
-  key: prefixer('selectUserModalCandidateUserIds'),
+export const selectUserModalExcludeUserIdsState = atom<string[]>({
+  key: prefixer('selectUserModalExcludeUserIds'),
   default: [],
 });
 
@@ -69,6 +69,7 @@ interface ShowSelectUserModalInfo {
   selectable?: boolean;
   selectedUserId?: string;
   scopeRoomId?: string;
+  excludeUserIds?: string[];
   candidateUsers?: { id: string; name: string }[];
 }
 export const selectUserModalControllerInfoState =
@@ -80,9 +81,15 @@ export const selectUserModalControllerInfoState =
       const selectable = get(selectUserModalSelectableState);
       const selectedUserId = get(selectUserModalSelectedUserIdState);
 
+      // get userIds from room
       let roomId = get(selectUserModalCandidateScopeState);
       let candidateUserIds: string[] = [];
-      if (roomId.charAt(0) === '!') {
+      if (!roomId) {
+        // no scope => enable all users
+        const allUserIds = get(teamIdsState);
+        candidateUserIds = allUserIds;
+      } else if (roomId.charAt(0) === '!') {
+        // prefix ! => exclude a room
         roomId = roomId.substring(1);
         const excludeUserIds = get(roomUserIdsBaseFamily(roomId));
         const allUserIds = get(teamIdsState);
@@ -91,17 +98,20 @@ export const selectUserModalControllerInfoState =
           return isUser && !excludeUserIds.includes(userId);
         });
       } else {
+        // normal => get userIds from one room
         candidateUserIds = get(roomUserIdsBaseFamily(roomId));
       }
+
+      // id => userBasicInfo
+      const excludeIdSet = new Set(get(selectUserModalExcludeUserIdsState));
       const candidateUsers = candidateUserIds
-        .map((userId) => {
-          const { id, name } = get(userBasicInfoFamily(userId)) || {};
-          if (!id) {
-            return null;
-          }
-          return { id, name };
+        .filter((userId) => !excludeIdSet.has(userId))
+        .map((userId) => get(userBasicInfoFamily(userId)))
+        .filter((user) => {
+          const { id, isGroup } = user;
+          return id && !isGroup;
         })
-        .filter((user) => !!user);
+        .map(({ id, name }) => ({ id, name }));
 
       return {
         visible,
@@ -119,6 +129,7 @@ export const selectUserModalControllerInfoState =
         position,
         selectedUserId,
         scopeRoomId,
+        excludeUserIds = [],
       }: ShowSelectUserModalInfo,
     ) => {
       set(selectUserModalVisibleState, visible);
@@ -128,6 +139,7 @@ export const selectUserModalControllerInfoState =
       if (visible) {
         // 可见时为更新 userIds
         set(selectUserModalCandidateScopeState, scopeRoomId);
+        set(selectUserModalExcludeUserIdsState, excludeUserIds);
         position && set(selectUserModalPositionState, position);
       } else {
         // 不可见时为更新 selectedUserId

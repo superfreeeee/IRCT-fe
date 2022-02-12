@@ -12,7 +12,6 @@ export const IMContainer = styled.div`
   margin: 15px 10px 15px 0;
   border-radius: 10px;
   background-color: var(--container_bg);
-  z-index: 100;
 `;
 
 export const SearchBar = styled.div`

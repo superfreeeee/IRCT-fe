@@ -28,6 +28,7 @@ import {
   userTable,
 } from './db';
 import { createEntityNode } from './utils';
+import { EditEntityModalActionType } from '../type';
 
 // ========== public ==========
 /**
@@ -390,6 +391,9 @@ export const getPersonalViewPoint = (centerUserId: string): ViewPointSource => {
   };
 };
 
+/**
+ * 计算目标类型的下一个子节点 seq
+ */
 export const getEntityChildNextSeq = ({
   type,
   id,
@@ -408,6 +412,71 @@ export const getEntityChildNextSeq = ({
   } else {
     console.error(`[getEntityChildNextSeq] todo shouldn't have any child`);
     return -1;
+  }
+};
+
+export const getRelativeUsers = ({
+  type,
+  id,
+  action,
+}: {
+  type: EntityType;
+  id: string | number; // centerUserId | edit item.id
+  action: EditEntityModalActionType.Create | EditEntityModalActionType.Edit;
+}): UserEntity[] => {
+  console.log(`[getRelativeUsers] type=${type}, id=${id}, action=${action}`);
+  if (action === EditEntityModalActionType.Create) {
+    /**
+     * 1. Create + Todo
+     */
+    if (type !== EntityType.Todo) {
+      console.warn(`[getRelativeUsers] create but not Todo, type=${type}`);
+      return [];
+    }
+
+    const initTodoUser = userTable.find((user) => user.id === id);
+    if (!initTodoUser) {
+      console.error(`[getRelativeUsers] centerUserId=${id} not found`);
+      return [];
+    }
+
+    return [initTodoUser];
+  } else {
+    /**
+     * 2. Edit + O、Project、Todo
+     */
+    if (type === EntityType.O) {
+      // 2.1 Edit O
+      const relOIdSet = new Set(
+        oRelTable.filter((rel) => rel.OId === id).map((rel) => rel.upperOId),
+      );
+      const relUserIdSet = new Set(
+        oTable.filter((o) => relOIdSet.has(o.id)).map((o) => o.userId),
+      );
+      const relUsers = userTable.filter((user) => relUserIdSet.has(user.id));
+      return relUsers;
+    } else if (type === EntityType.Project) {
+      // 2.2 Edit Project
+      const relUserIdSet = new Set(
+        projectRelUserTable
+          .filter((rel) => rel.projectId === id)
+          .map((rel) => rel.userId),
+      );
+      const relUsers = userTable.filter((user) => relUserIdSet.has(user.id));
+      return relUsers;
+    } else if (type === EntityType.Todo) {
+      // 2.3 Edit Todo
+      const initTodoUser = userTable.find((user) => user.id === id);
+      if (!initTodoUser) {
+        console.error(`[getRelativeUsers] centerUserId=${id} not found`);
+        return [];
+      }
+
+      return [initTodoUser];
+    } else {
+      console.warn(`[getRelativeUsers] edit but not O/Project, type=${type}`);
+      return [];
+    }
   }
 };
 

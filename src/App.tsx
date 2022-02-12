@@ -40,6 +40,13 @@ const GlobalStyle = createGlobalStyle`
     --trans_speed_level3: 0.3s;
     --trans_speed_level4: 0.4s;
     --trans_speed_level5: 0.5s;
+    /* z-index */
+    --z_index_level1: 3000; // top level
+    --z_index_level2: 2000; // modals
+    --z_index_level3: 1000;
+    --z_index_level4: 100;
+    --z_index_level5: 10;
+    --z_index_level6: 1;
   }
 
   * {

@@ -6,9 +6,13 @@ import { MutableRefObject, useRef } from 'react';
  * @param val
  * @returns
  */
-const useClosestRef = <T>(val: T): MutableRefObject<T> => {
+const useClosestRef = <T>(
+  val: T,
+  targetRef?: MutableRefObject<T>,
+): MutableRefObject<T> => {
   const valRef = useRef(null);
   valRef.current = val;
+  targetRef && (targetRef.current = val);
   return valRef;
 };
 
