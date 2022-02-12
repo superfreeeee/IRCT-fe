@@ -49,18 +49,27 @@
   - [x] O, Project 对齐人头样式
   - [x] Project 对齐人头选中时展示
   - [ ] Path List 关闭按钮
-  - [ ] Path List 项目右键
-  - [ ] 编辑模态框
-  - [ ] 编辑模态框数据联动
 - [ ] 侧边栏
   - [x] 侧边栏定位
   - [x] 侧边栏填充数据（静态）
   - [x] 侧边栏折叠
   - [x] 侧边栏项hover 联动
-  - [ ] O, KR, Project, Todo 关联人头
+  - [x] O, KR, Project, Todo 关联人头
+  - [ ] Path List 项目右键
+  - [ ] 编辑联动
 - [ ] 编辑
+  - [x] 编辑 Modal UI
+  - [x] 编辑 Modal 数据传递
   - [ ] 添加/删除节点
-  - [ ] 添加/删除边
+    - [ ] 添加 O
+    - [ ] 编辑 O
+    - [ ] 添加 KR
+    - [ ] 编辑 KR
+    - [ ] 添加 Project
+    - [ ] 编辑 Project
+    - [ ] 添加 Todo
+    - [ ] 编辑 Todo
+    - [x] 删除 Todo
 
 ### 边缘 feature
 

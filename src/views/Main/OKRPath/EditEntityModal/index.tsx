@@ -56,7 +56,6 @@ const EditEntityModal = () => {
   // ========== actions ==========
   const closeModal = useCloseEditEntityModal();
   const cancel = useCallback(() => {
-    console.log(`[EditEntityModal] cancel`);
     closeModal({
       status: EditEntityModalResponseStatus.Cancel,
     });
@@ -69,14 +68,13 @@ const EditEntityModal = () => {
         EditEntityModalActionType.Delete,
       ].includes(actionType)
     ) {
-      console.log(`[EditEntityModal] confirm`);
       closeModal({
         status: EditEntityModalResponseStatus.Confirm,
       });
       return;
     }
 
-    const content = contentRef.current;
+    const content = contentRef.current.replace(/\W+/g, ' ');
     const users = usersRef.current;
 
     if (actionType === EditEntityModalActionType.Create) {
@@ -108,8 +106,6 @@ const EditEntityModal = () => {
         result.selectedUsers = users;
       }
 
-      console.log(`[EditEntityModal] confirm`, result);
-
       closeModal({
         status: EditEntityModalResponseStatus.Confirm,
         payload: result,
@@ -140,16 +136,18 @@ const EditEntityModal = () => {
         result.selectedUsers = users;
       }
 
-      console.log(`[EditEntityModal] confirm`, result);
-
       closeModal({
         status: EditEntityModalResponseStatus.Confirm,
         payload: result,
       });
     } else {
-      console.warn(
+      console.error(
         `[EditEntityModal] confirm unknown actionType: ${actionType}`,
       );
+
+      closeModal({
+        status: EditEntityModalResponseStatus.Cancel,
+      });
     }
   }, sourceDeps);
 
@@ -289,10 +287,6 @@ const EditEntityModal = () => {
       </EditEntityModalMain>
     );
   }, [...sourceDeps, centerUserId]);
-
-  useEffect(() => {
-    console.log(`[EditEntityModal] source`, source);
-  }, sourceDeps);
 
   return (
     <Modal visible={visible}>

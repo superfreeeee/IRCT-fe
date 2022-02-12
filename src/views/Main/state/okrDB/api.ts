@@ -415,6 +415,9 @@ export const getEntityChildNextSeq = ({
   }
 };
 
+/**
+ * 获取指定 item 关联的用户
+ */
 export const getRelativeUsers = ({
   type,
   id,
@@ -424,7 +427,6 @@ export const getRelativeUsers = ({
   id: string | number; // centerUserId | edit item.id
   action: EditEntityModalActionType.Create | EditEntityModalActionType.Edit;
 }): UserEntity[] => {
-  console.log(`[getRelativeUsers] type=${type}, id=${id}, action=${action}`);
   if (action === EditEntityModalActionType.Create) {
     /**
      * 1. Create + Todo

@@ -1,13 +1,13 @@
 import { useCallback, useState } from 'react';
 
-let _bool = false;
-
 const useForceUpdate = () => {
-  const [, setBool] = useState(_bool);
+  const [, setBool] = useState(false);
 
-  const forceUpdate = useCallback(() => {
-    _bool = !_bool;
-    setBool(_bool);
+  const forceUpdate = useCallback((cb?: () => void) => {
+    setBool((bool) => {
+      cb && cb();
+      return !bool;
+    });
   }, []);
 
   return forceUpdate;

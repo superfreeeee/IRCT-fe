@@ -10,17 +10,22 @@ import {
 } from './db';
 import {
   EditOPayload,
+  EditProjectPayload,
   KREntity,
-  OEntityDetail,
+  AddOPayload,
   ORelEntity,
-  ProjectEntityDetail,
-  TodoEntityDetail,
+  AddProjectPayload,
+  AddTodoPayload,
+  ProjectRelUserEntity,
+  ProjectDuty,
+  TodoEntity,
+  EditTodoPayload,
 } from './type';
 
 /**
  * O
  */
-export const addO = (o: OEntityDetail) => {
+export const addO = (o: AddOPayload) => {
   const { relOs, ...oEntity } = o;
 
   oTable.push(oEntity);
@@ -33,7 +38,7 @@ export const editO = ({
 }: EditOPayload) => {
   const index = oTable.findIndex((o) => o.id === targetId);
   if (index < 0) {
-    console.error(`[okrDB.curd] editO: o.id = ${targetId} not found`);
+    console.error(`[okrDB.crud] editO: o.id = ${targetId} not found`);
   } else {
     // update oTable
     const originEntity = oTable[index];
@@ -60,10 +65,20 @@ export const addKR = (kr: KREntity) => {
   krTable.push(kr);
 };
 
+export const editKR = ({ id, content }: KREntity) => {
+  const index = krTable.findIndex((kr) => kr.id === id);
+  if (index < 0) {
+    console.error(`[okrDB.crud] editKR: kr.id = ${id} not found`);
+  } else {
+    const originKR = krTable[index];
+    krTable.splice(index, 1, { ...originKR, content });
+  }
+};
+
 /**
  * Project
  */
-export const addProject = (p: ProjectEntityDetail) => {
+export const addProject = (p: AddProjectPayload) => {
   const { relKRs, relUsers, ...pEntity } = p;
 
   projectTable.push(pEntity);
@@ -71,14 +86,54 @@ export const addProject = (p: ProjectEntityDetail) => {
   projectRelUserTable.push(...relUsers);
 };
 
+export const editProject = ({
+  entity: { id, name },
+  relativeUserIds,
+}: EditProjectPayload) => {
+  const index = projectTable.findIndex((p) => p.id === id);
+  if (index < 0) {
+    console.error(`[okrDB.crud] editProject: p.id = ${id} not found`);
+  } else {
+    const originProject = projectTable[index];
+    projectTable.splice(index, 1, { ...originProject, name });
+
+    const oldRelUsers = projectRelUserTable.filter(
+      (rel) => rel.projectId === id,
+    );
+    oldRelUsers.forEach((rel) => {
+      projectRelUserTable.splice(projectRelUserTable.indexOf(rel), 1);
+    });
+
+    const newRelUsers = relativeUserIds.map(
+      (userId): ProjectRelUserEntity => ({
+        projectId: id,
+        userId,
+        duty: ProjectDuty.Unkonwn,
+      }),
+    );
+    projectRelUserTable.push(...newRelUsers);
+  }
+};
+
 /**
  * \Todo
  */
-export const addTodo = (t: TodoEntityDetail) => {
+export const addTodo = (t: AddTodoPayload) => {
   const { relProjects, ...tEntity } = t;
 
   todoTable.push(tEntity);
   todoRelProjectTable.push(...relProjects);
+  // console.log(`[tmp] todoTable`, [...todoTable]);
+};
+
+export const editTodo = ({ id, userId, name }: EditTodoPayload) => {
+  const index = todoTable.findIndex((t) => t.id === id);
+  if (index < 0) {
+    console.error(`[okrDB.crud] editTodo: t.id = ${id} not found`);
+  } else {
+    const originTodo = todoTable[index];
+    todoTable.splice(index, 1, { ...originTodo, userId, name });
+  }
 };
 
 export const deleteTodo = (todoId: number) => {

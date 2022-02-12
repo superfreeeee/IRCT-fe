@@ -10,7 +10,12 @@ import React, {
 import * as d3 from 'd3';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { EntityType, ViewPointType } from '@views/Main/state/okrDB/type';
+import {
+  EntityType,
+  ProjectType,
+  TodoStatus,
+  ViewPointType,
+} from '@views/Main/state/okrDB/type';
 import {
   activeNodeState,
   okrPathListVisibleState,
@@ -75,7 +80,13 @@ import {
   editEntityModalVisibleState,
 } from '@views/Main/state/modals/editEntityModal';
 import useWaitFor from '@hooks/useWaitFor';
-import { deleteTodo, editO } from '@views/Main/state/okrDB/crud';
+import {
+  deleteTodo,
+  editKR,
+  editO,
+  editProject,
+  editTodo,
+} from '@views/Main/state/okrDB/crud';
 
 export interface PathBoardRef {
   resetZoom: () => void;
@@ -488,15 +499,26 @@ const PathBoard: ForwardRefExoticComponent<
         break;
 
       case EntityType.KR:
-        // TODO
+        editKR({ id: originId as number, content, upperOId: -1 });
         break;
 
       case EntityType.Project:
-        // TODO
+        editProject({
+          entity: {
+            id: originId as number,
+            name: content,
+            type: ProjectType.Unkonwn,
+          },
+          relativeUserIds: selectedUsers.map((user) => user.id),
+        });
         break;
 
       case EntityType.Todo:
-        // TODO
+        editTodo({
+          id: originId as number,
+          userId: selectedUsers[0].id,
+          name: content,
+        });
         break;
 
       case EntityType.User:
