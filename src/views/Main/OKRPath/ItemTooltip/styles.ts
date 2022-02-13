@@ -4,12 +4,12 @@ const MIN_WIDTH = 85;
 export const MAX_WIDTH = 300;
 
 export const ItemTooltipContainer = styled.div`
-  position: absolute;
+  position: fixed;
   transform: translateX(-50%);
 
-  /* for visible */
   transition: visibility 100ms 150ms; // 避免 reshape 时闪烁
   visibility: visible;
+  z-index: var(--z_index_level3);
 
   &.turn {
     transform: translate(-50%, 100%) translateY(20px);

@@ -483,7 +483,7 @@ export const getRelativeUsers = ({
 };
 
 // ========== id with entity type ==========
-const wrapId = (type: EntityType, id: number, seq?: number) => {
+export const wrapId = (type: EntityType, id: number, seq?: number) => {
   const wrappedId = `${type}-${id}`.toLowerCase();
   return seq === undefined ? wrappedId : `${wrappedId}_${seq}`;
 };

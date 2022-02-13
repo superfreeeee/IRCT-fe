@@ -1,4 +1,4 @@
-import React, { FC, MutableRefObject, useEffect, useMemo, useRef } from 'react';
+import React, { FC, useEffect, useMemo, useRef } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import classNames from 'classnames';
 

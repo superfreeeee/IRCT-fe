@@ -190,6 +190,14 @@ export interface PathLink extends d3.SimulationLinkDatum<PathNode> {
   distance?: number;
 }
 
+export interface InitItemsFn {
+  (
+    nodes: PathNode[],
+    links: PathLink[],
+    nodeMap: { [nodeId: string]: PathNode },
+  ): void;
+}
+
 export interface PathBoardSource {
   nodes: PathNode[];
   links: PathLink[];

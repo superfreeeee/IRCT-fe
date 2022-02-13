@@ -43,7 +43,7 @@ const GlobalStyle = createGlobalStyle`
     /* z-index */
     --z_index_level1: 3000; // top level
     --z_index_level2: 2000; // modals
-    --z_index_level3: 1000;
+    --z_index_level3: 1000; // IM state tooltip / PathBoard ItemTooltip
     --z_index_level4: 100;
     --z_index_level5: 10;
     --z_index_level6: 1;

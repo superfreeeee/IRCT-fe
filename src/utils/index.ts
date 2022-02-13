@@ -1,4 +1,5 @@
 import { EventHandler, SyntheticEvent } from 'react';
+import { DataMapper } from './type';
 
 export const noop = () => {};
 
@@ -85,4 +86,17 @@ export const simpleThrottle = (cb: Function, delay: number = 300) => {
     clearTimeout(timer);
     timer = setTimeout(cb, delay, ...args);
   };
+};
+
+/**
+ * 将 T[] 列表转换为 keyOf(T) => T
+ */
+export const listToMapper = <T>(
+  list: T[],
+  keyOf: (item: T) => number | string,
+): DataMapper<T> => {
+  return list.reduce((mapper, item) => {
+    mapper[keyOf(item)] = item;
+    return mapper;
+  }, {} as DataMapper<T>);
 };

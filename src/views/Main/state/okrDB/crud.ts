@@ -36,7 +36,7 @@ import { calcNextId } from './utils';
 export const addO = ({
   entity: { content, userId },
   relativeUserIds,
-}: AddOPayload) => {
+}: AddOPayload): OEntity => {
   // calc new id
   const id = calcNextId(oTable);
 
@@ -90,7 +90,7 @@ export const editO = ({
 /**
  * KR
  */
-export const addKR = ({ content, upperOId }: AddKRPayload) => {
+export const addKR = ({ content, upperOId }: AddKRPayload): KREntity => {
   const id = calcNextId(krTable);
 
   const newEntity: KREntity = {
@@ -120,7 +120,7 @@ export const addProject = ({
   entity: { name, type },
   upperKRId,
   relativeUserIds,
-}: AddProjectPayload) => {
+}: AddProjectPayload): ProjectEntity => {
   const id = calcNextId(projectTable);
 
   const newEntity: ProjectEntity = {
@@ -142,6 +142,8 @@ export const addProject = ({
     duty: ProjectDuty.Unkonwn,
   }));
   projectRelUserTable.push(...newRelUsers);
+
+  return newEntity;
 };
 
 export const editProject = ({
@@ -179,7 +181,7 @@ export const editProject = ({
 export const addTodo = ({
   entity: { name, userId },
   upperProjectId,
-}: AddTodoPayload) => {
+}: AddTodoPayload): TodoEntity => {
   const id = calcNextId(todoTable);
 
   const newEntity: TodoEntity = {
@@ -198,8 +200,7 @@ export const addTodo = ({
   todoTable.push(newEntity);
   todoRelProjectTable.push(newRelProject);
 
-  console.log(`[tmp] newEntity`, newEntity);
-  console.log(`[tmp] newRelProject`, newRelProject);
+  return newEntity;
 };
 
 export const editTodo = ({ id, userId, name }: EditTodoPayload) => {

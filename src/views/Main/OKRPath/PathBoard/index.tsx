@@ -12,9 +12,12 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import {
   EntityType,
+  KREntity,
+  OEntity,
   ProjectType,
   TodoStatus,
   ViewPointEntity,
+  ViewPointRelation,
   ViewPointType,
 } from '@views/Main/state/okrDB/type';
 import {
@@ -39,12 +42,13 @@ import {
   contextMenuVisibleState,
 } from '@views/Main/state/modals/customContextMenu';
 import useClosestRef from '@hooks/useClosestRef';
-import { deepCopy } from '@utils';
+import { deepCopy, listToMapper } from '@utils';
 import {
   BoundNodeAction,
   DragBehavior,
   ForceLinks,
   ForceSimulation,
+  InitItemsFn,
   LinkColor,
   LinkColorOpacity,
   LinksSelection,
@@ -61,6 +65,8 @@ import {
   TransZoomBehavior,
 } from './type';
 import {
+  bindInitItems,
+  entityToNode,
   isTargetNode,
   onClickNode,
   onDrag,
@@ -70,6 +76,9 @@ import {
   onMaskClick,
   onTick,
   onTransZoom,
+  relationToLink,
+  renderLinks,
+  renderNodes,
   transition,
 } from './utils';
 import { PathBoardContainer } from './styles';
@@ -92,6 +101,7 @@ import {
   editProject,
   editTodo,
 } from '@views/Main/state/okrDB/crud';
+import { wrapId } from '@views/Main/state/okrDB/api';
 
 export interface PathBoardRef {
   resetZoom: () => void;
@@ -138,6 +148,11 @@ const PathBoard: ForwardRefExoticComponent<
   const boundLeaveNodeRef = useRef<BoundNodeAction>(null);
   const boundClickNodeRef = useRef<BoundNodeAction>(null);
   const boundDragRef = useRef<DragBehavior>(null);
+
+  const boundInitItemsRef = useRef<InitItemsFn>(null);
+  useEffect(() => {
+    boundInitItemsRef.current = bindInitItems(viewPointType);
+  }, [viewPointType]);
 
   // =============== actions ===============
   /**
@@ -268,63 +283,23 @@ const PathBoard: ForwardRefExoticComponent<
       const newNodes = [...restNodesSelection.data(), ...activeNodes];
 
       const { x, y } = targetNode;
-      nodesRef.current = originNodesSelection.data(newNodes).join(
-        (enter) => {
-          const selection = enter
+
+      nodesRef.current = renderNodes(
+        originNodesSelection,
+        newNodes,
+        (nodes) => {
+          nodes
             .each((node) => {
               // 初始化坐标
               node.x = x;
               node.y = y;
             })
-            .append('g')
-            .attr('class', (d) => `node-${d.data.id}`)
             .on('click', (e: MouseEvent) => e.stopPropagation())
             .on('mouseenter', boundEnterNodeRef.current)
             .on('mouseleave', boundLeaveNodeRef.current)
             .on('mousedown', handleMouseDownNode)
             .on('mouseup', handleMouseUpNode)
             .call(boundDragRef.current);
-
-          selection
-            .append('circle')
-            .attr('cx', x)
-            .attr('cy', y)
-            .attr('r', (d) => d.store.radius)
-            .attr('fill', (d) => d.store.color)
-            .style('transition', transition('fill'));
-
-          selection
-            .append('image')
-            .attr('x', x)
-            .attr('y', y)
-            .attr('width', (d) => d.store.imageWidth)
-            .attr('height', (d) => d.store.imageWidth)
-            // @ts-ignore
-            .attr('xlink:href', (d) => d.data.avatar)
-            // @ts-ignore
-            .attr('src', (d) => d.data.avatar)
-            .attr('transform', (d) => {
-              const { radius: r, imagePadding: pad } = d.store;
-              const offset = -r + pad;
-              return `translate(${offset}, ${offset})`;
-            })
-            .attr('clip-path', (d) => `url(#node-${d.data.id}-circle)`);
-
-          selection
-            .append('circle')
-            .attr('class', 'user-mask')
-            .attr('cx', x)
-            .attr('cy', y)
-            .attr('r', (d) => d.store.radius)
-            .attr('fill', 'black')
-            .attr('opacity', NodeImageMaskOpacity.Inactive)
-            .style('transition', transition('opacity'));
-
-          return selection;
-        },
-        (update) => update,
-        (exit) => {
-          exit.remove();
         },
       );
 
@@ -334,15 +309,7 @@ const PathBoard: ForwardRefExoticComponent<
       );
       const newLinks = [...restLinksSelection.data(), ...activeLinks];
 
-      linksRef.current = originLinksSelection.data(newLinks).join(
-        (enter) => {
-          return enter.append('g').attr('class', (d) => d.store.id);
-        },
-        (update) => update,
-        (exit) => {
-          exit.remove();
-        },
-      );
+      linksRef.current = renderLinks(originLinksSelection, newLinks);
 
       // update simulation
       const simulation = simulationRef.current;
@@ -405,13 +372,13 @@ const PathBoard: ForwardRefExoticComponent<
         .filter((d) => d === node)
         .node() as SVGGElement;
 
-      const { x: dx, height } = containerRef.current.getBoundingClientRect();
+      const { height } = containerRef.current.getBoundingClientRect();
       const { x, width, top } = nodeEl.getBoundingClientRect();
 
       clearTimeout(resetPositionTimer.current);
       setTooltipVisible(true);
       setTooltipPosition({
-        left: x - dx + width / 2,
+        left: x + width / 2,
         bottom: height - top + 10,
       });
       setTooltipData(deepCopy(node));
@@ -421,12 +388,12 @@ const PathBoard: ForwardRefExoticComponent<
   const resetPositionTimer = useRef(null);
   const closeTooltip = useCallback(() => {
     setTooltipVisible(false);
-    resetPositionTimer.current = setTimeout(() => {
-      setTooltipPosition({
-        left: 0,
-        bottom: 24,
-      });
-    }, 500);
+    // resetPositionTimer.current = setTimeout(() => {
+    //   setTooltipPosition({
+    //     left: 0,
+    //     bottom: 24,
+    //   });
+    // }, 500);
   }, []);
   const handleLeaveNode: NodeActionCallback = useCallback(() => {
     closeTooltip();
@@ -480,33 +447,33 @@ const PathBoard: ForwardRefExoticComponent<
   const createNode = (payload: EditEntityModalResultPayload) => {
     console.log(`[PathBoard] createNode, payload:`, payload);
     const {
-      entity: { content },
+      entity: { content, seq },
       selectedUsers,
     } = payload;
     const {
-      data: { originId },
+      data: { id: sourceNodeId, originId },
     } = editModalSource;
 
     const sourceUserId = originId as string;
     const sourceItemId = originId as number;
     const relativeUserIds = selectedUsers.map((user) => user.id);
 
-    let res, newEntity: ViewPointEntity;
+    let res;
     // update db
     switch (editModalTargetType) {
       case EntityType.O:
-        addO({
+        res = addO({
           entity: { content, userId: sourceUserId },
           relativeUserIds,
         });
         break;
 
       case EntityType.KR:
-        addKR({ content, upperOId: sourceItemId });
+        res = addKR({ content, upperOId: sourceItemId });
         break;
 
       case EntityType.Project:
-        addProject({
+        res = addProject({
           entity: { name: content, type: ProjectType.Unkonwn },
           upperKRId: sourceItemId,
           relativeUserIds,
@@ -514,7 +481,7 @@ const PathBoard: ForwardRefExoticComponent<
         break;
 
       case EntityType.Todo:
-        addTodo({
+        res = addTodo({
           entity: { name: content, userId: selectedUsers[0].id },
           upperProjectId: sourceItemId,
         });
@@ -526,11 +493,51 @@ const PathBoard: ForwardRefExoticComponent<
           payload,
         );
       default:
-        break;
+        // update db fail
+        return;
     }
 
     // update graph
-    // TODO
+    const newEntity: ViewPointEntity = {
+      type: editModalTargetType,
+      id: wrapId(editModalTargetType, res.id, seq),
+      originId: res.id,
+      seq,
+      content,
+    };
+    const newRelation: ViewPointRelation = {
+      source: sourceNodeId,
+      target: newEntity.id,
+    };
+
+    const newNode = entityToNode(newEntity);
+    const newLink = relationToLink(newRelation);
+
+    const sourceNodes = sourceRef.current.nodes;
+    sourceNodes.push(newNode);
+
+    const nodeMap = listToMapper(sourceNodes, (node) => node.id);
+    boundInitItemsRef.current([newNode], [newLink], nodeMap);
+
+    switch (editModalTargetType) {
+      case EntityType.O:
+        break;
+
+      case EntityType.KR:
+        break;
+
+      case EntityType.Project:
+        break;
+
+      case EntityType.Todo:
+        break;
+
+      default:
+        return;
+    }
+
+    console.log(`[tmp] new Entity`, newEntity);
+    console.log(`[tmp] new Relation`, newRelation);
 
     // update inherit tree
     // TODO
@@ -816,54 +823,10 @@ const PathBoard: ForwardRefExoticComponent<
     /**
      * links
      */
-    const linksSelection = (linksRef.current = root
-      .append('g')
-      .attr('class', 'links')
-      .selectAll('g')
-      .data(links)
-      .join('g')
-      .attr('class', (d) => d.store.id));
-
-    // 关系图形
-    linksSelection
-      .filter((link) => !link.additional && !link.relative) // 主边
-      .append('path')
-      .attr('d', (d) => {
-        const r1 = (d.source as PathNode).store.radius;
-        const r2 = (d.target as PathNode).store.radius;
-        return `M0 0
-           V${r1}
-           Q1 0,2 ${r2}
-           V-${r2}
-           Q1 0,0 ${-r1} Z`;
-      })
-      .attr('fill', (d) => `url(#${d.store.colorId})`);
-
-    // 关系颜色
-    const gradients = linksSelection
-      .filter((link) => !link.additional)
-      .append('linearGradient')
-      .attr('id', (d) => d.store.colorId);
-    gradients
-      .append('stop')
-      .attr('offset', '0%')
-      .attr('stop-color', LinkColor.Inactive)
-      .attr('stop-opacity', LinkColorOpacity.Inactive)
-      .style('transition', transition('all'));
-    gradients
-      .append('stop')
-      .attr('offset', '100%')
-      .attr('stop-color', LinkColor.Inactive)
-      .attr('stop-opacity', LinkColorOpacity.Inactive)
-      .style('transition', transition('all'));
-
-    linksSelection
-      .filter((link) => link.additional) // 额外边
-      .append('line')
-      .attr('stroke', LinkColor.Hidden)
-      .attr('stroke-dasharray', [10, 8])
-      .attr('stroke-width', 4)
-      .style('transition', transition('stroke'));
+    linksRef.current = renderLinks(
+      root.append('g').attr('class', 'links').selectAll('g'),
+      links,
+    );
 
     /**
      * nodes
@@ -882,74 +845,18 @@ const PathBoard: ForwardRefExoticComponent<
     ));
     const boundDrag = (boundDragRef.current = onDrag(simulation));
 
-    const nodesSelection = (nodesRef.current = root
-      .append('g')
-      .attr('class', 'nodes')
-      .selectAll('g')
-      .data(nodes)
-      .join('g')
-      .attr('class', (d) => `node-${d.data.id}`)
-      .on('click', boundClickNode)
-      .on('mouseenter', boundEnterNode)
-      .on('mouseleave', boundLeaveNode)
-      .on('mousedown', handleMouseDownNode)
-      .on('mouseup', handleMouseUpNode)
-      .call(boundDrag));
-
-    // 节点背景
-    nodesSelection
-      .append('circle')
-      .attr('r', (d) => d.store.radius)
-      .attr('fill', (d) => d.store.color)
-      .style('transition', transition('fill'));
-
-    // 用户头像
-    const userNodes = nodesSelection.filter(
-      (d) => d.data.type === EntityType.User,
+    nodesRef.current = renderNodes(
+      root.append('g').attr('class', 'nodes').selectAll('g'),
+      nodes,
+      (nodes) =>
+        nodes
+          .on('click', boundClickNode)
+          .on('mouseenter', boundEnterNode)
+          .on('mouseleave', boundLeaveNode)
+          .on('mousedown', handleMouseDownNode)
+          .on('mouseup', handleMouseUpNode)
+          .call(boundDrag),
     );
-
-    userNodes
-      .append('image')
-      .attr('width', (d) => d.store.imageWidth)
-      .attr('height', (d) => d.store.imageWidth)
-      // @ts-ignore
-      .attr('xlink:href', (d) => d.data.avatar)
-      // @ts-ignore
-      .attr('src', (d) => d.data.avatar)
-      .attr('transform', (d) => {
-        const { radius: r, imagePadding: pad } = d.store;
-        const offset = -r + pad;
-        return `translate(${offset}, ${offset})`;
-      })
-      .attr('clip-path', (d) => `url(#node-${d.data.id}-circle)`);
-
-    userNodes
-      .append('circle')
-      .attr('class', 'user-mask')
-      .attr('r', (d) => d.store.radius)
-      .attr('fill', 'black')
-      .attr('opacity', NodeImageMaskOpacity.Inactive)
-      .style('transition', transition('opacity'));
-
-    // 节点文字
-    const itemNodes = nodesSelection.filter(
-      (d) => d.data.type !== EntityType.User,
-    );
-
-    itemNodes
-      .select('circle')
-      .attr('stroke', '#FFFFFF')
-      .attr('stroke-width', NodeStrokeWidth.Inactive);
-
-    itemNodes
-      .append('text')
-      .text((d) => d.store.text)
-      .attr('fill', NodeTextColor.Inactive)
-      .style('user-select', 'none')
-      .style('dominant-baseline', 'middle')
-      .style('text-anchor', 'middle')
-      .style('font-size', (d) => `${d.store.fontSize}px`)
-      .style('transition', transition('fill'));
 
     // bind simulation tick
     const boundOnTick = onTick({

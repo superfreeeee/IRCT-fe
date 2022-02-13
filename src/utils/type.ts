@@ -12,3 +12,7 @@ export type UnObserveMouseActions = {
 export interface PlainFn {
   (): void;
 }
+
+export type DataMapper<T> = {
+  [key: number | string]: T;
+};

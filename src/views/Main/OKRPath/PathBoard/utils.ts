@@ -1,9 +1,15 @@
 import * as d3 from 'd3';
 import { D3DragEvent } from 'd3';
 
-import { EntityType, ViewPointType } from '@views/Main/state/okrDB/type';
+import {
+  EntityType,
+  ViewPointEntity,
+  ViewPointRelation,
+  ViewPointType,
+} from '@views/Main/state/okrDB/type';
 import { PlainFn } from '@utils/type';
 import {
+  InitItemsFn,
   ItemsRefObj,
   LinkColor,
   LinkColorOpacity,
@@ -81,7 +87,7 @@ export const nodeRadius = (viewPointType: ViewPointType): CalcNodeRadius => {
 };
 
 /**
- *
+ * 节点边缘宽度
  */
 interface CalcNodeImageWidth {
   (d: PathNode): number;
@@ -255,6 +261,223 @@ export const linkColor = (
 export const linkId = (link: PathLink) => {
   const linkId = (link.store.id = `link-${link.source}-${link.target}`);
   link.store.colorId = `${linkId}-color`;
+};
+
+// ========== data transformer ==========
+export const entityToNode = (entity: ViewPointEntity): PathNode => {
+  return {
+    id: entity.id,
+    data: entity,
+    store: {
+      // static
+      relative: entity.relative,
+      // dynamic
+      state: NodeState.Inactive,
+    },
+    draggable: true,
+    // draggable: entity.type !== EntityType.User,
+    seq: entity.seq,
+  };
+};
+
+export const relationToLink = (relation: ViewPointRelation): PathLink => {
+  const { additional, relative, force } = relation;
+
+  return {
+    ...relation,
+    store: {},
+    additional: !!additional,
+    relative,
+    force: force !== undefined ? force : 1,
+    distance: relative ? 0 : 30,
+  };
+};
+
+export const bindInitItems = (viewPointType: ViewPointType): InitItemsFn => {
+  const _calcRadius = nodeRadius(viewPointType);
+  const _calcWidth = nodeImageWidth(viewPointType);
+  const _calcText = nodeText(viewPointType);
+
+  return (
+    nodes: PathNode[],
+    links: PathLink[],
+    nodeMap: { [nodeId: string]: PathNode },
+  ) => {
+    // init nodes
+    nodes.forEach((node) => {
+      _calcRadius(node);
+      _calcWidth(node);
+      _calcText(node);
+      nodeColor(node);
+      nodeStrokeWidth(node);
+    });
+
+    // init links
+    links.forEach((link) => {
+      linkColor(link, nodeMap);
+      linkId(link);
+    });
+  };
+};
+
+// ========== render data ==========
+/**
+ * 渲染主边
+ */
+export const renderLinks = (
+  links: LinksSelection,
+  data: PathLink[],
+): LinksSelection => {
+  return links.data(data).join(
+    (enter) => {
+      const linksGroup = enter.append('g').attr('class', (d) => d.store.id);
+
+      // 主边
+      const mainLinks = linksGroup.filter(
+        (link) => !link.additional && !link.relative,
+      );
+      // O-O 边
+      const additionalLinks = linksGroup.filter((link) => link.additional); // 额外边
+
+      /**
+       * 1. 主边图形
+       */
+      mainLinks
+        .append('path')
+        .attr('d', (d) => {
+          const r1 = (d.source as PathNode).store.radius;
+          const r2 = (d.target as PathNode).store.radius;
+          return `M0 0
+           V${r1}
+           Q1 0,2 ${r2}
+           V-${r2}
+           Q1 0,0 ${-r1} Z`;
+        })
+        .attr('fill', (d) => `url(#${d.store.colorId})`);
+
+      /**
+       * 2. 主边渐变色
+       */
+      const gradients = mainLinks
+        .filter((link) => !link.additional && !link.relative) // 主边
+        .append('linearGradient')
+        .attr('id', (d) => d.store.colorId);
+      gradients
+        .append('stop')
+        .attr('offset', '0%')
+        .attr('stop-color', LinkColor.Inactive)
+        .attr('stop-opacity', LinkColorOpacity.Inactive)
+        .style('transition', transition('all'));
+      gradients
+        .append('stop')
+        .attr('offset', '100%')
+        .attr('stop-color', LinkColor.Inactive)
+        .attr('stop-opacity', LinkColorOpacity.Inactive)
+        .style('transition', transition('all'));
+
+      /**
+       * 3. O-O 边图形 + 颜色
+       */
+      additionalLinks
+        .append('line')
+        .attr('stroke', LinkColor.Hidden)
+        .attr('stroke-dasharray', [10, 8])
+        .attr('stroke-width', 4)
+        .style('transition', transition('stroke'));
+
+      return linksGroup;
+    },
+    (update) => update,
+    (exit) => {
+      exit.remove();
+    },
+  );
+};
+
+/**
+ * 渲染主节点
+ */
+export const renderNodes = (
+  nodes: NodesSelection,
+  data: PathNode[],
+  addEventListeners?: (nodes: NodesSelection) => void,
+): NodesSelection => {
+  return nodes.data(data).join(
+    (enter) => {
+      const nodesGroup = enter
+        .append('g')
+        .attr('class', (d) => `node-${d.data.id}`);
+
+      addEventListeners && addEventListeners(nodesGroup);
+
+      /**
+       * 1. 节点背景
+       */
+      nodesGroup
+        .append('circle')
+        .attr('r', (d) => d.store.radius)
+        .attr('fill', (d) => d.store.color)
+        .style('transition', transition('fill'));
+
+      /**
+       * 2. 人物节点
+       */
+      const userNodes = nodesGroup.filter(
+        (d) => d.data.type === EntityType.User,
+      );
+
+      userNodes
+        .append('image')
+        .attr('width', (d) => d.store.imageWidth)
+        .attr('height', (d) => d.store.imageWidth)
+        .attr('xlink:href', (d) => d.data.avatar)
+        .attr('src', (d) => d.data.avatar)
+        .attr('transform', (d) => {
+          const { radius: r, imagePadding: pad } = d.store;
+          const offset = -r + pad;
+          return `translate(${offset}, ${offset})`;
+        })
+        .attr('clip-path', (d) => `url(#node-${d.data.id}-circle)`);
+
+      userNodes
+        .append('circle')
+        .attr('class', 'user-mask')
+        .attr('r', (d) => d.store.radius)
+        .attr('fill', 'black')
+        .attr('opacity', NodeImageMaskOpacity.Inactive)
+        .style('transition', transition('opacity'));
+
+      /**
+       * 3. 物件节点
+       */
+      const itemNodes = nodesGroup.filter(
+        (d) => d.data.type !== EntityType.User,
+      );
+
+      // 节点描边
+      itemNodes
+        .select('circle')
+        .attr('stroke', '#FFFFFF')
+        .attr('stroke-width', NodeStrokeWidth.Inactive);
+
+      // 节点文字
+      itemNodes
+        .append('text')
+        .text((d) => d.store.text)
+        .attr('fill', NodeTextColor.Inactive)
+        .style('user-select', 'none')
+        .style('dominant-baseline', 'middle')
+        .style('text-anchor', 'middle')
+        .style('font-size', (d) => `${d.store.fontSize}px`)
+        .style('transition', transition('fill'));
+
+      return nodesGroup;
+    },
+    (update) => update,
+    (exit) => {
+      exit.remove();
+    },
+  );
 };
 
 // ========== common style ==========

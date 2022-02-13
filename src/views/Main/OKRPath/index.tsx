@@ -27,6 +27,8 @@ import {
   PathNode,
 } from './PathBoard/type';
 import {
+  bindInitItems,
+  entityToNode,
   linkColor,
   linkId,
   nodeColor,
@@ -34,11 +36,13 @@ import {
   nodeRadius,
   nodeStrokeWidth,
   nodeText,
+  relationToLink,
 } from './PathBoard/utils';
 import ItemTooltip from './ItemTooltip';
 import { PathListSource } from './type';
 import CustomContextMenu from './CustomContextMenu';
 import EditEntityModal from './EditEntityModal';
+import { listToMapper } from '@utils';
 
 const OKRPath = () => {
   const visible = useRecoilValue(okrPathVisibleState);
@@ -79,51 +83,15 @@ const OKRPath = () => {
      *    api => PathNode/PathLink
      */
     // data transform
-    const nodes: PathNode[] = entities.map(
-      (entity: ViewPointEntity): PathNode => ({
-        id: entity.id,
-        data: entity,
-        store: {
-          state: NodeState.Inactive,
-          relative: entity.relative,
-        },
-        draggable: true,
-        // draggable: entity.type !== EntityType.User,
-        seq: entity.seq,
-      }),
-    );
-    const links: PathLink[] = relations.map((rel) => ({
-      ...rel,
-      store: {},
-      additional: !!rel.additional,
-      relative: rel.relative,
-      force: rel.force !== undefined ? rel.force : 1,
-      distance: rel.relative ? 0 : 30,
-    }));
+    const nodes: PathNode[] = entities.map(entityToNode);
+    const links: PathLink[] = relations.map(relationToLink);
 
     /**
      * 2. 计算固定状态
      *    calc store init
      */
-    // calc node side data(store in d.store)
-    const _calcRadius = nodeRadius(viewPointType);
-    const _calcWidth = nodeImageWidth(viewPointType);
-    const _calcText = nodeText(viewPointType);
-    const _nodeMap = {}; // nodeId => node
-    nodes.forEach((node) => {
-      _calcRadius(node);
-      _calcWidth(node);
-      _calcText(node);
-      nodeColor(node);
-      nodeStrokeWidth(node);
-      // store nodeMap for linkColor
-      _nodeMap[node.id] = node;
-    });
-    // calc link side data(store in d.store)
-    links.forEach((link) => {
-      linkColor(link, _nodeMap);
-      linkId(link);
-    });
+    const _nodeMap = listToMapper(nodes, (node) => node.id);
+    bindInitItems(viewPointType)(nodes, links, _nodeMap);
 
     /**
      * 3. 更新 board source

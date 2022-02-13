@@ -16,7 +16,7 @@ export const StateTooltipWrapper = styled.div`
   background-color: var(--menu_item_tip_bg);
   transform: translate(-50%, -100%);
   transition: all var(--trans_speed_level2);
-  z-index: var(--z_index_level1);
+  z-index: var(--z_index_level3);
   user-select: none;
 
   &::after {
