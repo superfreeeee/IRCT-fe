@@ -133,7 +133,7 @@ const CustomContextMenu: FC<CustomContextMenuProps> = ({ listRef }) => {
     };
 
     const pushPath = () => {
-      console.log(`[CustomContextMenu] pushPath`);
+      console.log(`[CustomContextMenu] pushPath: ${originId}`);
       updateStack({
         type: ViewPointStackActionType.Push,
         record: {
@@ -145,7 +145,7 @@ const CustomContextMenu: FC<CustomContextMenuProps> = ({ listRef }) => {
     };
 
     const editNode = () => {
-      console.log(`[CustomContextMenu] editNode`);
+      console.log(`[CustomContextMenu] editNode: ${type} ${originId}`);
       openModal({
         actionType: EditEntityModalActionType.Edit,
         targetType: type,
@@ -155,7 +155,7 @@ const CustomContextMenu: FC<CustomContextMenuProps> = ({ listRef }) => {
     };
 
     const createNode = () => {
-      console.log(`[CustomContextMenu] createNode`);
+      console.log(`[CustomContextMenu] createNode: ${type} ${originId}`);
       const targetType = _createTargetTypeMap[type];
       if (!targetType) {
         console.error(`[CustomContextMenu] invalid createNode base on Todo`);
@@ -173,7 +173,7 @@ const CustomContextMenu: FC<CustomContextMenuProps> = ({ listRef }) => {
     };
 
     const deleteNode = () => {
-      console.log(`[CustomContextMenu] deleteNode`);
+      console.log(`[CustomContextMenu] deleteNode: ${type} ${originId}`);
       openModal({
         actionType: EditEntityModalActionType.Delete,
         targetType: type,

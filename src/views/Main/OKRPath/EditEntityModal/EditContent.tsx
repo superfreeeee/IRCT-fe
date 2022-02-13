@@ -7,7 +7,7 @@ import { useRecoilValue } from 'recoil';
 import { editEntityModalVisibleState } from '@views/Main/state/modals/editEntityModal';
 
 interface EditContentProps {
-  content: string;
+  content: { content: string };
   contentRef: MutableRefObject<string>;
 }
 
@@ -21,7 +21,7 @@ const EditContent: FC<EditContentProps> = ({
   // sync content
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   useEffect(() => {
-    setInput(originContent);
+    setInput(originContent.content);
   }, [originContent]);
 
   // auto focus

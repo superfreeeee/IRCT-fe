@@ -20,16 +20,45 @@ import {
   ProjectDuty,
   TodoEntity,
   EditTodoPayload,
+  OEntity,
+  EditKRPayload,
+  AddKRPayload,
+  ProjectEntity,
+  ProjectRelKREntity,
+  TodoRelProjectEntity,
+  TodoStatus,
 } from './type';
+import { calcNextId } from './utils';
 
 /**
  * O
  */
-export const addO = (o: AddOPayload) => {
-  const { relOs, ...oEntity } = o;
+export const addO = ({
+  entity: { content, userId },
+  relativeUserIds,
+}: AddOPayload) => {
+  // calc new id
+  const id = calcNextId(oTable);
 
-  oTable.push(oEntity);
-  oRelTable.push(...relOs);
+  // update oTable
+  const newEntity: OEntity = {
+    id,
+    content,
+    userId,
+  };
+  oTable.push(newEntity);
+
+  // update oRelTable
+  const relUserIdSet = new Set(relativeUserIds);
+  const newRels: ORelEntity[] = oTable
+    .filter((o) => relUserIdSet.has(o.userId))
+    .map((o) => ({
+      OId: id,
+      upperOId: o.id,
+    }));
+  oRelTable.push(...newRels);
+
+  return newEntity;
 };
 
 export const editO = ({
@@ -61,11 +90,20 @@ export const editO = ({
 /**
  * KR
  */
-export const addKR = (kr: KREntity) => {
-  krTable.push(kr);
+export const addKR = ({ content, upperOId }: AddKRPayload) => {
+  const id = calcNextId(krTable);
+
+  const newEntity: KREntity = {
+    id,
+    content,
+    upperOId,
+  };
+  krTable.push(newEntity);
+
+  return newEntity;
 };
 
-export const editKR = ({ id, content }: KREntity) => {
+export const editKR = ({ id, content }: EditKRPayload) => {
   const index = krTable.findIndex((kr) => kr.id === id);
   if (index < 0) {
     console.error(`[okrDB.crud] editKR: kr.id = ${id} not found`);
@@ -78,12 +116,32 @@ export const editKR = ({ id, content }: KREntity) => {
 /**
  * Project
  */
-export const addProject = (p: AddProjectPayload) => {
-  const { relKRs, relUsers, ...pEntity } = p;
+export const addProject = ({
+  entity: { name, type },
+  upperKRId,
+  relativeUserIds,
+}: AddProjectPayload) => {
+  const id = calcNextId(projectTable);
 
-  projectTable.push(pEntity);
-  projectRelKRTable.push(...relKRs);
-  projectRelUserTable.push(...relUsers);
+  const newEntity: ProjectEntity = {
+    id,
+    name,
+    type,
+  };
+  projectTable.push(newEntity);
+
+  const newRelKR: ProjectRelKREntity = {
+    projectId: id,
+    KRId: upperKRId,
+  };
+  projectRelKRTable.push(newRelKR);
+
+  const newRelUsers: ProjectRelUserEntity[] = relativeUserIds.map((userId) => ({
+    projectId: id,
+    userId,
+    duty: ProjectDuty.Unkonwn,
+  }));
+  projectRelUserTable.push(...newRelUsers);
 };
 
 export const editProject = ({
@@ -118,12 +176,30 @@ export const editProject = ({
 /**
  * \Todo
  */
-export const addTodo = (t: AddTodoPayload) => {
-  const { relProjects, ...tEntity } = t;
+export const addTodo = ({
+  entity: { name, userId },
+  upperProjectId,
+}: AddTodoPayload) => {
+  const id = calcNextId(todoTable);
 
-  todoTable.push(tEntity);
-  todoRelProjectTable.push(...relProjects);
-  // console.log(`[tmp] todoTable`, [...todoTable]);
+  const newEntity: TodoEntity = {
+    id,
+    ddl: '',
+    status: TodoStatus.Incomplete,
+    userId,
+    name,
+  };
+
+  const newRelProject: TodoRelProjectEntity = {
+    todoId: id,
+    projectId: upperProjectId,
+  };
+
+  todoTable.push(newEntity);
+  todoRelProjectTable.push(newRelProject);
+
+  console.log(`[tmp] newEntity`, newEntity);
+  console.log(`[tmp] newRelProject`, newRelProject);
 };
 
 export const editTodo = ({ id, userId, name }: EditTodoPayload) => {

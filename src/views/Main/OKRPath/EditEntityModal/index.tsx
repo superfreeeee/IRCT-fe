@@ -89,15 +89,9 @@ const EditEntityModal = () => {
         content,
       };
 
-      const relation: ViewPointRelation = {
-        source: source.data.id,
-        target: '',
-      };
-
       const result = {
         entity,
-        relation,
-        selectedUsers: undefined,
+        selectedUsers: [],
       };
 
       if (
@@ -127,7 +121,7 @@ const EditEntityModal = () => {
 
       const result = {
         entity,
-        selectedUsers: undefined,
+        selectedUsers: [],
       };
 
       if (
@@ -272,8 +266,9 @@ const EditEntityModal = () => {
       });
     }
 
-    const initContent =
-      actionType === EditEntityModalActionType.Create ? '' : content;
+    const initContent = {
+      content: actionType === EditEntityModalActionType.Create ? '' : content,
+    };
 
     return (
       <EditEntityModalMain>

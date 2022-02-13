@@ -16,7 +16,7 @@ import {
   ProjectRelKREntity,
   ProjectRelUserEntity,
   TodoEntity,
-  TodoRelProjectTable,
+  TodoRelProjectEntity,
   UserEntity,
   UserRelEntity,
 } from './type';
@@ -53,4 +53,4 @@ export const projectRelKRTable: ProjectRelKREntity[] = _projectRelKRTable;
 
 // @ts-ignore
 export const todoTable: TodoEntity[] = _todoTable;
-export const todoRelProjectTable: TodoRelProjectTable[] = _todoRelProjectTable;
+export const todoRelProjectTable: TodoRelProjectEntity[] = _todoRelProjectTable;

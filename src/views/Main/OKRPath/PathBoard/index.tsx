@@ -14,6 +14,7 @@ import {
   EntityType,
   ProjectType,
   TodoStatus,
+  ViewPointEntity,
   ViewPointType,
 } from '@views/Main/state/okrDB/type';
 import {
@@ -81,6 +82,10 @@ import {
 } from '@views/Main/state/modals/editEntityModal';
 import useWaitFor from '@hooks/useWaitFor';
 import {
+  addKR,
+  addO,
+  addProject,
+  addTodo,
   deleteTodo,
   editKR,
   editO,
@@ -474,8 +479,55 @@ const PathBoard: ForwardRefExoticComponent<
   const editModalResult = useRecoilValue(editEntityModalResultState);
   const createNode = (payload: EditEntityModalResultPayload) => {
     console.log(`[PathBoard] createNode, payload:`, payload);
+    const {
+      entity: { content },
+      selectedUsers,
+    } = payload;
+    const {
+      data: { originId },
+    } = editModalSource;
+
+    const sourceUserId = originId as string;
+    const sourceItemId = originId as number;
+    const relativeUserIds = selectedUsers.map((user) => user.id);
+
+    let res, newEntity: ViewPointEntity;
     // update db
-    // TODO
+    switch (editModalTargetType) {
+      case EntityType.O:
+        addO({
+          entity: { content, userId: sourceUserId },
+          relativeUserIds,
+        });
+        break;
+
+      case EntityType.KR:
+        addKR({ content, upperOId: sourceItemId });
+        break;
+
+      case EntityType.Project:
+        addProject({
+          entity: { name: content, type: ProjectType.Unkonwn },
+          upperKRId: sourceItemId,
+          relativeUserIds,
+        });
+        break;
+
+      case EntityType.Todo:
+        addTodo({
+          entity: { name: content, userId: selectedUsers[0].id },
+          upperProjectId: sourceItemId,
+        });
+        break;
+
+      case EntityType.User:
+        console.warn(
+          `[PathBoard] createNode: unsable to createNode user`,
+          payload,
+        );
+      default:
+        break;
+    }
 
     // update graph
     // TODO
@@ -489,27 +541,31 @@ const PathBoard: ForwardRefExoticComponent<
       entity: { originId, content },
       selectedUsers,
     } = payload;
+
+    const id = originId as number;
+    const relativeUserIds = selectedUsers.map((user) => user.id);
+
     // update db
     switch (editModalTargetType) {
       case EntityType.O:
         editO({
-          entity: { id: originId as number, content, userId: '' },
-          relativeUserIds: selectedUsers.map((user) => user.id),
+          entity: { id, content, userId: '' },
+          relativeUserIds,
         });
         break;
 
       case EntityType.KR:
-        editKR({ id: originId as number, content, upperOId: -1 });
+        editKR({ id, content });
         break;
 
       case EntityType.Project:
         editProject({
           entity: {
-            id: originId as number,
+            id,
             name: content,
             type: ProjectType.Unkonwn,
           },
-          relativeUserIds: selectedUsers.map((user) => user.id),
+          relativeUserIds,
         });
         break;
 

@@ -32,7 +32,9 @@ const RemoveableUserAvatar: FC<RemoveableUserAvatarProps> = ({
 }) => {
   const { maskOn, onClick } = useMemo(() => {
     if (remove && reselect) {
-      console.warn(`[RemoveableUserAvatar] multiple action available`);
+      console.warn(
+        `[RemoveableUserAvatar] multiple action available, remove first`,
+      );
     }
 
     const maskOn = !!(remove || reselect);
@@ -136,7 +138,6 @@ const SelectedUserList: FC<SelectedUserListProps> = ({
     !modalVisible,
     () => {
       if (selectedUserId) {
-        console.log(`selectedUser = ${selectedUserId}`, selectedUserInfo);
         isWaitingRef.current = false;
 
         const { id, name, avatar } = selectedUserInfo;

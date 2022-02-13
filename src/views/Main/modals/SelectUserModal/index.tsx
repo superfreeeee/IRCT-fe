@@ -27,8 +27,7 @@ const SelectUserModal = () => {
   const onSelected = useCallback(
     (user: TeamData) => {
       if (selectable) {
-        console.log(`[SelectUserModal] select ${user.id}`);
-        console.table(user);
+        console.log(`[SelectUserModal] select ${user.id}`, user);
         setControllerInfo({
           visible: false,
           selectedUserId: user.id,

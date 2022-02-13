@@ -135,7 +135,6 @@ export interface OpenEditModalParams {
 
 export interface EditEntityModalResultPayload {
   entity: ViewPointEntity;
-  relation?: ViewPointRelation;
   selectedUsers: UserEntity[];
 }
 

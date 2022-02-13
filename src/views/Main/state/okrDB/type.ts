@@ -55,8 +55,12 @@ export interface ORelEntity {
   upperOId: number;
 }
 
-export interface AddOPayload extends OEntity {
-  relOs: ORelEntity[];
+export interface AddOPayload {
+  entity: {
+    content: string;
+    userId: string;
+  };
+  relativeUserIds: string[];
 }
 
 export interface EditOPayload {
@@ -68,6 +72,16 @@ export interface KREntity {
   id: number;
   content: string;
   upperOId: number;
+}
+
+export interface AddKRPayload {
+  content: string;
+  upperOId: number;
+}
+
+export interface EditKRPayload {
+  id: number;
+  content: string;
 }
 
 export interface ProjectEntity {
@@ -87,9 +101,10 @@ export interface ProjectRelKREntity {
   KRId: number;
 }
 
-export interface AddProjectPayload extends ProjectEntity {
-  relUsers: ProjectRelUserEntity[];
-  relKRs: ProjectRelKREntity[];
+export interface AddProjectPayload {
+  entity: { name: string; type: ProjectType };
+  upperKRId: number;
+  relativeUserIds: string[];
 }
 
 export interface EditProjectPayload {
@@ -105,13 +120,17 @@ export interface TodoEntity {
   name: string;
 }
 
-export interface TodoRelProjectTable {
+export interface TodoRelProjectEntity {
   todoId: number;
   projectId: number;
 }
 
-export interface AddTodoPayload extends TodoEntity {
-  relProjects: TodoRelProjectTable[];
+export interface AddTodoPayload {
+  entity: {
+    name: string;
+    userId: string;
+  };
+  upperProjectId: number;
 }
 
 export interface EditTodoPayload {

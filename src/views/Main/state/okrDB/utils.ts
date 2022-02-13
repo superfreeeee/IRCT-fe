@@ -1,3 +1,4 @@
+import { max } from 'd3';
 import {
   EntityNode,
   EntityNodeMap,
@@ -20,4 +21,12 @@ export const createEntityNode = (
     expand: node.type === EntityType.O, // default expand for O Entity
     isTarget: false,
   };
+};
+
+export const calcNextId = (itemTable: { id: number }[]): number => {
+  return (
+    itemTable.reduce((maxId, { id }) => {
+      return Math.max(maxId, id);
+    }, 0) + 1
+  );
 };
