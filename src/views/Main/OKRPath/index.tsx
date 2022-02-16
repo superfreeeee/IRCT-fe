@@ -2,47 +2,27 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import classNames from 'classnames';
 
+import { listToMapper } from '@utils';
 import {
   okrPathVisibleState,
   viewPointCenterUserIdState,
   viewPointTypeState,
 } from '../state/okrPath';
-import { OKRPathContainer } from './styles';
-import SideActions from './SideActions';
-import PathBoard, { PathBoardRef } from './PathBoard';
-import PathList, { PathListRef } from './PathList';
 import {
   getOrganizationViewPoint,
   getPersonalViewPoint,
 } from '../state/okrDB/api';
-import {
-  ViewPointEntity,
-  ViewPointSource,
-  ViewPointType,
-} from '../state/okrDB/type';
-import {
-  NodeState,
-  PathBoardSource,
-  PathLink,
-  PathNode,
-} from './PathBoard/type';
-import {
-  bindInitItems,
-  entityToNode,
-  linkColor,
-  linkId,
-  nodeColor,
-  nodeImageWidth,
-  nodeRadius,
-  nodeStrokeWidth,
-  nodeText,
-  relationToLink,
-} from './PathBoard/utils';
+import { ViewPointSource, ViewPointType } from '../state/okrDB/type';
+import { PathBoardSource, PathLink, PathNode } from './PathBoard/type';
+import { bindInitItems, entityToNode, relationToLink } from './PathBoard/utils';
 import ItemTooltip from './ItemTooltip';
-import { PathListSource } from './type';
 import CustomContextMenu from './CustomContextMenu';
 import EditEntityModal from './EditEntityModal';
-import { listToMapper } from '@utils';
+import SideActions from './SideActions';
+import PathBoard, { PathBoardRef } from './PathBoard';
+import PathList, { PathListRef } from './PathList';
+import { PathListSource } from './type';
+import { OKRPathContainer } from './styles';
 
 const OKRPath = () => {
   const visible = useRecoilValue(okrPathVisibleState);

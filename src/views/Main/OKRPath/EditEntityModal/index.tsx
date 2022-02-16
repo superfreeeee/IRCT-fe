@@ -13,14 +13,12 @@ import {
   EntityType,
   UserEntity,
   ViewPointEntity,
-  ViewPointRelation,
 } from '@views/Main/state/okrDB/type';
 import {
   EditEntityModalActionType,
   EditEntityModalResponseStatus,
 } from '@views/Main/state/type';
 import { useCloseEditEntityModal } from '@views/Main/state/modals/hooks';
-import useInput from '@hooks/useInput';
 import useClickDetect from '@hooks/useClickDetect';
 import BoxIcon, { BoxIconType } from '@components/BoxIcon';
 import ItemTypePoint from '../ItemTooltip/ItemTypePoint';
@@ -74,7 +72,7 @@ const EditEntityModal = () => {
       return;
     }
 
-    const content = contentRef.current.replace(/\W+/g, ' ');
+    const content = contentRef.current.replace(/[ \n\t]+/g, ' ');
     const users = usersRef.current;
 
     if (actionType === EditEntityModalActionType.Create) {

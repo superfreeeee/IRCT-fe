@@ -9,27 +9,27 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
 import classNames from 'classnames';
 
+import useClickDetect from '@hooks/useClickDetect';
+import BoxIcon, { BoxIconType } from '@components/BoxIcon';
+import { deepCopy } from '@utils';
+import { EntityType, ViewPointType } from '../state/okrDB/type';
 import {
   contextMenuPositionState,
   contextMenuTargetState,
   contextMenuVisibleState,
 } from '../state/modals/customContextMenu';
-import useClickDetect from '@hooks/useClickDetect';
-import BoxIcon, { BoxIconType } from '@components/BoxIcon';
-import { EntityType, ViewPointType } from '../state/okrDB/type';
-import { ContextMenuOption } from './type';
 import { okrPathVisibleState, viewPointStackUpdater } from '../state/okrPath';
 import {
   EditEntityModalActionType,
   TabOption,
   ViewPointStackActionType,
 } from '../state/type';
-import { PathListRef } from './PathList';
 import { currentSpaceIdState } from '../state/roomSpace';
 import { currentTabState, selectedTeamIdState } from '../state/im';
 import { useOpenEditEntityModal } from '../state/modals/hooks';
-import { deepCopy } from '@utils';
 import { getEntityChildNextSeq } from '../state/okrDB/api';
+import { ContextMenuOption } from './type';
+import { PathListRef } from './PathList';
 
 const CustomContextMenuContainer = styled.div`
   position: fixed;
@@ -96,9 +96,10 @@ const CustomContextMenu: FC<CustomContextMenuProps> = ({ listRef }) => {
   const wrapperRef = useRef<HTMLDivElement>(null);
   useClickDetect(
     wrapperRef,
-    (isOutSide) => {
+    (isOutSide, e) => {
       if (isOutSide) {
         closeMenu();
+        e.stopPropagation(); // 避免同时触发后续动作
       }
     },
     visible,

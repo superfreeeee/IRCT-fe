@@ -9,6 +9,7 @@ import {
 } from '@views/Main/state/okrDB/type';
 import { PlainFn } from '@utils/type';
 import {
+  ForceSimulation,
   InitItemsFn,
   ItemsRefObj,
   LinkColor,
@@ -29,6 +30,7 @@ import {
   NodeTextSize,
   PathLink,
   PathNode,
+  RestartSimulationOptions,
   RootSelection,
   SelectionType,
   TickBindRefs,
@@ -318,6 +320,34 @@ export const bindInitItems = (viewPointType: ViewPointType): InitItemsFn => {
       linkId(link);
     });
   };
+};
+
+const DEFAULT_ALPHATARGET = 0;
+const DEFAULT_VELOCITYDECAY = 0.25;
+export const restartSimulation = (
+  simulation: ForceSimulation,
+  {
+    alpha = 1,
+    alphaTarget = DEFAULT_ALPHATARGET,
+    velocityDecay = DEFAULT_VELOCITYDECAY,
+    delay = 3000,
+    restart = true,
+  }: RestartSimulationOptions = {},
+) => {
+  simulation.alphaTarget(alphaTarget).alpha(alpha).velocityDecay(velocityDecay);
+
+  restart && simulation.restart();
+
+  if (
+    alphaTarget > DEFAULT_ALPHATARGET ||
+    velocityDecay < DEFAULT_VELOCITYDECAY
+  ) {
+    setTimeout(() => {
+      simulation
+        .alphaTarget(DEFAULT_ALPHATARGET)
+        .velocityDecay(DEFAULT_VELOCITYDECAY);
+    }, delay);
+  }
 };
 
 // ========== render data ==========

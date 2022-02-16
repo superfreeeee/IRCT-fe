@@ -79,6 +79,7 @@ import {
   relationToLink,
   renderLinks,
   renderNodes,
+  restartSimulation,
   transition,
 } from './utils';
 import { PathBoardContainer } from './styles';
@@ -101,7 +102,12 @@ import {
   editProject,
   editTodo,
 } from '@views/Main/state/okrDB/crud';
-import { wrapId } from '@views/Main/state/okrDB/api';
+import {
+  getAdditionalRelations,
+  getRelativeUserSource,
+  wrapId,
+} from '@views/Main/state/okrDB/api';
+import { useCloseEditEntityModal } from '@views/Main/state/modals/hooks';
 
 export interface PathBoardRef {
   resetZoom: () => void;
@@ -414,6 +420,8 @@ const PathBoard: ForwardRefExoticComponent<
 
       if (e.button === 2) {
         // 右键点击事件
+        isDraggingRef.current = false; // 直接忽略拖拽可能
+
         setContextMenuVisible(true);
         setContextMenuTarget(deepCopy(targetNode));
         const { clientX: left, clientY: top } = e;
@@ -459,7 +467,9 @@ const PathBoard: ForwardRefExoticComponent<
     const relativeUserIds = selectedUsers.map((user) => user.id);
 
     let res;
-    // update db
+    /**
+     * 1. update db
+     */
     switch (editModalTargetType) {
       case EntityType.O:
         res = addO({
@@ -497,7 +507,27 @@ const PathBoard: ForwardRefExoticComponent<
         return;
     }
 
-    // update graph
+    /**
+     * 2. update graph
+     */
+    if (viewPointType === ViewPointType.Organization) {
+      // 组织视图
+      if (editModalTargetType !== EntityType.O) {
+        // 只可能创建 O 节点
+        return;
+      }
+    } else {
+      // 个人视图
+      if (
+        editModalTargetType === EntityType.Todo &&
+        res.userId !== centerUserId
+      ) {
+        // 非本人 Todo
+        return;
+      }
+    }
+
+    // 2.1 create new Entity/Relation
     const newEntity: ViewPointEntity = {
       type: editModalTargetType,
       id: wrapId(editModalTargetType, res.id, seq),
@@ -510,36 +540,80 @@ const PathBoard: ForwardRefExoticComponent<
       target: newEntity.id,
     };
 
-    const newNode = entityToNode(newEntity);
-    const newLink = relationToLink(newRelation);
+    // 至少存在一组 Node + Link
+    // transform to PathNode/PathLink
+    const newNodes = [entityToNode(newEntity)];
+    const newLinks = [relationToLink(newRelation)];
 
-    const sourceNodes = sourceRef.current.nodes;
-    sourceNodes.push(newNode);
-
-    const nodeMap = listToMapper(sourceNodes, (node) => node.id);
-    boundInitItemsRef.current([newNode], [newLink], nodeMap);
-
-    switch (editModalTargetType) {
-      case EntityType.O:
-        break;
-
-      case EntityType.KR:
-        break;
-
-      case EntityType.Project:
-        break;
-
-      case EntityType.Todo:
-        break;
-
-      default:
-        return;
+    // 2.2 额外的节点、边
+    const { nodes: sourceNodes, links: sourceLinks } = sourceRef.current;
+    if (
+      viewPointType === ViewPointType.Organization &&
+      editModalTargetType === EntityType.O
+    ) {
+      // 组织视图 + O-O 关系
+      const additionalLinks = getAdditionalRelations(
+        newEntity.originId as number,
+        sourceNodes.map((node) => node.data),
+      ).map(relationToLink);
+      newLinks.push(...additionalLinks);
+    } else if (viewPointType === ViewPointType.Personal) {
+      // 个人视图
+      if (
+        editModalTargetType === EntityType.O ||
+        editModalTargetType === EntityType.Project
+      ) {
+        // O/Project 关联人物
+        const { entities: relativeEntities, relations: relativeRelations } =
+          getRelativeUserSource(
+            newEntity.originId as number,
+            newEntity.id,
+            editModalTargetType,
+          );
+        newNodes.push(...relativeEntities.map(entityToNode));
+        newLinks.push(...relativeRelations.map(relationToLink));
+      }
     }
+    // 新节点添加到原数据当中(2.1 + 2.2)
+    sourceNodes.push(...newNodes);
+    sourceLinks.push(...newLinks);
 
-    console.log(`[tmp] new Entity`, newEntity);
-    console.log(`[tmp] new Relation`, newRelation);
+    // 2.3 初始化新数据
+    // 初始化所有新节点
+    const nodeMap = listToMapper(sourceNodes, (node) => node.id);
+    boundInitItemsRef.current(newNodes, newLinks, nodeMap);
 
-    // update inherit tree
+    const newDisplayNodes = sourceNodes.filter(
+      (d) => d.data.relative !== EntityType.Project,
+    );
+    const newDisplayLinks = sourceLinks.filter(
+      (d) => d.relative !== EntityType.Project,
+    );
+
+    // 只将非 relativeUser for Project 加入模拟
+    simulationRef.current.nodes(newDisplayNodes);
+    forceLinksRef.current.links(newDisplayLinks);
+
+    // 2.4 render 渲染
+    linksRef.current = renderLinks(linksRef.current, newDisplayLinks);
+    nodesRef.current = renderNodes(nodesRef.current, newDisplayNodes, (nodes) =>
+      nodes
+        .on('click', boundClickNodeRef.current)
+        .on('mouseenter', boundEnterNodeRef.current)
+        .on('mouseleave', boundLeaveNodeRef.current)
+        .on('mousedown', handleMouseDownNode)
+        .on('mouseup', handleMouseUpNode)
+        .call(boundDragRef.current),
+    );
+
+    restartSimulation(simulationRef.current, {
+      alpha: 0.2,
+      velocityDecay: 0.1,
+    });
+
+    /**
+     * 3. update inherit tree
+     */
     // TODO
   };
   const editNode = (payload: EditEntityModalResultPayload) => {
@@ -640,10 +714,15 @@ const PathBoard: ForwardRefExoticComponent<
     // update inherit tree
     // TODO
   };
+  const closeModal = useCloseEditEntityModal();
+
   useWaitFor(
     !editModalVisible,
     () => {
-      console.log(`[PathBoard] status ${editModalResult.status}`);
+      console.log(
+        `[PathBoard] status ${editModalResult.status}, type=${editModalActionType}`,
+        editModalResult.payload,
+      );
       switch (editModalResult.status) {
         case EditEntityModalResponseStatus.Confirm:
           if (editModalActionType === EditEntityModalActionType.Create) {
@@ -657,6 +736,9 @@ const PathBoard: ForwardRefExoticComponent<
               `[PathBoard] unknown action type ${editModalActionType}`,
             );
           }
+          closeModal({
+            status: EditEntityModalResponseStatus.Cancel, // 确定之后重置状态
+          });
           waitingEditRef.current = false;
           break;
 
@@ -864,15 +946,21 @@ const PathBoard: ForwardRefExoticComponent<
       nodesRef,
     });
     simulation.on('tick', boundOnTick).on('end', onEnd(simulation));
-    simulation.alphaTarget(0.1).velocityDecay(0.1);
+
+    restartSimulation(simulation, {
+      alphaTarget: 0.1,
+      velocityDecay: 0.1,
+    });
+
+    // simulation.alphaTarget(0.1).velocityDecay(0.1);
 
     setTimeout(() => {
       resetZoom();
     }, 750);
-    setTimeout(() => {
-      simulation.alphaTarget(0);
-      simulation.velocityDecay(0.25);
-    }, 3000);
+    // setTimeout(() => {
+    //   simulation.alphaTarget(0);
+    //   simulation.velocityDecay(0.25);
+    // }, 3000);
   }, [source]);
 
   return <PathBoardContainer ref={boardContainerRef} />;

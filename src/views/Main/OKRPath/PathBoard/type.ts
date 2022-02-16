@@ -253,3 +253,11 @@ export interface ItemsRefObj {
   linksRef: MutableRefObject<LinksSelection>;
   nodesRef: MutableRefObject<NodesSelection>;
 }
+
+export interface RestartSimulationOptions {
+  alpha?: number;
+  alphaTarget?: number;
+  velocityDecay?: number;
+  delay?: number;
+  restart?: boolean;
+}

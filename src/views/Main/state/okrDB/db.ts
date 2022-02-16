@@ -1,7 +1,7 @@
 import { initTeamDataList } from '../../config';
 import _userRelTable from './data/userRelTable.json';
 import _oTable from './data/oTable.json';
-import _oRelTable from './data/oRel.json';
+import _oRelTable from './data/oRelTable.json';
 import _krTable from './data/krTable.json';
 import _projectTable from './data/projectTable.json';
 import _projectRelUserTable from './data/projectRelUserTable.json';

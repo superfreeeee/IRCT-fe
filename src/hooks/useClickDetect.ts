@@ -28,7 +28,7 @@ const useClickDetect = (
         cbLive.current(isOuteSide, e);
       };
 
-      document.addEventListener('mousedown', onDocumentClick, true);
+      document.addEventListener('mousedown', onDocumentClick, true); // mousedown 避免拖拽
       return () => {
         document.removeEventListener('mousedown', onDocumentClick, true);
       };

@@ -4,12 +4,15 @@ import {
   KREntity,
   MergedEntity,
   OEntity,
+  ORelEntity,
   OrganizationViewPointEntity,
   OrganizationViewPointRelation,
   PersonalViewPointEntity,
   PersonalViewPointRelation,
   ProjectDuty,
   UserEntity,
+  ViewPointEntity,
+  ViewPointRelation,
   ViewPointSource,
   ViewPointType,
 } from './type';
@@ -96,16 +99,10 @@ export const getOrganizationViewPoint = (): ViewPointSource => {
    * O-O relation
    *   force = 0
    */
-  oRelTable
-    .filter((oRel) => oIdSet.has(oRel.OId) && oIdSet.has(oRel.upperOId))
-    .forEach((oRel) => {
-      relations.push({
-        source: oIdMap.get(oRel.OId),
-        target: oIdMap.get(oRel.upperOId),
-        additional: true,
-        force: 0,
-      });
-    });
+  oIdSet.forEach((oId) => {
+    const additionalRelations = getAdditionalRelations(oId, entities);
+    relations.push(...additionalRelations);
+  });
 
   return {
     type: ViewPointType.Organization,
@@ -175,28 +172,12 @@ export const getPersonalViewPoint = (centerUserId: string): ViewPointSource => {
 
       // ========== 关联用户 ==========
       // add relativeUser
-      const relativeUsers = getRelativeUsersByOId(originId);
-      relativeUsers.forEach((user) => {
-        const id = `${oId}.${user.id}`;
-        // relativeUser entity
-        const userEntity: PersonalViewPointEntity = {
-          ...user,
-          type: EntityType.User,
-          id,
-          originId: user.id,
-          relative: EntityType.O,
-        };
-        entities.push(userEntity);
+      const { entities: userEntities, relations: oUserRelations } =
+        getRelativeUserSource(originId, oId, EntityType.O);
 
-        // O-relativeUser relation
-        const oUserRelation: PersonalViewPointRelation = {
-          source: oId,
-          target: id,
-          relative: EntityType.O,
-        };
-        relations.push(oUserRelation);
-        entityNode.relativeUsers.push(userEntity);
-      });
+      entities.push(...userEntities);
+      relations.push(...oUserRelations);
+      entityNode.relativeUsers.push(...userEntities);
 
       return o;
     });
@@ -300,31 +281,37 @@ export const getPersonalViewPoint = (centerUserId: string): ViewPointSource => {
         projectEntityNodeMap.set(pId, pEntityNode);
 
         // ========== 关联用户 ==========
-        const relativeUsers = getRelativeUsersByProjectId(originId);
-        relativeUsers.forEach((user) => {
-          if (user.id === centerUserId) {
-            return;
-          }
-          const id = `${pId}.${user.id}`;
-          // relativeUser entity
-          const userEntity: PersonalViewPointEntity = {
-            ...user,
-            type: EntityType.User,
-            id,
-            originId: user.id,
-            relative: EntityType.Project,
-          };
-          entities.push(userEntity);
+        const { entities: userEntities, relations: projectUserRelations } =
+          getRelativeUserSource(originId, pId, EntityType.Project);
+        entities.push(...userEntities);
+        relations.push(...projectUserRelations);
+        pEntityNode.relativeUsers.push(...userEntities);
 
-          // O-relativeUser relation
-          const projectUserRelation: PersonalViewPointRelation = {
-            source: pId,
-            target: id,
-            relative: EntityType.Project,
-          };
-          relations.push(projectUserRelation);
-          pEntityNode.relativeUsers.push(userEntity);
-        });
+        // const relativeUsers = getRelativeUsersByProjectId(originId);
+        // relativeUsers.forEach((user) => {
+        //   if (user.id === centerUserId) {
+        //     return;
+        //   }
+        //   const id = `${pId}.${user.id}`;
+        //   // relativeUser entity
+        //   const userEntity: PersonalViewPointEntity = {
+        //     ...user,
+        //     type: EntityType.User,
+        //     id,
+        //     originId: user.id,
+        //     relative: EntityType.Project,
+        //   };
+        //   entities.push(userEntity);
+
+        //   // O-relativeUser relation
+        //   const projectUserRelation: PersonalViewPointRelation = {
+        //     source: pId,
+        //     target: id,
+        //     relative: EntityType.Project,
+        //   };
+        //   relations.push(projectUserRelation);
+        //   pEntityNode.relativeUsers.push(userEntity);
+        // });
       });
 
       return projectList;
@@ -480,6 +467,76 @@ export const getRelativeUsers = ({
       return [];
     }
   }
+};
+
+/**
+ * 获取 entities 范围内的 O-O 关系
+ */
+export const getAdditionalRelations = (
+  baseOId: number,
+  entities: ViewPointEntity[],
+): ViewPointRelation[] => {
+  const entityMapper = entities.reduce((mapper, entity) => {
+    if (entity.type === EntityType.O) {
+      mapper[entity.originId] = entity;
+    }
+    return mapper;
+  }, {} as { [oId: number]: ViewPointEntity }); // oId => OViewPointEntity
+
+  return oRelTable
+    .filter((rel) => rel.OId === baseOId && rel.upperOId in entityMapper)
+    .map((rel) => ({
+      source: entityMapper[rel.OId].id,
+      target: entityMapper[rel.upperOId].id,
+      additional: true,
+      force: 0,
+    }));
+};
+
+/**
+ * 获取 O-User 人物 Nodes + Links
+ */
+export const getRelativeUserSource = (
+  originId: number,
+  nodeId: string,
+  relative: EntityType.O | EntityType.Project,
+): {
+  entities: ViewPointEntity[];
+  relations: ViewPointRelation[];
+} => {
+  const entities = [];
+  const relations = [];
+
+  const relativeUsers =
+    relative === EntityType.O
+      ? getRelativeUsersByOId(originId)
+      : getRelativeUsersByProjectId(originId);
+
+  relativeUsers.forEach((user) => {
+    const id = `${nodeId}.${user.id}`;
+    // relativeUser entity
+    const userEntity: PersonalViewPointEntity = {
+      ...user,
+      type: EntityType.User,
+      id,
+      originId: user.id,
+      relative,
+    };
+    entities.push(userEntity);
+
+    // O-relativeUser relation
+    const oUserRelation: PersonalViewPointRelation = {
+      source: nodeId,
+      target: id,
+      relative,
+    };
+    relations.push(oUserRelation);
+  });
+
+  return {
+    entities,
+    relations,
+  };
 };
 
 // ========== id with entity type ==========
