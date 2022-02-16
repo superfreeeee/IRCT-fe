@@ -554,7 +554,7 @@ const PathBoard: ForwardRefExoticComponent<
       // 组织视图 + O-O 关系
       const additionalLinks = getAdditionalRelations(
         newEntity.originId as number,
-        sourceNodes.map((node) => node.data),
+        [...sourceNodes.map((node) => node.data), newEntity],
       ).map(relationToLink);
       newLinks.push(...additionalLinks);
     } else if (viewPointType === ViewPointType.Personal) {

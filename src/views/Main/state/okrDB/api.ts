@@ -482,12 +482,14 @@ export const getAdditionalRelations = (
     }
     return mapper;
   }, {} as { [oId: number]: ViewPointEntity }); // oId => OViewPointEntity
+  console.log(`baseOId`, baseOId);
+  console.log(`entityMapper`, entityMapper);
+  console.log(`oRelTable`, oRelTable);
 
   return oRelTable
     .filter(
       (rel) =>
         rel.OId === baseOId &&
-        rel.OId in entityMapper &&
         rel.upperOId in entityMapper,
     )
     .map((rel) => ({
