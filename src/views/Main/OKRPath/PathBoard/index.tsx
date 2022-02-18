@@ -518,13 +518,6 @@ const PathBoard: ForwardRefExoticComponent<
       }
     } else {
       // 个人视图
-      if (
-        editModalTargetType === EntityType.Todo &&
-        res.userId !== centerUserId
-      ) {
-        // 非本人 Todo
-        return;
-      }
     }
 
     // 2.1 create new Entity/Relation

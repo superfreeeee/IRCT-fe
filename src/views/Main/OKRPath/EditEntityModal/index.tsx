@@ -256,7 +256,10 @@ const EditEntityModal = () => {
        *   编辑 O、Project、Todo
        *   新建 Todo
        */
-      const id = targetType === EntityType.Todo ? centerUserId : originId;
+      const id =
+        actionType === EditEntityModalActionType.Create
+          ? centerUserId // 新建使用 centerUserId
+          : originId; // 编辑使用 todoId
       relativeUsers = getRelativeUsers({
         type: targetType,
         id,

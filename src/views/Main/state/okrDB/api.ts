@@ -389,12 +389,16 @@ export const getEntityChildNextSeq = ({
   id: string | number;
 }): number => {
   if (type === EntityType.User) {
+    // User 下所有 O
     return oTable.filter((o) => o.userId === id).length + 1;
   } else if (type === EntityType.O) {
+    // O 下所有 KR
     return krTable.filter((kr) => kr.upperOId === id).length + 1;
   } else if (type === EntityType.KR) {
+    // KR 下所有 Project
     return projectRelKRTable.filter((rel) => rel.KRId === id).length + 1;
   } else if (type === EntityType.Project) {
+    // Project 下所有 Todo
     return todoRelProjectTable.filter((rel) => rel.projectId === id).length + 1;
   } else {
     console.error(`[getEntityChildNextSeq] todo shouldn't have any child`);
@@ -455,9 +459,20 @@ export const getRelativeUsers = ({
       return relUsers;
     } else if (type === EntityType.Todo) {
       // 2.3 Edit Todo
-      const initTodoUser = userTable.find((user) => user.id === id);
+      const matchedTodos = todoTable.filter((todo) => todo.id === id);
+      if (matchedTodos.length === 0) {
+        console.error(`[getRelativeUsers] todo ${id} not found`);
+        return [];
+      } else if (matchedTodos.length > 1) {
+        console.warn(`[getRelativeUsers] multiple todo match`, matchedTodos);
+        matchedTodos.length = 1; // 保留第一个
+      }
+
+      const userId = matchedTodos[0].userId;
+
+      const initTodoUser = userTable.find((user) => user.id === userId);
       if (!initTodoUser) {
-        console.error(`[getRelativeUsers] centerUserId=${id} not found`);
+        console.error(`[getRelativeUsers] todo.userid = ${userId} not found`);
         return [];
       }
 
@@ -482,16 +497,9 @@ export const getAdditionalRelations = (
     }
     return mapper;
   }, {} as { [oId: number]: ViewPointEntity }); // oId => OViewPointEntity
-  console.log(`baseOId`, baseOId);
-  console.log(`entityMapper`, entityMapper);
-  console.log(`oRelTable`, oRelTable);
 
   return oRelTable
-    .filter(
-      (rel) =>
-        rel.OId === baseOId &&
-        rel.upperOId in entityMapper,
-    )
+    .filter((rel) => rel.OId === baseOId && rel.upperOId in entityMapper)
     .map((rel) => ({
       source: entityMapper[rel.OId].id,
       target: entityMapper[rel.upperOId].id,
