@@ -7,14 +7,14 @@ import {
   userVideoRoomSettingFamily,
 } from '@views/Main/state/user';
 import { VideoRoomFigure, VideoVoiceRate } from '@views/Main/state/type';
+import Avatar from '@components/Avatar';
+import AppIcon from '@components/AppIcon';
 import {
   VideoBlockContainer,
   VideoBlockContent,
   VideoBlockTitle,
   VideoBlockWrapper,
 } from './styles';
-import Avatar from '@components/Avatar';
-import AppIcon from '@components/AppIcon';
 
 interface VideoBlockProps {
   figure: VideoRoomFigure;
@@ -39,6 +39,10 @@ const VideoBlock: FC<VideoBlockProps> = ({
   const videoRef = useRef<HTMLVideoElement>(null);
   useEffect(() => {
     const video = videoRef.current;
+    if (!video) {
+      return;
+    }
+
     if (video.fastSeek) {
       video.fastSeek(0);
     } else {
@@ -64,7 +68,7 @@ const VideoBlock: FC<VideoBlockProps> = ({
 
   // 音频控制
   useEffect(() => {
-    videoRef.current.volume = voiceRate / 100;
+    videoRef.current && (videoRef.current.volume = voiceRate / 100);
   }, [voiceRate]);
 
   return (
@@ -76,22 +80,12 @@ const VideoBlock: FC<VideoBlockProps> = ({
     >
       <VideoBlockWrapper>
         <VideoBlockContent className={classNames({ hide: hideVideo })}>
-          {hideVideo ? (
+          {hideVideo && (
             <Avatar>
               <img src={avatar} width={'100%'} />
             </Avatar>
-          ) : (
-            <video
-              autoPlay
-              // muted
-              className="video"
-              ref={videoRef}
-              src={videoUrl}
-            ></video>
-            // <span>
-            //   {figure.id}-{figure.voiceRate}
-            // </span>
           )}
+          <video className="video" autoPlay ref={videoRef} src={videoUrl} />
           <VideoBlockTitle>
             <Avatar className={classNames({ hideVideo })}>
               <img src={avatar} width={'100%'} />

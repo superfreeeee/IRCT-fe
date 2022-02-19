@@ -17,7 +17,8 @@ export const VideoRoomContainer = styled.div`
 export const VideoBlockContainer = styled.div`
   overflow: hidden;
   transform: translateX(0);
-  transition: transform var(--trans_speed_level3), opacity var(--trans_speed_level2);
+  transition: transform var(--trans_speed_level3),
+    opacity var(--trans_speed_level2);
   animation: fadeIn 0.4s ease-in;
 
   @keyframes fadeIn {
@@ -84,6 +85,10 @@ export const VideoBlockContent = styled.div`
 
   &.hide {
     background-color: #171717;
+  }
+
+  &.hide .video {
+    display: none;
   }
 
   /* 位于中央的 Avatar */
