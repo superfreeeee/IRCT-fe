@@ -9,11 +9,10 @@ import {
   roomSpaceVisibleState,
 } from '../state/roomSpace';
 import { okrPathVisibleState } from '../state/okrPath';
-
-import backgroundLogoUrl from '@assets/img/background_logo.png';
-import { currentTabState } from '../state/im';
 import { TabOption } from '../state/type';
 import { appSidebarVisibleState } from '../state/appSidebar';
+
+import backgroundLogoUrl from '@assets/img/background_logo.png';
 
 const BackgroundContainer = styled.div`
   flex: 1;
@@ -22,8 +21,11 @@ const BackgroundContainer = styled.div`
   justify-content: center;
   align-items: center;
   gap: 20px;
+
   height: 100%;
   padding-top: 5%;
+
+  opacity: 15%;
 
   &.hide {
     display: none;
