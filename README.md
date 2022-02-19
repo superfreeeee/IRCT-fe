@@ -43,7 +43,7 @@
   - [x] Hover tooltip 简单信息
   - [x] 视窗 resize/container size change => 更新 svg 大小
     - [x] svg 使用 100% 可以解决
-    - [ ] mask 大小可能因为 viewpoint 被压缩
+    - [x] mask 大小可能因为 viewpoint 被压缩 -> 取消 mask，直接标记在 svg 上
   - [x] 右键操作列表
   - [x] 同 id Node 应该同时亮起
   - [x] O, Project 对齐人头样式
@@ -57,18 +57,20 @@
   - [x] O, KR, Project, Todo 关联人头
   - [ ] Path List 项目右键
   - [ ] 编辑联动
+    - [ ] 添加节点编辑联动
+    - [ ] 更新节点编辑联动
 - [ ] 编辑
   - [x] 编辑 Modal UI
   - [x] 编辑 Modal 数据传递
-  - [ ] 添加/删除节点
-    - [ ] 添加 O
-    - [ ] 编辑 O
-    - [ ] 添加 KR
-    - [ ] 编辑 KR
-    - [ ] 添加 Project
-    - [ ] 编辑 Project
-    - [ ] 添加 Todo
-    - [ ] 编辑 Todo
+  - [x] 添加/删除节点
+    - [x] 添加 O
+    - [x] 编辑 O
+    - [x] 添加 KR
+    - [x] 编辑 KR
+    - [x] 添加 Project
+    - [x] 编辑 Project
+    - [x] 添加 Todo
+    - [x] 编辑 Todo
     - [x] 删除 Todo
 
 ### 边缘 feature

@@ -86,7 +86,12 @@ const OKRPath = () => {
       className={classNames({ hide: !visible })}
     >
       {/* 主板 */}
-      <PathBoard ref={boardRef} containerRef={containerRef} source={source} />
+      <PathBoard
+        ref={boardRef}
+        containerRef={containerRef}
+        source={source}
+        listRef={listRef}
+      />
       {/* 右侧列表 */}
       <PathList ref={listRef} inheritTree={inheritTree} boardRef={boardRef} />
       {/* Icon Btns */}

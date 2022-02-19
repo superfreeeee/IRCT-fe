@@ -32,6 +32,7 @@ import {
 } from './db';
 import { createEntityNode } from './utils';
 import { EditEntityModalActionType } from '../type';
+import { deepCopy } from '@utils';
 
 // ========== public ==========
 /**
@@ -286,32 +287,6 @@ export const getPersonalViewPoint = (centerUserId: string): ViewPointSource => {
         entities.push(...userEntities);
         relations.push(...projectUserRelations);
         pEntityNode.relativeUsers.push(...userEntities);
-
-        // const relativeUsers = getRelativeUsersByProjectId(originId);
-        // relativeUsers.forEach((user) => {
-        //   if (user.id === centerUserId) {
-        //     return;
-        //   }
-        //   const id = `${pId}.${user.id}`;
-        //   // relativeUser entity
-        //   const userEntity: PersonalViewPointEntity = {
-        //     ...user,
-        //     type: EntityType.User,
-        //     id,
-        //     originId: user.id,
-        //     relative: EntityType.Project,
-        //   };
-        //   entities.push(userEntity);
-
-        //   // O-relativeUser relation
-        //   const projectUserRelation: PersonalViewPointRelation = {
-        //     source: pId,
-        //     target: id,
-        //     relative: EntityType.Project,
-        //   };
-        //   relations.push(projectUserRelation);
-        //   pEntityNode.relativeUsers.push(userEntity);
-        // });
       });
 
       return projectList;
@@ -376,6 +351,143 @@ export const getPersonalViewPoint = (centerUserId: string): ViewPointSource => {
     relations,
     inheritTree,
   };
+};
+
+/**
+ * 根据原始 entity 查询构建 EntityNode
+ */
+export const getEntityNode = (entity: ViewPointEntity): EntityNode => {
+  const entityNode = createEntityNode(deepCopy(entity));
+  _fillEntityNode(entityNode);
+  return entityNode;
+};
+
+/**
+ * add relativeUsers/children
+ */
+const _fillEntityNode = (entityNode: EntityNode) => {
+  const {
+    node: { id, originId, type },
+  } = entityNode;
+  const itemId = originId as number;
+
+  // add relativeUsers
+  if (type === EntityType.O || type === EntityType.Project) {
+    const { entities: userEntities } = getRelativeUserSource(
+      originId as number,
+      id,
+      EntityType.O,
+    );
+    entityNode.relativeUsers.push(...userEntities);
+  }
+
+  // add children
+  if (type === EntityType.O) {
+    const krList = getKRsByOId(itemId).map((kr) => {
+      const krId = wrapId(EntityType.KR, kr.id);
+      return {
+        ...kr,
+        id: krId,
+        originId: kr.id,
+      };
+    });
+
+    krList.forEach((kr, i) => {
+      const krEntity: PersonalViewPointEntity = {
+        type: EntityType.KR,
+        id: kr.id,
+        originId: kr.originId,
+        seq: i + 1,
+        content: kr.content,
+      };
+
+      const oKRRelation: PersonalViewPointRelation = {
+        source: id,
+        target: kr.id,
+      };
+
+      const krEntityNode = createEntityNode(krEntity, oKRRelation);
+      entityNode.children[kr.id] = krEntityNode;
+
+      _fillEntityNode(krEntityNode);
+    });
+  } else if (type === EntityType.KR) {
+    const _projectCount = new Map<number, number>(); // id => count
+    const projectList = getProjectsByKRId(itemId).map((p) => {
+      // transform id, calc seq
+      const pId = p.id;
+      const count = (_projectCount.get(pId) || 0) + 1;
+      _projectCount.set(pId, count);
+
+      const projectId = wrapId(EntityType.Project, pId, count);
+
+      return {
+        ...p,
+        id: projectId,
+        originId: pId,
+      };
+    });
+
+    projectList.forEach((p, i) => {
+      const pEntity: PersonalViewPointEntity = {
+        type: EntityType.Project,
+        id: p.id,
+        originId: p.originId,
+        seq: i + 1,
+        content: p.name,
+      };
+
+      const krProjectRelation: PersonalViewPointRelation = {
+        source: id,
+        target: p.id,
+      };
+
+      const pEntityNode = createEntityNode(pEntity, krProjectRelation);
+      entityNode.children[p.id] = pEntityNode;
+
+      _fillEntityNode(pEntityNode);
+    });
+  } else if (type === EntityType.Project) {
+    const _todoCount = new Map<number, number>();
+    const todoList = getTodosByProjectId(itemId).map((t) => {
+      // transform id, calc seq
+      const tId = t.id;
+      const count = (_todoCount.get(tId) || 0) + 1;
+      _todoCount.set(t.id, count);
+
+      const todoId = wrapId(EntityType.Todo, tId, count);
+
+      return {
+        ...t,
+        id: todoId,
+        originId: tId,
+      };
+    });
+
+    todoList.forEach((t, i) => {
+      const todoEntity: PersonalViewPointEntity = {
+        type: EntityType.Todo,
+        id: t.id,
+        originId: t.originId,
+        seq: i + 1,
+        content: t.name,
+      };
+
+      // add Project-Todo relation
+      const pTodoRelation: PersonalViewPointRelation = {
+        source: id,
+        target: t.id,
+      };
+
+      // add todo entity node
+      const todoEntityNode = createEntityNode(todoEntity, pTodoRelation);
+      entityNode.children[t.id] = todoEntityNode;
+
+      // \todoEntity has no children
+    });
+  } else {
+    // do nothing
+  }
 };
 
 /**

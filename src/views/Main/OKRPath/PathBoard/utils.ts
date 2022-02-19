@@ -510,6 +510,41 @@ export const renderNodes = (
   );
 };
 
+/**
+ * 移除所有 relative === Project 的节点与关系
+ */
+export const removeAllRelativeProjects = ({
+  nodesRef,
+  linksRef,
+}: ItemsRefObj) => {
+  // remove
+  const removedNodes = nodesRef.current
+    .filter((node) => node.store.relative === EntityType.Project)
+    .remove()
+    .data().length;
+
+  const removedLinks = linksRef.current
+    .filter((link) => link.relative === EntityType.Project)
+    .remove()
+    .data().length;
+
+  if (removedNodes !== removedLinks) {
+    console.warn(
+      `[removeAllRelativeProjects] length not match: nodes = ${removedNodes}, links = ${removedLinks}`,
+    );
+  }
+
+  // update refs
+  nodesRef.current = nodesRef.current.filter(
+    (node) => node.store.relative !== EntityType.Project,
+  );
+  linksRef.current = linksRef.current.filter(
+    (link) => link.relative !== EntityType.Project,
+  );
+
+  return removedNodes; // return nodes count
+};
+
 // ========== common style ==========
 export const transition = (attr: string, duration: number = 0.2) =>
   `${attr} ${duration}s`;

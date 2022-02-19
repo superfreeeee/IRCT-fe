@@ -10,9 +10,16 @@ import React, {
 import { useRecoilValue } from 'recoil';
 import classNames from 'classnames';
 
-import { EntityNode, EntityType } from '@views/Main/state/okrDB/type';
+import {
+  EntityNode,
+  EntityType,
+  ViewPointEntity,
+} from '@views/Main/state/okrDB/type';
 import { useShowExpandBtn } from '@views/Main/state/hooks';
-import { AbsolutePosition } from '@views/Main/state/type';
+import {
+  AbsolutePosition,
+  EditEntityModalActionType,
+} from '@views/Main/state/type';
 import useShadowState from '@hooks/useShadowState';
 import usePrev from '@hooks/usePrev';
 import Avatar from '@components/Avatar';
@@ -30,8 +37,20 @@ import {
 import CommentArea, { CommentAreaRef } from './CommentArea';
 import ItemDetail from './ItemDetail';
 import ExpandBtn from './ExpandBtn';
+import { PathNode } from '../PathBoard/type';
+import {
+  update_addNewNode,
+  update_deleteTodoNode,
+  update_editNode,
+} from './utils';
 
-export interface PathListRef extends CommentAreaRef {}
+export interface PathListRef extends CommentAreaRef {
+  updateTree(
+    actionType: EditEntityModalActionType,
+    sourceNode: PathNode,
+    entity: ViewPointEntity,
+  ): void;
+}
 
 interface PathListProps {
   inheritTree: PathListSource;
@@ -164,11 +183,58 @@ const PathList: ForwardRefExoticComponent<
         commentAreaRef.current.focusComment();
       };
 
+      const updateTree = (
+        actionType: EditEntityModalActionType,
+        sourceNode: PathNode,
+        entity: ViewPointEntity,
+      ) => {
+        const sourceType = sourceNode.data.type;
+        switch (actionType) {
+          case EditEntityModalActionType.Create: {
+            const newTree = update_addNewNode(shadowTree, sourceNode, entity);
+            setShadowTree(newTree);
+            break;
+          }
+
+          case EditEntityModalActionType.Edit: {
+            const newTree = update_editNode(shadowTree, sourceNode, entity);
+            setShadowTree(newTree);
+            break;
+          }
+
+          case EditEntityModalActionType.Delete:
+            if (sourceType === EntityType.Todo) {
+              /**
+               * Delete + Todo
+               */
+              const newTree = update_deleteTodoNode(
+                shadowTree,
+                sourceNode.data.originId as number,
+              );
+              setShadowTree(newTree);
+            } else {
+              /**
+               * Delete fail
+               */
+              console.error(`[PathList.updateTree] delete none todo entity`);
+            }
+            break;
+
+          case EditEntityModalActionType.Idle:
+          default:
+            console.warn(
+              `[PathList] invoke updateTree with Idle action: actionType = ${actionType}`,
+            );
+            break;
+        }
+      };
+
       return {
         focusComment,
+        updateTree,
       };
     },
-    [],
+    [shadowTree],
   );
 
   return (

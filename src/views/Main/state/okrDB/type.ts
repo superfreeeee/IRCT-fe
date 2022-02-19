@@ -198,10 +198,13 @@ export type EntityNodeMap = {
 };
 
 export interface EntityNode {
+  // 当前节点相关
   node: ViewPointEntity;
   relation?: ViewPointRelation;
+  // 子节点相关
   children: EntityNodeMap;
   relativeUsers: ViewPointEntity[];
+  // 状态
   expand?: boolean;
   isTarget?: boolean;
 }
