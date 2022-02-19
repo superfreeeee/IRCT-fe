@@ -22,7 +22,7 @@ export const DEFAULT_SPACE_ID =
 /**
  * defaults for okrPath
  */
-export const DEFAULT_OKR_PATH_VISIBLE = true;
+export const DEFAULT_OKR_PATH_VISIBLE = false;
 export const DEFAULT_OKR_PATH_LIST_VISIBLE = false;
 
 export const DEFAULT_OKR_VIEW_POINT_TYPE = ViewPointType.Organization;

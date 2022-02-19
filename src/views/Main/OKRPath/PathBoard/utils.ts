@@ -333,7 +333,7 @@ export const restartSimulation = (
     delay = 3000,
     restart = true,
   }: RestartSimulationOptions = {},
-) => {
+): number => {
   simulation.alphaTarget(alphaTarget).alpha(alpha).velocityDecay(velocityDecay);
 
   restart && simulation.restart();
@@ -342,12 +342,13 @@ export const restartSimulation = (
     alphaTarget > DEFAULT_ALPHATARGET ||
     velocityDecay < DEFAULT_VELOCITYDECAY
   ) {
-    setTimeout(() => {
+    return window.setTimeout(() => {
       simulation
         .alphaTarget(DEFAULT_ALPHATARGET)
         .velocityDecay(DEFAULT_VELOCITYDECAY);
     }, delay);
   }
+  return null;
 };
 
 // ========== render data ==========
@@ -430,7 +431,7 @@ export const renderLinks = (
 export const renderNodes = (
   nodes: NodesSelection,
   data: PathNode[],
-  addEventListeners?: (nodes: NodesSelection) => void,
+  addEventListeners?: (enterNodes: NodesSelection) => void,
 ): NodesSelection => {
   return nodes.data(data).join(
     (enter) => {

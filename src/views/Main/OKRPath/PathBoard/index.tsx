@@ -20,6 +20,7 @@ import {
 import {
   activeNodeState,
   okrPathListVisibleState,
+  okrPathVisibleState,
   tooltipDataState,
   tooltipPositionState,
   tooltipVisibleState,
@@ -74,6 +75,7 @@ import {
   InitItemsFn,
   LinksSelection,
   NodeActionCallback,
+  NodeDragType,
   NodesSelection,
   PathBoardSource,
   PathNode,
@@ -187,8 +189,6 @@ const PathBoard: ForwardRefExoticComponent<
     const activeNodeLive = useClosestRef(activeNode);
     const handleClickNode: NodeActionCallback = useCallback(
       (node: PathNode, e: MouseEvent) => {
-        isDraggingRef.current = false; // 点击事件也允许清理
-
         const currentId = node.id;
         const lastId = lastClickItemIdRef.current;
 
@@ -309,8 +309,6 @@ const PathBoard: ForwardRefExoticComponent<
               .on('click', (e: MouseEvent) => e.stopPropagation())
               .on('mouseenter', boundEnterNodeRef.current)
               .on('mouseleave', boundLeaveNodeRef.current)
-              .on('mousedown', handleMouseDownNode)
-              .on('mouseup', handleMouseUpNode)
               .call(boundDragRef.current);
           },
         );
@@ -588,8 +586,6 @@ const PathBoard: ForwardRefExoticComponent<
             .on('click', boundClickNodeRef.current)
             .on('mouseenter', boundEnterNodeRef.current)
             .on('mouseleave', boundLeaveNodeRef.current)
-            .on('mousedown', handleMouseDownNode)
-            .on('mouseup', handleMouseUpNode)
             .call(boundDragRef.current),
       );
 
@@ -781,8 +777,6 @@ const PathBoard: ForwardRefExoticComponent<
                 .on('click', boundClickNodeRef.current)
                 .on('mouseenter', boundEnterNodeRef.current)
                 .on('mouseleave', boundLeaveNodeRef.current)
-                .on('mousedown', handleMouseDownNode)
-                .on('mouseup', handleMouseUpNode)
                 .call(boundDragRef.current),
           );
 
@@ -977,15 +971,11 @@ const PathBoard: ForwardRefExoticComponent<
     /**
      * 数据变动时重新渲染
      */
-    useEffect(() => {
+    const renderSource = () => {
       // TODO clear console
       // console.group(`[PathBoard] source change`);
       // console.log(`source(isDefault = ${source === DEFAULT_SOURCE})`, source);
       // console.groupEnd();
-
-      if (source === DEFAULT_SOURCE) {
-        return;
-      }
 
       const { nodes: sourceNodes, links: sourceLinks } = source;
       const nodes = sourceNodes.filter(
@@ -1008,10 +998,7 @@ const PathBoard: ForwardRefExoticComponent<
         nodesRef,
       };
 
-      // clear last binding
-      if (svgRef.current) {
-        svgRef.current.remove();
-      }
+      cleanBoard();
 
       /**
        * svg Element
@@ -1084,7 +1071,20 @@ const PathBoard: ForwardRefExoticComponent<
         tickBindRefs,
         handleClickNode,
       ));
-      const boundDrag = (boundDragRef.current = onDrag(simulation));
+      const boundDrag = (boundDragRef.current = onDrag(
+        simulation,
+        (type: NodeDragType, e: MouseEvent, targetNode: PathNode) => {
+          switch (type) {
+            case NodeDragType.Down:
+              handleMouseDownNode(e, targetNode);
+              break;
+
+            case NodeDragType.Up:
+              handleMouseUpNode(e, targetNode);
+              break;
+          }
+        },
+      ));
 
       nodesRef.current = renderNodes(
         root.append('g').attr('class', 'nodes').selectAll('g'),
@@ -1094,8 +1094,6 @@ const PathBoard: ForwardRefExoticComponent<
             .on('click', boundClickNode)
             .on('mouseenter', boundEnterNode)
             .on('mouseleave', boundLeaveNode)
-            .on('mousedown', handleMouseDownNode)
-            .on('mouseup', handleMouseUpNode)
             .call(boundDrag),
       );
 
@@ -1106,21 +1104,38 @@ const PathBoard: ForwardRefExoticComponent<
       });
       simulation.on('tick', boundOnTick).on('end', onEnd(simulation));
 
-      restartSimulation(simulation, {
+      const restartTimer = restartSimulation(simulation, {
         alphaTarget: 0.1,
         velocityDecay: 0.1,
       });
 
-      // simulation.alphaTarget(0.1).velocityDecay(0.1);
-
-      setTimeout(() => {
+      const resetZoomTimer = setTimeout(() => {
         resetZoom();
       }, 750);
-      // setTimeout(() => {
-      //   simulation.alphaTarget(0);
-      //   simulation.velocityDecay(0.25);
-      // }, 3000);
-    }, [source]);
+
+      return () => {
+        clearTimeout(restartTimer);
+        clearTimeout(resetZoomTimer);
+      };
+    };
+    const cleanBoard = () => {
+      // remove hole svg element
+      if (svgRef.current) {
+        svgRef.current.remove();
+      }
+    };
+    const pathVisible = useRecoilValue(okrPathVisibleState);
+    useEffect(() => {
+      if (!pathVisible) {
+        return; // do nothing when invisible
+      }
+
+      if (source === DEFAULT_SOURCE) {
+        return; // don't render default source
+      }
+
+      return renderSource();
+    }, [source, pathVisible]);
 
     return <PathBoardContainer ref={boardContainerRef} />;
   },
