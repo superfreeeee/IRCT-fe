@@ -107,6 +107,7 @@ export interface PathBoardRef {
   enterNode: (nodeId: string) => void;
   leaveNode: (nodeId: string) => void;
   clickNode: (nodeId: string) => void;
+  listenEdit: () => void;
 }
 
 export interface PathBoardProps {
@@ -330,14 +331,18 @@ const PathBoard: ForwardRefExoticComponent<
 
         simulation.alpha(0.5).restart();
       } else {
-        const count = removeAllRelativeProjects({ nodesRef, linksRef });
+        removeAllRelativeUsers();
+      }
+    }, []);
 
-        if (count > 0) {
-          // update simulation
-          simulationRef.current.nodes(nodesRef.current.data());
-          forceLinksRef.current.links(linksRef.current.data());
-          return;
-        }
+    const removeAllRelativeUsers = useCallback(() => {
+      const count = removeAllRelativeProjects({ nodesRef, linksRef });
+
+      if (count > 0) {
+        // update simulation
+        simulationRef.current.nodes(nodesRef.current.data());
+        forceLinksRef.current.links(linksRef.current.data());
+        return;
       }
     }, []);
 
@@ -435,7 +440,6 @@ const PathBoard: ForwardRefExoticComponent<
     const createNode = (
       payload: EditEntityModalResultPayload,
     ): ViewPointEntity => {
-      console.log(`[PathBoard] createNode, payload:`, payload);
       const {
         entity: { content, seq },
         selectedUsers,
@@ -556,6 +560,8 @@ const PathBoard: ForwardRefExoticComponent<
       sourceNodes.push(...newNodes);
       sourceLinks.push(...newLinks);
 
+      removeAllRelativeUsers();
+
       // 2.3 初始化新数据
       // 初始化所有新节点
       const nodeMap = listToMapper(sourceNodes, (node) => node.id);
@@ -600,7 +606,6 @@ const PathBoard: ForwardRefExoticComponent<
     const editNode = (
       payload: EditEntityModalResultPayload,
     ): ViewPointEntity => {
-      console.log(`[PathBoard] editNode, payload:`, payload);
       const {
         entity: { id: nodeId, originId, content },
         selectedUsers,
@@ -943,6 +948,7 @@ const PathBoard: ForwardRefExoticComponent<
             console.error(`[PathBoard.enterNode] unknown id: ${nodeId}`);
           }
         };
+
         const leaveNode = (nodeId: string) => {
           const targetNode = _findNode(nodeId);
           if (targetNode) {
@@ -951,34 +957,31 @@ const PathBoard: ForwardRefExoticComponent<
             console.error(`[PathBoard.leaveNode] unknown id: ${nodeId}`);
           }
         };
-        return { resetZoom, enterNode, leaveNode, clickNode: outerClickNode };
+
+        const listenEdit = () => {
+          waitingEditRef.current = true;
+        };
+
+        return {
+          resetZoom,
+          enterNode,
+          leaveNode,
+          clickNode: outerClickNode,
+          listenEdit,
+        };
       },
       [],
     );
 
     // =============== effects ===============
     /**
-     * 初始化
-     *   阻止默认 contextmenu 事件
-     */
-    useEffect(() => {
-      const recent = document.oncontextmenu;
-      const instead = (e: MouseEvent) => e.preventDefault();
-
-      document.oncontextmenu = instead;
-      () => {
-        document.oncontextmenu = recent;
-      };
-    }, []);
-
-    /**
      * 数据变动时重新渲染
      */
     useEffect(() => {
       // TODO clear console
-      console.group(`[PathBoard] source change`);
-      console.log(`source(isDefault = ${source === DEFAULT_SOURCE})`, source);
-      console.groupEnd();
+      // console.group(`[PathBoard] source change`);
+      // console.log(`source(isDefault = ${source === DEFAULT_SOURCE})`, source);
+      // console.groupEnd();
 
       if (source === DEFAULT_SOURCE) {
         return;

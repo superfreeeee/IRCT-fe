@@ -36,7 +36,7 @@ const CreateMeetingModal = () => {
 
   const setRoomData = useSetRecoilState(roomDataFamily(roomId));
   const persistTempMeeting = () => {
-    console.log(`persistTempMeeting(roomId = ${roomId})`);
+    console.log(`[CreateMeetingModal] persistTempMeeting(roomId = ${roomId})`);
     const roomData: RoomData = {
       id: roomId,
       type: RoomType.Meeting,

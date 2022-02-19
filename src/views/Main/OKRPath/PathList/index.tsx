@@ -1,13 +1,15 @@
 import React, {
   ForwardRefExoticComponent,
+  MouseEvent,
   MutableRefObject,
   RefAttributes,
+  useCallback,
   useEffect,
   useImperativeHandle,
   useMemo,
   useRef,
 } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import classNames from 'classnames';
 
 import {
@@ -20,13 +22,20 @@ import {
   AbsolutePosition,
   EditEntityModalActionType,
 } from '@views/Main/state/type';
+import {
+  contextMenuPositionState,
+  contextMenuTargetState,
+  contextMenuVisibleState,
+} from '@views/Main/state/modals/customContextMenu';
 import useShadowState from '@hooks/useShadowState';
 import usePrev from '@hooks/usePrev';
 import Avatar from '@components/Avatar';
 import BoxIcon, { BoxIconType } from '@components/BoxIcon';
 import { deepCopy } from '@utils';
-import { PathBoardRef } from '../PathBoard';
 import { activeNodeState, okrPathListVisibleState } from '../../state/okrPath';
+import { entityToNode } from '../PathBoard/utils';
+import { PathBoardRef } from '../PathBoard';
+import { PathNode } from '../PathBoard/type';
 import { PathListSource } from '../type';
 import {
   DetailList,
@@ -37,7 +46,6 @@ import {
 import CommentArea, { CommentAreaRef } from './CommentArea';
 import ItemDetail from './ItemDetail';
 import ExpandBtn from './ExpandBtn';
-import { PathNode } from '../PathBoard/type';
 import {
   update_addNewNode,
   update_deleteTodoNode,
@@ -174,6 +182,21 @@ const PathList: ForwardRefExoticComponent<
     showExpandBtn(position, isExpand);
   };
 
+  // ========== 右键操作 ==========
+  const setContextMenuVisible = useSetRecoilState(contextMenuVisibleState);
+  const setContextMenuPosition = useSetRecoilState(contextMenuPositionState);
+  const setContextMenuTarget = useSetRecoilState(contextMenuTargetState);
+  const onRightClick = useCallback((e: MouseEvent, entity: ViewPointEntity) => {
+    if (e.button === 2) {
+      setContextMenuVisible(true);
+      setContextMenuTarget(entityToNode(deepCopy(entity)));
+      const { clientX: left, clientY: top } = e;
+      setContextMenuPosition({ left, top });
+
+      boardRef.current.listenEdit();
+    }
+  }, []);
+
   // ========== outer actions ==========
   const commentAreaRef = useRef<CommentAreaRef>(null);
   useImperativeHandle(
@@ -249,9 +272,9 @@ const PathList: ForwardRefExoticComponent<
                 node={oEntityNode}
                 hoverExpandBtn={hoverExpandBtn}
                 boardRef={boardRef}
+                onRightClick={onRightClick}
               />
             ))}
-          {/* <button onClick={() => setVisible(false)}>Close</button> */}
           <ExpandBtn />
         </DetailList>
         <CommentArea ref={commentAreaRef} />

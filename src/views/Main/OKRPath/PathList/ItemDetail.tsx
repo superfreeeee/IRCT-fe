@@ -9,7 +9,11 @@ import React, {
 import { useSetRecoilState } from 'recoil';
 import classNames from 'classnames';
 
-import { EntityNode, EntityType } from '@views/Main/state/okrDB/type';
+import {
+  EntityNode,
+  EntityType,
+  ViewPointEntity,
+} from '@views/Main/state/okrDB/type';
 import { useHideExpandBtn } from '@views/Main/state/hooks';
 import { AbsolutePosition } from '@views/Main/state/type';
 import { expandBtnIsOpenState } from '@views/Main/state/okrPath';
@@ -28,11 +32,13 @@ interface ItemDetailProps {
   node: EntityNode;
   hoverExpandBtn?: (position: AbsolutePosition, isExpand: boolean) => void;
   boardRef: MutableRefObject<PathBoardRef>;
+  onRightClick?: (e: MouseEvent, entity: ViewPointEntity) => void;
 }
 
 const ItemDetail: FC<ItemDetailProps> = ({
   node: {
     node: { id, type, content, seq },
+    node: entity,
     children,
     relativeUsers,
     expand,
@@ -41,6 +47,7 @@ const ItemDetail: FC<ItemDetailProps> = ({
   node,
   hoverExpandBtn,
   boardRef,
+  onRightClick,
 }) => {
   // inner controll switch: node 更新时同步 expand 状态
   const [contentVisible, setContentVisible] = useShadowState(expand, [node]);
@@ -64,7 +71,8 @@ const ItemDetail: FC<ItemDetailProps> = ({
       <RelativeUsers>
         {relativeUsers.map((user) => {
           return (
-            <Avatar key={user.id}>
+            //
+            <Avatar key={user.id} onMouseDown={(e) => onRightClick(e, user)}>
               <img src={user.avatar} width={'100%'} />
             </Avatar>
           );
@@ -84,6 +92,7 @@ const ItemDetail: FC<ItemDetailProps> = ({
           node={entityNode}
           hoverExpandBtn={hoverExpandBtn}
           boardRef={boardRef}
+          onRightClick={onRightClick}
         />
       );
     });
@@ -120,6 +129,10 @@ const ItemDetail: FC<ItemDetailProps> = ({
     boardRef.current.leaveNode(id);
   };
 
+  const onMouseDownTitle = (e: MouseEvent) => {
+    onRightClick(e, entity);
+  };
+
   return (
     <DetailLayer>
       <DetailLayerBanner ref={bannerRef} type={type}>
@@ -135,6 +148,7 @@ const ItemDetail: FC<ItemDetailProps> = ({
           onClick={onClickTitle}
           onMouseEnter={onMouseEnterTitle}
           onMouseLeave={onMouseLeaveTitle}
+          onMouseDown={onMouseDownTitle}
         >
           {title}
         </span>

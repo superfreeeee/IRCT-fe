@@ -376,7 +376,7 @@ const _fillEntityNode = (entityNode: EntityNode) => {
     const { entities: userEntities } = getRelativeUserSource(
       originId as number,
       id,
-      EntityType.O,
+      type,
     );
     entityNode.relativeUsers.push(...userEntities);
   }

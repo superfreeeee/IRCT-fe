@@ -14,6 +14,7 @@ const Avatar: StyledComponent<
   AvatarProps
 > = styled.div.attrs<AvatarProps>((props) => ({
   className: classNames(props.usage, { noAvatar: props.default }),
+  onclick: props.onClick,
 }))`
   display: flex;
   justify-content: center;

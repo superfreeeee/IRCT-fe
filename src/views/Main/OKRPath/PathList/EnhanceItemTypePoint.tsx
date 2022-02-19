@@ -18,7 +18,6 @@ export const EnhanceItemTypePointWrapper = styled.div<{ type: EntityType }>`
   border: 3px solid transparent;
   transition: border-color var(--trans_speed_level2);
 
-  /* // TODO change to active */
   &.lightOn {
     border: 3px solid
       ${({ type }) => typePointExpandColorMap[type] || 'transparent'};

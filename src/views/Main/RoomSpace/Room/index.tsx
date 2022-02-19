@@ -66,7 +66,7 @@ const useAreaResizer = (): [number, MouseEventHandler] => {
 
   const onMouseUp = useCallback((e) => {
     const newH = calcH(e);
-    console.log(`[Room.useAreaResizer] newH = ${newH}`);
+    // console.log(`[Room.useAreaResizer] newH = ${newH}`);
     // remove listening
     document.removeEventListener('mousemove', onMouseMove);
     document.removeEventListener('mouseup', onMouseUp);

@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import classNames from 'classnames';
 
+import usePreventContextMenu from '@hooks/usePreventContextMenu';
 import { listToMapper } from '@utils';
 import {
   okrPathVisibleState,
@@ -50,13 +51,13 @@ const OKRPath = () => {
     const { entities, relations, inheritTree } = viewPointData;
 
     // TODO clear console
-    console.group(`[OKRPath] view change`);
-    console.log(`viewPointType = ${viewPointType}`);
-    console.log(`centerUserId = ${centerUserId}`);
-    console.log(`entities`, entities);
-    console.log(`relations`, relations);
-    console.log(`inheritTree`, inheritTree);
-    console.groupEnd();
+    // console.group(`[OKRPath] view change`);
+    // console.log(`viewPointType = ${viewPointType}`);
+    // console.log(`centerUserId = ${centerUserId}`);
+    // console.log(`entities`, entities);
+    // console.log(`relations`, relations);
+    // console.log(`inheritTree`, inheritTree);
+    // console.groupEnd();
 
     /**
      * 1. 数据变换
@@ -79,6 +80,12 @@ const OKRPath = () => {
     setSource({ nodes, links });
     setInheritTree(inheritTree);
   }, [viewPointType, centerUserId]);
+
+  /**
+   * 初始化
+   *   阻止默认 contextmenu 事件
+   */
+  usePreventContextMenu();
 
   return (
     <OKRPathContainer
