@@ -472,7 +472,7 @@ export const getRelativeUsers = ({
 
       const initTodoUser = userTable.find((user) => user.id === userId);
       if (!initTodoUser) {
-        console.error(`[getRelativeUsers] todo.userid = ${userId} not found`);
+        console.error(`[getRelativeUsers] todo.userId = ${userId} not found`);
         return [];
       }
 
@@ -482,6 +482,24 @@ export const getRelativeUsers = ({
       return [];
     }
   }
+};
+
+export const getORelUserMapper = (): {
+  [oId: number]: string; // oId => userId
+} => {
+  return oTable.reduce((mapper, { id, userId }) => {
+    mapper[id] = userId;
+    return mapper;
+  }, {} as { [oId: number]: string });
+};
+
+export const getUserRelOMapper = (): {
+  [userId: string]: number[]; // userId => oId[]
+} => {
+  return oTable.reduce((mapper, { id, userId }) => {
+    (mapper[userId] || (mapper[userId] = [])).push(id);
+    return mapper;
+  }, {} as { [userId: string]: number[] });
 };
 
 /**
@@ -509,7 +527,7 @@ export const getAdditionalRelations = (
 };
 
 /**
- * 获取 O-User 人物 Nodes + Links
+ * 获取 O-User / Project-User 人物 Nodes + Links
  */
 export const getRelativeUserSource = (
   originId: number,

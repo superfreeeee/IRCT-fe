@@ -12,10 +12,8 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import {
   EntityType,
-  KREntity,
-  OEntity,
   ProjectType,
-  TodoStatus,
+  UserEntity,
   ViewPointEntity,
   ViewPointRelation,
   ViewPointType,
@@ -41,6 +39,31 @@ import {
   contextMenuTargetState,
   contextMenuVisibleState,
 } from '@views/Main/state/modals/customContextMenu';
+import {
+  editEntityModalActionTypeState,
+  editEntityModalResultState,
+  editEntityModalSourceState,
+  editEntityModalTargetTypeState,
+  editEntityModalVisibleState,
+} from '@views/Main/state/modals/editEntityModal';
+import {
+  addKR,
+  addO,
+  addProject,
+  addTodo,
+  deleteTodo,
+  editKR,
+  editO,
+  editProject,
+  editTodo,
+} from '@views/Main/state/okrDB/crud';
+import {
+  getAdditionalRelations,
+  getRelativeUsers,
+  getRelativeUserSource,
+  wrapId,
+} from '@views/Main/state/okrDB/api';
+import { useCloseEditEntityModal } from '@views/Main/state/modals/hooks';
 import useClosestRef from '@hooks/useClosestRef';
 import { deepCopy, listToMapper } from '@utils';
 import {
@@ -49,14 +72,9 @@ import {
   ForceLinks,
   ForceSimulation,
   InitItemsFn,
-  LinkColor,
-  LinkColorOpacity,
   LinksSelection,
   NodeActionCallback,
-  NodeImageMaskOpacity,
   NodesSelection,
-  NodeStrokeWidth,
-  NodeTextColor,
   PathBoardSource,
   PathNode,
   RootSelection,
@@ -80,34 +98,9 @@ import {
   renderLinks,
   renderNodes,
   restartSimulation,
-  transition,
 } from './utils';
 import { PathBoardContainer } from './styles';
-import {
-  editEntityModalActionTypeState,
-  editEntityModalResultState,
-  editEntityModalSourceState,
-  editEntityModalTargetTypeState,
-  editEntityModalVisibleState,
-} from '@views/Main/state/modals/editEntityModal';
 import useWaitFor from '@hooks/useWaitFor';
-import {
-  addKR,
-  addO,
-  addProject,
-  addTodo,
-  deleteTodo,
-  editKR,
-  editO,
-  editProject,
-  editTodo,
-} from '@views/Main/state/okrDB/crud';
-import {
-  getAdditionalRelations,
-  getRelativeUserSource,
-  wrapId,
-} from '@views/Main/state/okrDB/api';
-import { useCloseEditEntityModal } from '@views/Main/state/modals/hooks';
 
 export interface PathBoardRef {
   resetZoom: () => void;
@@ -612,43 +605,47 @@ const PathBoard: ForwardRefExoticComponent<
   const editNode = (payload: EditEntityModalResultPayload) => {
     console.log(`[PathBoard] editNode, payload:`, payload);
     const {
-      entity: { originId, content },
+      entity: { id: nodeId, originId, content },
       selectedUsers,
     } = payload;
 
     const id = originId as number;
     const relativeUserIds = selectedUsers.map((user) => user.id);
 
-    // update db
+    let entity, rels;
+    /**
+     * 1. update db
+     */
     switch (editModalTargetType) {
       case EntityType.O:
-        editO({
+        ({ entity, rels } = editO({
           entity: { id, content, userId: '' },
           relativeUserIds,
-        });
+        }));
         break;
 
       case EntityType.KR:
-        editKR({ id, content });
+        ({ entity } = editKR({ id, content }));
         break;
 
       case EntityType.Project:
-        editProject({
+        ({ entity, rels } = editProject({
           entity: {
             id,
             name: content,
             type: ProjectType.Unkonwn,
           },
           relativeUserIds,
-        });
+        }));
+
         break;
 
       case EntityType.Todo:
-        editTodo({
+        ({ entity } = editTodo({
           id: originId as number,
           userId: selectedUsers[0].id,
           name: content,
-        });
+        }));
         break;
 
       case EntityType.User:
@@ -657,10 +654,140 @@ const PathBoard: ForwardRefExoticComponent<
         break;
     }
 
-    // update graph
-    // TODO
+    /**
+     * 2. update graph
+     */
+    const { nodes: sourceNodes, links: sourceLinks } = sourceRef.current;
+    sourceNodes
+      .filter((node) => node.id === nodeId)
+      .forEach((node) => {
+        node.data.content = content;
+      });
 
-    // update inherit tree
+    if (viewPointType === ViewPointType.Organization) {
+      // 组织视图
+      if (editModalTargetType === EntityType.O) {
+        // update O-O links
+
+        // remove old
+        const removedLinks = sourceLinks.filter(
+          (link) => (link.source as PathNode).id === nodeId,
+        );
+        removedLinks.forEach((link) => {
+          sourceLinks.splice(sourceLinks.indexOf(link), 1);
+        });
+
+        // add new
+        const newLinks = getAdditionalRelations(
+          id,
+          sourceNodes.map((node) => node.data),
+        ).map(relationToLink);
+
+        sourceLinks.push(...newLinks);
+
+        // init items
+        const nodeMap = listToMapper(sourceNodes, (node) => node.id);
+        boundInitItemsRef.current([], newLinks, nodeMap);
+
+        // update simulation
+        forceLinksRef.current.links(sourceLinks);
+
+        linksRef.current = renderLinks(linksRef.current, sourceLinks);
+        restartSimulation(simulationRef.current);
+      }
+    } else {
+      // 个人视图
+      if (
+        editModalTargetType === EntityType.O ||
+        editModalTargetType === EntityType.Project
+      ) {
+        // remove old
+        const removedLinks = linksRef.current.filter(({ source, relative }) => {
+          const { id } = source as PathNode;
+          return relative && id === nodeId;
+        });
+        removedLinks.remove();
+        const removedNodesIdSet = new Set();
+        sourceLinks
+          .filter(({ source, relative }) => {
+            const { id } = source as PathNode;
+            return relative && id === nodeId;
+          })
+          .forEach((link) => {
+            removedNodesIdSet.add((link.target as PathNode).id); // remove target nodes
+            sourceLinks.splice(sourceLinks.indexOf(link), 1);
+          });
+        const removedLinksSet = new Set(removedLinks.data());
+        linksRef.current = linksRef.current.filter(
+          (link) => !removedLinksSet.has(link),
+        );
+
+        const removedNodes = nodesRef.current.filter((node) =>
+          removedNodesIdSet.has(node.id),
+        );
+        removedNodes.remove();
+        sourceNodes
+          .filter((node) => removedNodesIdSet.has(node.id))
+          .forEach((node) => {
+            sourceNodes.splice(sourceNodes.indexOf(node), 1);
+          });
+        const removedNodesSet = new Set(removedNodes.data());
+        nodesRef.current = nodesRef.current.filter(
+          (node) => !removedNodesSet.has(node),
+        );
+
+        // add new
+        const { entities, relations } = getRelativeUserSource(
+          id,
+          nodeId,
+          editModalTargetType,
+        );
+
+        const newNodes = entities.map(entityToNode);
+        const newLinks = relations.map(relationToLink);
+
+        sourceNodes.push(...newNodes);
+        sourceLinks.push(...newLinks);
+
+        // init items
+        boundInitItemsRef.current(
+          newNodes,
+          newLinks,
+          listToMapper(sourceNodes, (node) => node.id),
+        );
+
+        // update simulation
+        const newDisplayNodes = sourceNodes.filter(
+          (d) => d.data.relative !== EntityType.Project,
+        );
+        const newDisplayLinks = sourceLinks.filter(
+          (d) => d.relative !== EntityType.Project,
+        );
+
+        simulationRef.current.nodes(newDisplayNodes);
+        forceLinksRef.current.links(newDisplayLinks);
+
+        linksRef.current = renderLinks(linksRef.current, newDisplayLinks);
+        nodesRef.current = renderNodes(
+          nodesRef.current,
+          newDisplayNodes,
+          (nodes) =>
+            nodes
+              .on('click', boundClickNodeRef.current)
+              .on('mouseenter', boundEnterNodeRef.current)
+              .on('mouseleave', boundLeaveNodeRef.current)
+              .on('mousedown', handleMouseDownNode)
+              .on('mouseup', handleMouseUpNode)
+              .call(boundDragRef.current),
+        );
+
+        restartSimulation(simulationRef.current);
+      }
+    }
+
+    /**
+     * 3. update inherit tree
+     */
     // TODO
   };
   const deleteNode = () => {
@@ -685,20 +812,34 @@ const PathBoard: ForwardRefExoticComponent<
     });
 
     // update graph
-    if (activeNode.data.originId === originId) {
+    if (activeNode?.data.originId === originId) {
       // 删除当前 active 节点
       boundMaskClickRef.current(null);
     }
+
+    const { nodes: sourceNodes, links: sourceLinks } = sourceRef.current;
 
     linksRef.current
       .filter((d) => boundIsTargetNode(d.target as PathNode))
       .remove();
     const restLinksSelection = (linksRef.current = linksRef.current.filter(
-      (d) => !boundIsTargetNode(d.target as PathNode),
+      (d) => {
+        const isTarget = boundIsTargetNode(d.target as PathNode);
+        if (isTarget) {
+          sourceLinks.splice(sourceLinks.indexOf(d), 1);
+        }
+        return !isTarget;
+      },
     ));
     nodesRef.current.filter(boundIsTargetNode).remove();
     const restNodesSelection = (nodesRef.current = nodesRef.current.filter(
-      (d) => !boundIsTargetNode(d),
+      (d) => {
+        const isTarget = boundIsTargetNode(d);
+        if (isTarget) {
+          sourceNodes.splice(sourceNodes.indexOf(d), 1);
+        }
+        return !isTarget;
+      },
     ));
 
     forceLinksRef.current.links(restLinksSelection.data());
@@ -817,18 +958,10 @@ const PathBoard: ForwardRefExoticComponent<
     }
 
     const { nodes: sourceNodes, links: sourceLinks } = source;
-    const displayNodeIdSet = new Set<string>();
-    const nodes = sourceNodes
-      .filter((node) => node.store.relative !== EntityType.Project)
-      .map((node) => {
-        displayNodeIdSet.add(node.id);
-        return node;
-      });
-    const links = sourceLinks.filter(
-      (link) =>
-        displayNodeIdSet.has(link.source as string) &&
-        displayNodeIdSet.has(link.target as string),
+    const nodes = sourceNodes.filter(
+      (d) => d.data.relative !== EntityType.Project,
     );
+    const links = sourceLinks.filter((d) => d.relative !== EntityType.Project);
 
     // render
     const { width, height } = boardContainerRef.current.getBoundingClientRect();

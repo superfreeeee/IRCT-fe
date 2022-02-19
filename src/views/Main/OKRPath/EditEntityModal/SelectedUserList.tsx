@@ -11,13 +11,13 @@ import classNames from 'classnames';
 
 import { EntityType, UserEntity } from '@views/Main/state/okrDB/type';
 import { selectUserModalControllerInfoState } from '@views/Main/state/modals/selectUserModal';
+import { userBasicInfoFamily } from '@views/Main/state/user';
 import useShadowState from '@hooks/useShadowState';
 import useWaitFor from '@hooks/useWaitFor';
+import useClosestRef from '@hooks/useClosestRef';
 import BoxIcon, { BoxIconType } from '@components/BoxIcon';
-import { userBasicInfoFamily } from '@views/Main/state/user';
 import Avatar from '@components/Avatar';
 import { EditContentUserList } from './styles';
-import useClosestRef from '@hooks/useClosestRef';
 
 interface RemoveableUserAvatarProps {
   user: UserEntity;

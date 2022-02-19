@@ -1,3 +1,4 @@
+import { getORelUserMapper, getUserRelOMapper } from './api';
 import {
   krTable,
   oRelTable,
@@ -64,26 +65,50 @@ export const addO = ({
 export const editO = ({
   entity: { id: targetId, content },
   relativeUserIds,
-}: EditOPayload) => {
+}: EditOPayload): {
+  entity: OEntity;
+  rels?: ORelEntity[];
+} => {
   const index = oTable.findIndex((o) => o.id === targetId);
   if (index < 0) {
     console.error(`[okrDB.crud] editO: o.id = ${targetId} not found`);
+    return { entity: null };
   } else {
     // update oTable
     const originEntity = oTable[index];
-    oTable.splice(index, 1, { ...originEntity, content }); // update content
+    const newEntity = { ...originEntity, content };
+    oTable.splice(index, 1, newEntity); // update content
 
     // update oRelTable
-    const relativeUserIdSet = new Set(relativeUserIds);
-    const newORels = oTable
-      .filter((o) => relativeUserIdSet.has(o.userId))
-      .map((o): ORelEntity => ({ OId: targetId, upperOId: o.id }));
 
-    const oldORels = oRelTable.filter((rel) => rel.OId === targetId);
-    oldORels.forEach((rel) => {
+    // remove old
+    const newUserIdSet = new Set(relativeUserIds);
+    const restoreUserIdSet = new Set();
+    const oRelUserMapper = getORelUserMapper();
+    const oldRels = oRelTable
+      .filter((rel) => rel.OId === targetId)
+      .filter((rel) => {
+        const userId = oRelUserMapper[rel.upperOId];
+        const restore = newUserIdSet.has(userId);
+        if (restore) {
+          restoreUserIdSet.add(userId);
+        }
+        return !restore;
+      });
+    oldRels.forEach((rel) => {
       oRelTable.splice(oRelTable.indexOf(rel), 1);
     });
+
+    // add new
+    const newORels = oTable
+      .filter(
+        ({ userId }) =>
+          newUserIdSet.has(userId) && !restoreUserIdSet.has(userId),
+      )
+      .map((o): ORelEntity => ({ OId: targetId, upperOId: o.id }));
     oRelTable.push(...newORels);
+
+    return { entity: newEntity, rels: newORels };
   }
 };
 
@@ -103,13 +128,21 @@ export const addKR = ({ content, upperOId }: AddKRPayload): KREntity => {
   return newEntity;
 };
 
-export const editKR = ({ id, content }: EditKRPayload) => {
+export const editKR = ({
+  id,
+  content,
+}: EditKRPayload): {
+  entity: KREntity;
+} => {
   const index = krTable.findIndex((kr) => kr.id === id);
   if (index < 0) {
     console.error(`[okrDB.crud] editKR: kr.id = ${id} not found`);
+    return { entity: null };
   } else {
     const originKR = krTable[index];
-    krTable.splice(index, 1, { ...originKR, content });
+    const newKR = { ...originKR, content };
+    krTable.splice(index, 1, newKR);
+    return { entity: newKR };
   }
 };
 
@@ -149,13 +182,18 @@ export const addProject = ({
 export const editProject = ({
   entity: { id, name },
   relativeUserIds,
-}: EditProjectPayload) => {
+}: EditProjectPayload): {
+  entity: ProjectEntity;
+  rels?: ProjectRelUserEntity[];
+} => {
   const index = projectTable.findIndex((p) => p.id === id);
   if (index < 0) {
     console.error(`[okrDB.crud] editProject: p.id = ${id} not found`);
+    return { entity: null };
   } else {
     const originProject = projectTable[index];
-    projectTable.splice(index, 1, { ...originProject, name });
+    const newProject = { ...originProject, name };
+    projectTable.splice(index, 1, newProject);
 
     const oldRelUsers = projectRelUserTable.filter(
       (rel) => rel.projectId === id,
@@ -172,6 +210,8 @@ export const editProject = ({
       }),
     );
     projectRelUserTable.push(...newRelUsers);
+
+    return { entity: newProject, rels: newRelUsers };
   }
 };
 
@@ -203,13 +243,22 @@ export const addTodo = ({
   return newEntity;
 };
 
-export const editTodo = ({ id, userId, name }: EditTodoPayload) => {
+export const editTodo = ({
+  id,
+  userId,
+  name,
+}: EditTodoPayload): {
+  entity: TodoEntity;
+} => {
   const index = todoTable.findIndex((t) => t.id === id);
   if (index < 0) {
     console.error(`[okrDB.crud] editTodo: t.id = ${id} not found`);
+    return { entity: null };
   } else {
     const originTodo = todoTable[index];
-    todoTable.splice(index, 1, { ...originTodo, userId, name });
+    const newTodo = { ...originTodo, userId, name };
+    todoTable.splice(index, 1, newTodo);
+    return { entity: newTodo };
   }
 };
 
@@ -222,11 +271,9 @@ export const deleteTodo = (todoId: number) => {
     console.error(`[deleteTodo] todoId: ${todoId} not found`);
   }
 
-  console.log(`new todoRelProjectTable`, [...todoRelProjectTable]);
   // delete todoRelProjectTable
   const removedRels = todoRelProjectTable.filter((t) => t.todoId === todoId);
   removedRels.forEach((rel) => {
     todoRelProjectTable.splice(todoRelProjectTable.indexOf(rel), 1);
   });
-  console.log(`new todoRelProjectTable`, [...todoRelProjectTable]);
 };

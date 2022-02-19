@@ -18,7 +18,10 @@ import {
   EditEntityModalActionType,
   EditEntityModalResponseStatus,
 } from '@views/Main/state/type';
-import { useCloseEditEntityModal } from '@views/Main/state/modals/hooks';
+import {
+  useCloseEditEntityModal,
+  useOpenEditEntityModal,
+} from '@views/Main/state/modals/hooks';
 import useClickDetect from '@hooks/useClickDetect';
 import BoxIcon, { BoxIconType } from '@components/BoxIcon';
 import ItemTypePoint from '../ItemTooltip/ItemTypePoint';
@@ -157,6 +160,7 @@ const EditEntityModal = () => {
   );
 
   // ========== render header ==========
+  const openModal = useOpenEditEntityModal();
   const headerEl = useMemo(() => {
     if (
       [
@@ -186,13 +190,21 @@ const EditEntityModal = () => {
         break;
     }
 
+    const askDelete = () => {
+      openModal({
+        actionType: EditEntityModalActionType.Delete,
+        targetType: type,
+        source,
+      });
+    };
+
     return (
       <EditEntityModalHeader type={targetType}>
         <ItemTypePoint color={headerPointColorMap[targetType]} size={8} />
         <span>{title}</span>
         {actionType === EditEntityModalActionType.Edit && (
           <div className="actions">
-            <BoxIcon type={BoxIconType.Trash} size={'xs'} onClick={cancel} />
+            <BoxIcon type={BoxIconType.Trash} size={'xs'} onClick={askDelete} />
           </div>
         )}
       </EditEntityModalHeader>
