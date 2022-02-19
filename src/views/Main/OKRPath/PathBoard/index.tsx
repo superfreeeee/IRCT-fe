@@ -309,6 +309,7 @@ const PathBoard: ForwardRefExoticComponent<
               .on('click', (e: MouseEvent) => e.stopPropagation())
               .on('mouseenter', boundEnterNodeRef.current)
               .on('mouseleave', boundLeaveNodeRef.current)
+              .on('mousedown', handleMouseDownNode)
               .call(boundDragRef.current);
           },
         );
@@ -586,6 +587,7 @@ const PathBoard: ForwardRefExoticComponent<
             .on('click', boundClickNodeRef.current)
             .on('mouseenter', boundEnterNodeRef.current)
             .on('mouseleave', boundLeaveNodeRef.current)
+            .on('mousedown', handleMouseDownNode)
             .call(boundDragRef.current),
       );
 
@@ -777,6 +779,7 @@ const PathBoard: ForwardRefExoticComponent<
                 .on('click', boundClickNodeRef.current)
                 .on('mouseenter', boundEnterNodeRef.current)
                 .on('mouseleave', boundLeaveNodeRef.current)
+                .on('mousedown', handleMouseDownNode)
                 .call(boundDragRef.current),
           );
 
@@ -1075,10 +1078,6 @@ const PathBoard: ForwardRefExoticComponent<
         simulation,
         (type: NodeDragType, e: MouseEvent, targetNode: PathNode) => {
           switch (type) {
-            case NodeDragType.Down:
-              handleMouseDownNode(e, targetNode);
-              break;
-
             case NodeDragType.Up:
               handleMouseUpNode(e, targetNode);
               break;
@@ -1094,6 +1093,7 @@ const PathBoard: ForwardRefExoticComponent<
             .on('click', boundClickNode)
             .on('mouseenter', boundEnterNode)
             .on('mouseleave', boundLeaveNode)
+            .on('mousedown', handleMouseDownNode)
             .call(boundDrag),
       );
 
