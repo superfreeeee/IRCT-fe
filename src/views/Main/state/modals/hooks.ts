@@ -1,4 +1,5 @@
-import { useCallback } from 'react';
+import { PlainFn } from '@utils/type';
+import { MouseEvent, useCallback } from 'react';
 import { useResetRecoilState, useSetRecoilState } from 'recoil';
 
 import {
@@ -6,6 +7,10 @@ import {
   EditEntityModalResult,
   OpenEditModalParams,
 } from '../type';
+import {
+  contextMenuPositionState,
+  contextMenuVisibleState,
+} from './customContextMenu';
 import {
   editEntityModalSourceState,
   editEntityModalActionTypeState,
@@ -30,7 +35,7 @@ export const useOpenEditEntityModal = () => {
       setTargetType(targetType);
       setSource(source);
       setNextSeq(nextSeq);
-      
+
       resetResult(); // clear response
     },
     [],
@@ -49,4 +54,19 @@ export const useCloseEditEntityModal = () => {
   }, []);
 
   return closeEditModal;
+};
+
+export const useOpenContextMenu = () => {
+  const setContextMenuVisible = useSetRecoilState(contextMenuVisibleState);
+  const setContextMenuPosition = useSetRecoilState(contextMenuPositionState);
+
+  const openContextMenu = useCallback((e: MouseEvent<any>, cb: PlainFn) => {
+    const { clientX: left, clientY: top } = e;
+    setContextMenuVisible(true);
+    setContextMenuPosition({ left, top });
+
+    cb && cb();
+  }, []);
+
+  return openContextMenu;
 };

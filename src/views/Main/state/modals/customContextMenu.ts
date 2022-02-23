@@ -19,9 +19,9 @@ export const contextMenuVisibleState = selector<boolean>({
   key: prefixer('contextMenuVisible'),
   get: ({ get }) => {
     const visible = get(contextMenuVisibleBaseState);
-    const hasTarget = get(contextMenuTargetState);
-
-    return !!hasTarget && visible;
+    const hasTarget = !!get(contextMenuTargetState);
+    const hasTargetUserId = !!get(contextMenuTargetUserIdState);
+    return (hasTarget || hasTargetUserId) && visible;
   },
   set: ({ set }, visible) => {
     set(contextMenuVisibleBaseState, visible);
@@ -36,4 +36,9 @@ export const contextMenuPositionState = atom<AbsolutePosition>({
 export const contextMenuTargetState = atom<PathNode>({
   key: prefixer('contextMenuTarget'),
   default: null,
+});
+
+export const contextMenuTargetUserIdState = atom<string>({
+  key: prefixer('contextMenuTargetUserId'),
+  default: '',
 });

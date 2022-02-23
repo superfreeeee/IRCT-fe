@@ -1,4 +1,4 @@
-import React, { FC, RefObject, useEffect, useRef } from 'react';
+import React, { FC, MouseEvent, RefObject, useEffect, useRef } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import classNames from 'classnames';
 
@@ -20,6 +20,13 @@ import {
   SIMULATION_BOARD_PADDING,
 } from './styles';
 import useShadowState from '@hooks/useShadowState';
+import usePreventContextMenu from '@hooks/usePreventContextMenu';
+import {
+  contextMenuTargetUserIdState,
+  contextMenuVisibleState,
+} from '@views/Main/state/modals/customContextMenu';
+import { useOpenContextMenu } from '@views/Main/state/modals/hooks';
+import { okrPathVisibleState } from '@views/Main/state/okrPath';
 
 const MicroOff = () => {
   return (
@@ -84,12 +91,28 @@ const Figure: FC<FigureProps> = ({ figure, boardRef, onFigureMove }) => {
   const isMute = !useRecoilValue(userVideoVoiceSwitchFamily(figure.id));
   const activeButMute = isTalking && isMute;
 
+  usePreventContextMenu();
+
+  const setContextMenuTargetUserId = useSetRecoilState(
+    contextMenuTargetUserIdState,
+  );
+  const openContextMenu = useOpenContextMenu();
+  const wrappedOnMouseDown = (e: MouseEvent<HTMLDivElement>) => {
+    if (e.button === 2) {
+      openContextMenu(e, () => {
+        setContextMenuTargetUserId(figure.id);
+      });
+    } else {
+      onMouseDown(e);
+    }
+  };
+
   return (
     <FigureContainer
       className={classNames({ inactive: !isTalking, mute: activeButMute })}
       title="点击+拖拽"
       onClick={stopPropagationHandler}
-      onMouseDown={onMouseDown}
+      onMouseDown={wrappedOnMouseDown}
       style={{ left: position[0], top: position[1] }}
     >
       <Avatar>

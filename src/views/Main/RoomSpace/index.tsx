@@ -22,6 +22,7 @@ import {
   RoomSpaceWrapper,
 } from './styles';
 import { okrPathVisibleState } from '../state/okrPath';
+import CustomContextMenu from './CustomContextMenu';
 
 interface RoomSpaceProps {}
 
@@ -57,9 +58,12 @@ const RoomSpace: FC<RoomSpaceProps> = ({}) => {
           <Header isRoom={isRoom} expand={expandVideoRoom} />
           {/* body: Room | Chat */}
           <RoomSpaceBody>
+            {/* SimulationArea | MeetingRoom */}
             <RoomSpaceOrigin className={classNames({ isChat: !isRoom })}>
               {BodyEl}
             </RoomSpaceOrigin>
+            <CustomContextMenu />
+            {/* Video */}
             <RoomSpaceVideo
               className={classNames({ visible: isRoom && expandVideoRoom })}
             >

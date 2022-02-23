@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { selectedRoomIdState } from '@views/Main/state/im';
@@ -6,6 +6,9 @@ import { userTalkingListState } from '@views/Main/state/user';
 import { roomSpaceUserBasicInfoListFamily } from '@views/Main/state/roomSpace';
 import { useInviteToRoom } from '@views/Main/state/hooks';
 import { selectUserModalControllerInfoState } from '@views/Main/state/modals/selectUserModal';
+import { useOpenContextMenu } from '@views/Main/state/modals/hooks';
+import { contextMenuTargetUserIdState } from '@views/Main/state/modals/customContextMenu';
+import usePreventContextMenu from '@hooks/usePreventContextMenu';
 import useWaitFor from '@hooks/useWaitFor';
 import Avatar from '@components/Avatar';
 import BoxIcon, { BoxIconType } from '@components/BoxIcon';
@@ -65,10 +68,26 @@ const MeetingRoomMembers = () => {
     waitingResponseRef.current,
   );
 
+  const setContextMenuTargetUserId = useSetRecoilState(
+    contextMenuTargetUserIdState,
+  );
+  const openContextMenu = useOpenContextMenu();
+  const bindMouseDown = useCallback(
+    (userId: string) => (e) => {
+      if (e.button === 2) {
+        openContextMenu(e, () => {
+          setContextMenuTargetUserId(userId);
+        });
+      }
+    },
+    [],
+  );
+  usePreventContextMenu();
+
   return (
     <MeetingRoomMembersWrapper>
       {userList.map(({ id, avatar }) => (
-        <Avatar key={id}>
+        <Avatar key={id} onMouseDown={bindMouseDown(id)}>
           <img src={avatar} width={'100%'} />
         </Avatar>
       ))}

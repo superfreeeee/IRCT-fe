@@ -30,6 +30,7 @@ import { useOpenEditEntityModal } from '../state/modals/hooks';
 import { getEntityChildNextSeq } from '../state/okrDB/api';
 import { ContextMenuOption } from './type';
 import { PathListRef } from './PathList';
+import ContextMenu from '@components/ContextMenu';
 
 const CustomContextMenuContainer = styled.div`
   position: fixed;
@@ -83,8 +84,7 @@ interface CustomContextMenuProps {
 }
 
 const CustomContextMenu: FC<CustomContextMenuProps> = ({ listRef }) => {
-  const [visible, setVisible] = useRecoilState(contextMenuVisibleState);
-  const position = useRecoilValue(contextMenuPositionState);
+  const setVisible = useSetRecoilState(contextMenuVisibleState);
   const [targetNode, setTargetNode] = useRecoilState(contextMenuTargetState);
 
   const closeMenu = useCallback(() => {
@@ -92,18 +92,7 @@ const CustomContextMenu: FC<CustomContextMenuProps> = ({ listRef }) => {
     setTargetNode(null); // reset when menu closed
   }, []);
 
-  // ========== click outside and close ==========
-  const wrapperRef = useRef<HTMLDivElement>(null);
-  useClickDetect(
-    wrapperRef,
-    (isOutSide, e) => {
-      if (isOutSide) {
-        closeMenu();
-        e.stopPropagation(); // 避免同时触发后续动作
-      }
-    },
-    visible,
-  );
+  const onCancel = closeMenu;
 
   // ========== render options(dep on targetNode) ==========
   const updateStack = useSetRecoilState(viewPointStackUpdater);
@@ -274,15 +263,7 @@ const CustomContextMenu: FC<CustomContextMenuProps> = ({ listRef }) => {
     );
   }, [targetNode]);
 
-  return (
-    <CustomContextMenuContainer
-      ref={wrapperRef}
-      className={classNames({ visible })}
-      style={{ ...position }}
-    >
-      {optionsEl}
-    </CustomContextMenuContainer>
-  );
+  return <ContextMenu onCancel={onCancel}>{optionsEl}</ContextMenu>;
 };
 
 export default CustomContextMenu;
