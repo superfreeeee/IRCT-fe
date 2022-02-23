@@ -71,13 +71,20 @@ export const useMenu = () => {
    * 点击目录切换
    */
   const setCurrentSpaceId = useSetRecoilState(currentSpaceIdState);
-  const setOKRPathVisible = useSetRecoilState(okrPathVisibleState);
+  const [okrPathVisible, setOKRPathVisible] =
+    useRecoilState(okrPathVisibleState);
   const onItemClick = useCallback(
     (data: MenuData) => {
+      if (okrPathVisible) {
+        // 点击任意 item 关闭 Path 页面
+        setOKRPathVisible(false);
+      }
+
       // 点击 MenuItem 只对 Team 有效
       if (currentTab === TabOption.Team) {
         const { id: teamId } = data;
-        if (teamId === selectedId) {
+        if (teamId === selectedId && !okrPathVisible) {
+          // okrPath 关闭时再点击才关闭 Team
           setSelectedTeamId('');
           setCurrentSpaceId('');
         } else {
@@ -85,10 +92,8 @@ export const useMenu = () => {
           setCurrentSpaceId(teamId);
         }
       }
-      // 点击任意 item 关闭 Path 页面
-      setOKRPathVisible(false);
     },
-    [currentTab, selectedId],
+    [currentTab, selectedId, okrPathVisible],
   );
 
   return {
