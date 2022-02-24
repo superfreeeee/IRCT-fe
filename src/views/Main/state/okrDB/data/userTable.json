@@ -1,0 +1,17 @@
+[
+  { "id": "user-07", "name": "San", "state": "UserState.Idle", "currentRoomId": "room-0", "isGroup": false, "avatar": "user1000Avatar" },
+  { "id": "user-01", "name": "Jojo Zhao", "state": "UserState.Idle", "currentRoomId": "room-1", "isGroup": false, "avatar": "user0Avatar" },
+  { "id": "user-08", "name": "Tingting", "state": "UserState.Talking", "currentRoomId": "room-5", "usingApp": "AppType.Figma", "isGroup": false, "avatar": "user1Avatar" },
+  { "id": "user-06", "name": "Xin Liu", "state": "UserState.Busy", "currentRoomId": "room-11", "usingApp": "AppType.Notion", "isGroup": false, "avatar": "user2Avatar" },
+  { "id": "group-01", "name": "Doc PM Group", "isGroup": true, "avatar": "graphic1Avatar" },
+  { "id": "user-09", "name": "Lan", "state": "UserState.Busy", "currentRoomId": "room-5", "usingApp": "AppType.Figma", "isGroup": false, "avatar": "user5Avatar" },
+  { "id": "group-02", "name": "Project Alpha Group", "isGroup": true, "avatar": "graphic2Avatar" },
+  { "id": "user-05", "name": "Shu ting", "state": "UserState.Busy", "currentRoomId": "room-11", "usingApp": "AppType.Figma", "isGroup": false, "avatar": "user9Avatar" },
+  { "id": "user-02", "name": "JiaJia", "state": "UserState.Busy", "currentRoomId": "room-0", "usingApp": "AppType.Notion", "isGroup": false, "avatar": "user12Avatar" },
+  { "id": "user-03", "name": "Yu hang", "state": "UserState.Busy", "currentRoomId": "room-0", "usingApp": "AppType.Figma", "isGroup": false, "videoUrl": "SanVideoUrl", "avatar": "user13Avatar" },
+  { "id": "user-04", "name": "Tian tian", "state": "UserState.Busy", "currentRoomId": "room-4", "usingApp": "AppType.Pycharm", "isGroup": false, "avatar": "user14Avatar" },
+  { "id": "user-10", "name": "Lei", "state": "UserState.Busy", "currentRoomId": "room-1", "isGroup": false, "avatar": "user15Avatar" },
+  { "id": "group-003", "name": "Test 1 - Project Alpha Group LongLongLongLongNmae", "isGroup": true, "avatar": "graphic2Avatar" },
+  { "id": "group-004", "name": "Test 2 - Project Alpha Group LongLongLongLongNmae", "isGroup": true, "avatar": "graphic2Avatar" },
+  { "id": "user-666", "name": "CEO", "state": "UserState.Idle", "isGroup": false, "avatar": "user666Avatar" }
+]

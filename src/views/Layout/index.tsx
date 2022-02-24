@@ -3,16 +3,15 @@ import { Switch, Route, Redirect } from 'react-router-dom';
 
 import Home from '@views/Home';
 import Main from '../Main';
+import { CrafteamRoute } from './type';
 
 const Layout = () => {
   return (
     <Switch>
-      {/* <Route exact path="/" component={Home}></Route> */}
-      {/* <Route exact path="/main" component={Main}></Route> */}
-      <Route exact path="/" component={Main}></Route>
-      <Route exact path="/home" component={Home}></Route>
+      <Route exact path={CrafteamRoute.Home} component={Home} />
+      <Route exact path={CrafteamRoute.Main} component={Main} />
       <Route>
-        <Redirect to="/" />
+        <Redirect to={CrafteamRoute.Home} />
       </Route>
     </Switch>
   );
