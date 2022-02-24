@@ -41,9 +41,9 @@ const FrameBg = styled.img`
   left: 60%;
 
   width: 2400px;
-  z-index: -1;
-
+  
   transform: translate(-50%, 0);
+  z-index: -1;
 `;
 
 const EntryBtn = styled(Link)`
