@@ -1,5 +1,7 @@
 import styled from 'styled-components';
 
+import logoSrcBg2 from '../../assets/img/home_logo_bg2.png';
+
 export const HomeContainer = styled.div`
   width: 100vw;
   height: 100vh;
@@ -41,17 +43,12 @@ export const HomeFooter = styled.section`
 
   .bottom-padding {
     position: relative;
-    height: 400px;
-    overflow: hidden;
-  }
-`;
 
-export const BottomBg = styled.img`
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 3300px;
-  -webkit-transform: translateY(0);
-  -ms-transform: translateY(0);
-  transform: translate(-10%, 41%) rotate(10deg);
+    height: 400px;
+
+    overflow: hidden;
+
+    background: url(${logoSrcBg2});
+    background-size: cover;
+  }
 `;

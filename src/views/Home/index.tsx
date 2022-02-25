@@ -4,9 +4,7 @@ import Frame1 from './Frame1';
 import FrameDescription from './FrameDescription';
 import Header from './Header';
 import RectPlaceholder from './RectPlaceholder';
-import { BottomBg, HomeContainer, HomeFooter, HomePageFrame } from './styles';
-
-import logoSrc from '../../assets/img/home_logo_small.png';
+import { HomeContainer, HomeFooter, HomePageFrame } from './styles';
 
 const commonFramesData = [
   {
@@ -45,17 +43,7 @@ const Home = () => {
   return (
     <HomeContainer ref={containerRef}>
       <Header onClickOption={onClickOption} />
-      <Frame1 />
-      <HomePageFrame>
-        <div className="common" style={{ gap: 70 }}>
-          <RectPlaceholder video />
-          <ul style={{ margin: 'auto', fontSize: 24, fontWeight: 600 }}>
-            {commonFramesData.map(({ title }) => (
-              <li key={title}>{title}</li>
-            ))}
-          </ul>
-        </div>
-      </HomePageFrame>
+      <Frame1 titles={commonFramesData.map(({ title }) => title)} />
       {commonFramesData.map(({ title, subtitle, textRight }) => (
         <HomePageFrame key={title}>
           <div className="common">
@@ -73,9 +61,7 @@ const Home = () => {
           We Hope all people on the remote team can be fully respected and
           inspired
         </div>
-        <div className="bottom-padding">
-          <BottomBg src={logoSrc} />
-        </div>
+        <div className="bottom-padding"></div>
       </HomeFooter>
     </HomeContainer>
   );

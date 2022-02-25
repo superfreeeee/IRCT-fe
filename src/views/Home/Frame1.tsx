@@ -1,15 +1,30 @@
-import { CrafteamRoute } from '@views/Layout/type';
-import React from 'react';
+import React, { FC } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { CrafteamRoute } from '@views/Layout/type';
+import RectPlaceholder from './RectPlaceholder';
 import { HomePageFrame } from './styles';
 
-import logoSrc from '../../assets/img/home_logo_small.png';
+import logoSrcBg1 from '../../assets/img/home_logo_bg1.png';
 
-const FrameWrapper = styled.p`
+const PageFrameWithBg = styled(HomePageFrame)`
   display: flex;
   flex-direction: column;
+  align-items: stretch;
+
+  background: url(${logoSrcBg1});
+  background-size: cover;
+  background-position: 0 -350px;
+  background-repeat: no-repeat;
+`;
+
+const FrameWrapper = styled.p`
+  min-height: 70vh;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
 
   padding: 40px;
@@ -35,17 +50,6 @@ const FrameWrapper = styled.p`
   }
 `;
 
-const FrameBg = styled.img`
-  position: absolute;
-  top: -150%;
-  left: 60%;
-
-  width: 2400px;
-  
-  transform: translate(-50%, 0);
-  z-index: -1;
-`;
-
 const EntryBtn = styled(Link)`
   width: 240px;
   padding: 15px 0;
@@ -61,26 +65,40 @@ const EntryBtn = styled(Link)`
   cursor: pointer;
 
   transition: box-shadow var(--trans_speed_level1);
+  /* mix-blend-mode: exclusion; */
 
   &:hover {
     box-shadow: 0 0px 5px inset rgba(0, 0, 0, 0.64);
   }
 `;
 
-const Frame1 = () => {
+interface Frame1Props {
+  titles: string[];
+}
+
+const Frame1: FC<Frame1Props> = ({ titles }) => {
   const title = 'Stimulate Endividual Energy for your Remote Team';
   const subtitle =
     'Using Crafteam, Easy to Communicate and collaborate with your online team at any time, more flexible in setting personal or organizational goals and tasks';
 
   return (
-    <HomePageFrame>
-      <FrameBg src={logoSrc} />
+    <PageFrameWithBg>
       <FrameWrapper className="frame1">
         <span className="title">{title}</span>
         <span className="subtitle">{subtitle}</span>
         <EntryBtn to={CrafteamRoute.Main}>Try for Free</EntryBtn>
       </FrameWrapper>
-    </HomePageFrame>
+      <HomePageFrame>
+        <div className="common" style={{ gap: 70 }}>
+          <RectPlaceholder video />
+          <ul style={{ margin: 'auto', fontSize: 24, fontWeight: 600 }}>
+            {titles.map((title) => (
+              <li key={title}>{title}</li>
+            ))}
+          </ul>
+        </div>
+      </HomePageFrame>
+    </PageFrameWithBg>
   );
 };
 
