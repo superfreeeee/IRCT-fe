@@ -69,7 +69,7 @@ export const calcNearbyFigures = (
     // 3. filter by voice rate
     .filter((figure) => figure.voiceRate > 0); // 不用过滤自己
 
-  // 只有自己就算了
+  // 只有当前用户
   if (nearbyFigures.length === 1) {
     return [];
   }

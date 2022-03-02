@@ -556,7 +556,7 @@ export const transition = (attr: string, duration: number = 0.2) =>
  */
 
 /**
- * 模拟中
+ * 力导图模拟更新计算
  */
 export const onTick =
   ({ linksRef, nodesRef }: TickBindRefs) =>
@@ -975,7 +975,6 @@ const _nodesColor = (
   if (type === SelectionType.Active) {
     // active
     nodes.select('circle').attr('fill', (d) => d.store.hoverColor);
-    // d === targetNode ? d.store.activeColor : d.store.hoverColor // 暂时都先使用 hover 颜色
     nodes.select('text').attr('fill', NodeTextColor.Active);
     nodes
       .select('circle.user-mask')

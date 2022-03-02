@@ -1,6 +1,6 @@
 # IRCT = Innovation Remote collaboration tools
 
-- 部署位置：[http://101.43.30.63/](http://101.43.30.63/)
+- 部署位置：[http://crafteam.cn/](http://crafteam.cn/)
 
 ## TODO
 
@@ -29,7 +29,7 @@
 
 - [x] 跳转
   - [x] 人物聊天页面跳转
-- [ ] 主视图
+- [x] 主视图
   - [x] 关系颜色渐层
   - [x] 人物节点透明度遮罩
   - [x] 个人视图数据
