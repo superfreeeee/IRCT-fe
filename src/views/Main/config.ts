@@ -22,7 +22,16 @@ import coffeeAvatar from '@assets/img/coffee.png';
 import coffeeGymAvatar from '@assets/img/coffee_gym.png';
 import meetingAvatar from '@assets/img/meeting.png';
 
+// video
 import SanVideoUrl from '@assets/video/San.mov';
+import JojoVideoUrl from '@assets/video/Jojo.mov';
+import LanVideoUrl from '@assets/video/Lan.mp4';
+import LeiVideoUrl from '@assets/video/Lei.mov';
+import ShutingVideoUrl from '@assets/video/Shuting.mov';
+import TiantianVideoUrl from '@assets/video/Tiantian.mov';
+import TingtingVideoUrl from '@assets/video/Tingting.mov';
+import XinLiuVideoUrl from '@assets/video/XinLiu.mov';
+import YuHangVideoUrl from '@assets/video/YuHang.mp4';
 
 import { AppType } from '@components/AppIcon/type';
 import { UserState, RoomType } from './state/type';
@@ -38,7 +47,7 @@ export const initTeamDataList: TeamData[] = [
     state: UserState.Idle,
     currentRoomId: 'room-0',
     isGroup: false,
-    // videoUrl: SanVideoUrl,
+    videoUrl: SanVideoUrl,
   },
   {
     id: 'user-01',
@@ -47,6 +56,7 @@ export const initTeamDataList: TeamData[] = [
     state: UserState.Idle,
     currentRoomId: 'room-1',
     isGroup: false,
+    videoUrl: JojoVideoUrl,
   },
   {
     id: 'user-08',
@@ -56,6 +66,7 @@ export const initTeamDataList: TeamData[] = [
     currentRoomId: 'room-5',
     usingApp: AppType.Figma,
     isGroup: false,
+    videoUrl: TingtingVideoUrl,
   },
   {
     id: 'user-06',
@@ -65,6 +76,7 @@ export const initTeamDataList: TeamData[] = [
     currentRoomId: 'room-11',
     usingApp: AppType.Notion,
     isGroup: false,
+    videoUrl: XinLiuVideoUrl,
   },
   {
     id: 'group-01',
@@ -80,6 +92,7 @@ export const initTeamDataList: TeamData[] = [
     currentRoomId: 'room-5',
     usingApp: AppType.Figma,
     isGroup: false,
+    videoUrl: LanVideoUrl,
   },
   {
     id: 'group-02',
@@ -95,6 +108,7 @@ export const initTeamDataList: TeamData[] = [
     currentRoomId: 'room-11',
     usingApp: AppType.Figma,
     isGroup: false,
+    videoUrl: ShutingVideoUrl,
   },
   {
     id: 'user-02',
@@ -113,7 +127,7 @@ export const initTeamDataList: TeamData[] = [
     currentRoomId: 'room-0',
     usingApp: AppType.Figma,
     isGroup: false,
-    videoUrl: SanVideoUrl,
+    videoUrl: YuHangVideoUrl,
   },
   {
     id: 'user-04',
@@ -123,6 +137,7 @@ export const initTeamDataList: TeamData[] = [
     currentRoomId: 'room-4',
     usingApp: AppType.Pycharm,
     isGroup: false,
+    videoUrl: TiantianVideoUrl,
   },
   {
     id: 'user-10',
@@ -131,6 +146,7 @@ export const initTeamDataList: TeamData[] = [
     state: UserState.Busy,
     currentRoomId: 'room-1',
     isGroup: false,
+    videoUrl: LeiVideoUrl,
   },
   {
     id: 'group-003',

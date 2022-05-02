@@ -68,7 +68,7 @@ const config = {
       },
       // 视频
       {
-        test: /\.mov$/,
+        test: /\.(mov|mp4)$/,
         use: [
           {
             loader: 'file-loader',
