@@ -11,7 +11,7 @@ const config = {
   entry: path.join(__dirname, 'src/index'),
   output: {
     path: path.join(__dirname, 'dist'),
-    filename: '[name]-[chunkhash].js',
+    filename: '[name]-[chunkhash:6].js',
   },
   resolve: {
     alias: {
@@ -95,6 +95,7 @@ const config = {
       template: './public/index.html',
       filename: 'index.html',
       favicon: './public/favicon32.png',
+      publicPath: '/',
     }),
   ],
   optimization: {
