@@ -22,24 +22,31 @@ import coffeeAvatar from '@/assets/img/coffee.png';
 import coffeeGymAvatar from '@/assets/img/coffee_gym.png';
 import meetingAvatar from '@/assets/img/meeting.png';
 
-// video
-import {
-  SanVideoUrl,
-  JojoVideoUrl,
-  LanVideoUrl,
-  LeiVideoUrl,
-  ShutingVideoUrl,
-  TiantianVideoUrl,
-  TingtingVideoUrl,
-  XinLiuVideoUrl,
-  YuHangVideoUrl,
-} from '@/common/const';
-
 import { AppType } from '@/components/AppIcon/type';
 import { UserState, RoomType } from './state/type';
 import { TeamData } from './state/team';
 import { RoomData } from './state/room';
 import { AllChatRecords, AllRoomSpaceInfo } from './state/roomSpace';
+
+// video
+export const SanVideoUrl =
+  'https://youxian-assets.oss-cn-beijing.aliyuncs.com/video/San.mov';
+export const JojoVideoUrl =
+  'https://youxian-assets.oss-cn-beijing.aliyuncs.com/video/Jojo.mov';
+export const LanVideoUrl =
+  'https://youxian-assets.oss-cn-beijing.aliyuncs.com/video/Lan.mp4';
+export const LeiVideoUrl =
+  'https://youxian-assets.oss-cn-beijing.aliyuncs.com/video/Lei.mov';
+export const ShutingVideoUrl =
+  'https://youxian-assets.oss-cn-beijing.aliyuncs.com/video/Shuting.mov';
+export const TiantianVideoUrl =
+  'https://youxian-assets.oss-cn-beijing.aliyuncs.com/video/Tiantian.mov';
+export const TingtingVideoUrl =
+  'https://youxian-assets.oss-cn-beijing.aliyuncs.com/video/Tingting.mov';
+export const XinLiuVideoUrl =
+  'https://youxian-assets.oss-cn-beijing.aliyuncs.com/video/XinLiu.mov';
+export const YuHangVideoUrl =
+  'https://youxian-assets.oss-cn-beijing.aliyuncs.com/video/YuHang.mp4';
 
 export const initTeamDataList: TeamData[] = [
   {

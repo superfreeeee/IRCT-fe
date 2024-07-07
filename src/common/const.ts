@@ -1,9 +1,0 @@
-export const SanVideoUrl = ''; //  import  from '@/assets/video/San.mov';
-export const JojoVideoUrl = ''; //  import  from '@/assets/video/Jojo.mov';
-export const LanVideoUrl = ''; //  import  from '@/assets/video/Lan.mp4';
-export const LeiVideoUrl = ''; //  import  from '@/assets/video/Lei.mov';
-export const ShutingVideoUrl = ''; //  import  from '@/assets/video/Shuting.mov';
-export const TiantianVideoUrl = ''; //  import  from '@/assets/video/Tiantian.mov';
-export const TingtingVideoUrl = ''; //  import  from '@/assets/video/Tingting.mov';
-export const XinLiuVideoUrl = ''; //  import  from '@/assets/video/XinLiu.mov';
-export const YuHangVideoUrl = ''; //  import  from '@/assets/video/YuHang.mp4';
