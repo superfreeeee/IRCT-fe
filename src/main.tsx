@@ -1,4 +1,3 @@
-import React from 'react';
 import ReactDOM from 'react-dom';
 
 // Box Icon
@@ -8,4 +7,4 @@ import './index.css'
 
 import App from './App';
 
-ReactDOM.render(<App />, document.querySelector('#app'));
+ReactDOM.render(<App />, document.querySelector('#root'));

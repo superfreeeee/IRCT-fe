@@ -37,7 +37,7 @@ const Home = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const onClickOption = () => {
     console.log(`back to top`);
-    containerRef.current.scrollTop = 0;
+    containerRef.current && (containerRef.current.scrollTop = 0);
   };
 
   return (
