@@ -1,6 +1,8 @@
 # IRCT = Innovation Remote collaboration tools
 
-- 部署位置：[http://crafteam.cn/](http://crafteam.cn/)
+- 部署
+  - [http://crafteam.cn/](http://crafteam.cn/)
+  - [https://irct-fe.vercel.app/](https://irct-fe.vercel.app/)
 
 ## TODO
 
