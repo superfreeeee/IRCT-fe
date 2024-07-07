@@ -1,39 +1,41 @@
 // user avatar resources
-import user0Avatar from '@assets/img/user_0.png';
-import user1Avatar from '@assets/img/user_1.png';
-import user2Avatar from '@assets/img/user_2.png';
-import user5Avatar from '@assets/img/user_5.png';
-import user9Avatar from '@assets/img/user_9.png';
-import user12Avatar from '@assets/img/user_12.png';
-import user13Avatar from '@assets/img/user_13.png';
-import user14Avatar from '@assets/img/user_14.png';
-import user15Avatar from '@assets/img/user_15.png';
-import user1000Avatar from '@assets/img/user_1000.png';
-import user666Avatar from '@assets/img/user_666.png';
-import graphic1Avatar from '@assets/img/graphic_1.png';
-import graphic2Avatar from '@assets/img/graphic_2.png';
+import user0Avatar from '@/assets/img/user_0.png';
+import user1Avatar from '@/assets/img/user_1.png';
+import user2Avatar from '@/assets/img/user_2.png';
+import user5Avatar from '@/assets/img/user_5.png';
+import user9Avatar from '@/assets/img/user_9.png';
+import user12Avatar from '@/assets/img/user_12.png';
+import user13Avatar from '@/assets/img/user_13.png';
+import user14Avatar from '@/assets/img/user_14.png';
+import user15Avatar from '@/assets/img/user_15.png';
+import user1000Avatar from '@/assets/img/user_1000.png';
+import user666Avatar from '@/assets/img/user_666.png';
+import graphic1Avatar from '@/assets/img/graphic_1.png';
+import graphic2Avatar from '@/assets/img/graphic_2.png';
 
 // room avatar resources
-import officeBookAvatar from '@assets/img/office_book.png';
-import officeToolsAvatar from '@assets/img/office_tools.png';
-import officeGraphicsAvatar from '@assets/img/office_graphics.png';
-import officeGitlabAvatar from '@assets/img/office_gitlab.png';
-import coffeeAvatar from '@assets/img/coffee.png';
-import coffeeGymAvatar from '@assets/img/coffee_gym.png';
-import meetingAvatar from '@assets/img/meeting.png';
+import officeBookAvatar from '@/assets/img/office_book.png';
+import officeToolsAvatar from '@/assets/img/office_tools.png';
+import officeGraphicsAvatar from '@/assets/img/office_graphics.png';
+import officeGitlabAvatar from '@/assets/img/office_gitlab.png';
+import coffeeAvatar from '@/assets/img/coffee.png';
+import coffeeGymAvatar from '@/assets/img/coffee_gym.png';
+import meetingAvatar from '@/assets/img/meeting.png';
 
 // video
-import SanVideoUrl from '@assets/video/San.mov';
-import JojoVideoUrl from '@assets/video/Jojo.mov';
-import LanVideoUrl from '@assets/video/Lan.mp4';
-import LeiVideoUrl from '@assets/video/Lei.mov';
-import ShutingVideoUrl from '@assets/video/Shuting.mov';
-import TiantianVideoUrl from '@assets/video/Tiantian.mov';
-import TingtingVideoUrl from '@assets/video/Tingting.mov';
-import XinLiuVideoUrl from '@assets/video/XinLiu.mov';
-import YuHangVideoUrl from '@assets/video/YuHang.mp4';
+import {
+  SanVideoUrl,
+  JojoVideoUrl,
+  LanVideoUrl,
+  LeiVideoUrl,
+  ShutingVideoUrl,
+  TiantianVideoUrl,
+  TingtingVideoUrl,
+  XinLiuVideoUrl,
+  YuHangVideoUrl,
+} from '@/common/const';
 
-import { AppType } from '@components/AppIcon/type';
+import { AppType } from '@/components/AppIcon/type';
 import { UserState, RoomType } from './state/type';
 import { TeamData } from './state/team';
 import { RoomData } from './state/room';

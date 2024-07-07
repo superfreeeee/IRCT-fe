@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { EntityType } from '@views/Main/state/okrDB/type';
+import { EntityType } from '@/views/Main/state/okrDB/type';
 import { NodeColor } from '../PathBoard/type';
 
 const entityColorMap: { [type in EntityType]: NodeColor } = {

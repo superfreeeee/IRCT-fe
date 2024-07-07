@@ -1,29 +1,29 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useRecoilValue } from 'recoil';
 
-import Modal from '@components/Modal';
+import Modal from '@/components/Modal';
 import {
   editEntityModalSourceState,
   editEntityModalActionTypeState,
   editEntityModalVisibleState,
   editEntityModalTargetTypeState,
   editEntityModalNextSeqState,
-} from '@views/Main/state/modals/editEntityModal';
+} from '@/views/Main/state/modals/editEntityModal';
 import {
   EntityType,
   UserEntity,
   ViewPointEntity,
-} from '@views/Main/state/okrDB/type';
+} from '@/views/Main/state/okrDB/type';
 import {
   EditEntityModalActionType,
   EditEntityModalResponseStatus,
-} from '@views/Main/state/type';
+} from '@/views/Main/state/type';
 import {
   useCloseEditEntityModal,
   useOpenEditEntityModal,
-} from '@views/Main/state/modals/hooks';
-import useClickDetect from '@hooks/useClickDetect';
-import BoxIcon, { BoxIconType } from '@components/BoxIcon';
+} from '@/views/Main/state/modals/hooks';
+import useClickDetect from '@/hooks/useClickDetect';
+import BoxIcon, { BoxIconType } from '@/components/BoxIcon';
 import ItemTypePoint from '../ItemTooltip/ItemTypePoint';
 import {
   EditEntityModalBtn,
@@ -36,9 +36,9 @@ import {
 } from './styles';
 import EditContent from './EditContent';
 import SelectedUserList from './SelectedUserList';
-import { selectUserModalVisibleState } from '@views/Main/state/modals/selectUserModal';
-import { getRelativeUsers } from '@views/Main/state/okrDB/api';
-import { viewPointCenterUserIdState } from '@views/Main/state/okrPath';
+import { selectUserModalVisibleState } from '@/views/Main/state/modals/selectUserModal';
+import { getRelativeUsers } from '@/views/Main/state/okrDB/api';
+import { viewPointCenterUserIdState } from '@/views/Main/state/okrPath';
 
 const EditEntityModal = () => {
   // outer state

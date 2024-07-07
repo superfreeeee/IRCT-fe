@@ -2,14 +2,14 @@ import React, { FC, useCallback, useEffect, useRef } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import classNames from 'classnames';
 
-import { selectedRoomIdState, selectedTeamIdState } from '@views/Main/state/im';
-import { currentUserIdState } from '@views/Main/state/user';
+import { selectedRoomIdState, selectedTeamIdState } from '@/views/Main/state/im';
+import { currentUserIdState } from '@/views/Main/state/user';
 import {
   chatHistoryFamily,
   chatRecordsFamily,
-} from '@views/Main/state/roomSpace';
-import { getCurrentTime, scrollToBottom } from '@utils';
-import BoxIcon, { BoxIconType } from '@components/BoxIcon';
+} from '@/views/Main/state/roomSpace';
+import { getCurrentTime, scrollToBottom } from '@/utils';
+import BoxIcon, { BoxIconType } from '@/components/BoxIcon';
 import { useEnterListener, useInput } from './hooks';
 import ChatRecordEl from './ChatRecordEl';
 import {
@@ -19,7 +19,7 @@ import {
   Input,
   SendButton,
 } from './styles';
-import useKeyDetect from '@hooks/useKeyDetect';
+import useKeyDetect from '@/hooks/useKeyDetect';
 
 interface ChatProps {
   isInRoom?: boolean;

@@ -1,5 +1,5 @@
-import { AppIconWrapper } from '@components/AppIcon';
-import Avatar from '@components/Avatar';
+import { AppIconWrapper } from '@/components/AppIcon';
+import Avatar from '@/components/Avatar';
 import styled from 'styled-components';
 
 export const VideoRoomContainer = styled.div`

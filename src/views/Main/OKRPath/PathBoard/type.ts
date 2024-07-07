@@ -5,7 +5,7 @@ import {
   EntityType,
   OrganizationViewPointEntity,
   PersonalViewPointEntity,
-} from '@views/Main/state/okrDB/type';
+} from '@/views/Main/state/okrDB/type';
 
 // ========== enum ==========
 /**

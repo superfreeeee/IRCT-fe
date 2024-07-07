@@ -2,34 +2,34 @@ import React, { FC, useRef } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import classNames from 'classnames';
 
-import { TabOption, UserState, RoomType } from '@views/Main/state/type';
+import { TabOption, UserState, RoomType } from '@/views/Main/state/type';
 import {
   currentTabState,
   stateTooltipInfoState,
   stateTooltipVisibleState,
-} from '@views/Main/state/im';
+} from '@/views/Main/state/im';
 import {
   roomBasicInfoFamily,
   RoomData,
   roomUserIdsFamily,
-} from '@views/Main/state/room';
-import { TeamData } from '@views/Main/state/team';
+} from '@/views/Main/state/room';
+import { TeamData } from '@/views/Main/state/team';
 import {
   callModalInfoState,
   callModalVisibleState,
-} from '@views/Main/state/modals/callModal';
-import { lastChatRecordFamily } from '@views/Main/state/roomSpace';
-import { useCreateTempMeeting, useEnterRoom } from '@views/Main/state/hooks';
+} from '@/views/Main/state/modals/callModal';
+import { lastChatRecordFamily } from '@/views/Main/state/roomSpace';
+import { useCreateTempMeeting, useEnterRoom } from '@/views/Main/state/hooks';
 import {
   collaborateOuterLinkMap,
   invitationAcceptList,
-} from '@views/Main/config';
-import { openNewPage } from '@utils';
-import { AppType } from '@components/AppIcon/type';
-import Avatar from '@components/Avatar';
-import StatusPoint from '@components/StatusPoint';
-import AppIcon from '@components/AppIcon';
-import BoxIcon, { BoxIconType } from '@components/BoxIcon';
+} from '@/views/Main/config';
+import { openNewPage } from '@/utils';
+import { AppType } from '@/components/AppIcon/type';
+import Avatar from '@/components/Avatar';
+import StatusPoint from '@/components/StatusPoint';
+import AppIcon from '@/components/AppIcon';
+import BoxIcon, { BoxIconType } from '@/components/BoxIcon';
 import {
   ItemActionBtn,
   ItemActionDivider,
@@ -40,11 +40,11 @@ import {
 } from './styles';
 import { MenuData } from './type';
 
-import graphic2Avatar from '@assets/img/graphic_2.png';
-import lockedUrl from '@assets/img/room_action_lock.png';
-import CALL_ICON_URL from '@assets/img/team_action_call.png';
-import FOLLOR_ICON_URL from '@assets/img/team_action_follow.png';
-import COLLABORATE_ICON_URL from '@assets/img/team_action_collaborate.png';
+import graphic2Avatar from '@/assets/img/graphic_2.png';
+import lockedUrl from '@/assets/img/room_action_lock.png';
+import CALL_ICON_URL from '@/assets/img/team_action_call.png';
+import FOLLOR_ICON_URL from '@/assets/img/team_action_follow.png';
+import COLLABORATE_ICON_URL from '@/assets/img/team_action_collaborate.png';
 
 /**
  * 状态点 hover 展示用户状态

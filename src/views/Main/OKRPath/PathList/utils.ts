@@ -2,13 +2,13 @@ import {
   EntityNode,
   EntityType,
   ViewPointEntity,
-} from '@views/Main/state/okrDB/type';
-import { deepCopy } from '@utils';
+} from '@/views/Main/state/okrDB/type';
+import { deepCopy } from '@/utils';
 import { PathNode } from '../PathBoard/type';
 import {
   getEntityNode,
   getRelativeUserSource,
-} from '@views/Main/state/okrDB/api';
+} from '@/views/Main/state/okrDB/api';
 
 /**
  * EditEntityModalActionType.Delete + Todo

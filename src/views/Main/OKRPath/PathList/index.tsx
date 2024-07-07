@@ -16,22 +16,22 @@ import {
   EntityNode,
   EntityType,
   ViewPointEntity,
-} from '@views/Main/state/okrDB/type';
-import { useShowExpandBtn } from '@views/Main/state/hooks';
+} from '@/views/Main/state/okrDB/type';
+import { useShowExpandBtn } from '@/views/Main/state/hooks';
 import {
   AbsolutePosition,
   EditEntityModalActionType,
-} from '@views/Main/state/type';
+} from '@/views/Main/state/type';
 import {
   contextMenuPositionState,
   contextMenuTargetState,
   contextMenuVisibleState,
-} from '@views/Main/state/modals/customContextMenu';
-import useShadowState from '@hooks/useShadowState';
-import usePrev from '@hooks/usePrev';
-import Avatar from '@components/Avatar';
-import BoxIcon, { BoxIconType } from '@components/BoxIcon';
-import { deepCopy } from '@utils';
+} from '@/views/Main/state/modals/customContextMenu';
+import useShadowState from '@/hooks/useShadowState';
+import usePrev from '@/hooks/usePrev';
+import Avatar from '@/components/Avatar';
+import BoxIcon, { BoxIconType } from '@/components/BoxIcon';
+import { deepCopy } from '@/utils';
 import { activeNodeState, okrPathListVisibleState } from '../../state/okrPath';
 import { entityToNode } from '../PathBoard/utils';
 import { PathBoardRef } from '../PathBoard';

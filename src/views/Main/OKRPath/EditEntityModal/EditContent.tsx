@@ -1,10 +1,10 @@
 import React, { FC, MutableRefObject, useEffect, useRef } from 'react';
 
-import useInput from '@hooks/useInput';
+import useInput from '@/hooks/useInput';
 import { EditContentTextArea } from './styles';
-import useClosestRef from '@hooks/useClosestRef';
+import useClosestRef from '@/hooks/useClosestRef';
 import { useRecoilValue } from 'recoil';
-import { editEntityModalVisibleState } from '@views/Main/state/modals/editEntityModal';
+import { editEntityModalVisibleState } from '@/views/Main/state/modals/editEntityModal';
 
 interface EditContentProps {
   content: { content: string };

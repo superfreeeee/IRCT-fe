@@ -1,5 +1,5 @@
-import Avatar from '@components/Avatar';
-import StatusPoint from '@components/StatusPoint';
+import Avatar from '@/components/Avatar';
+import StatusPoint from '@/components/StatusPoint';
 import styled from 'styled-components';
 import {
   SIMULATION_FIGURE_SIZE,

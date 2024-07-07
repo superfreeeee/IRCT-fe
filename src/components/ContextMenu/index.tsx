@@ -5,8 +5,8 @@ import classNames from 'classnames';
 import {
   contextMenuPositionState,
   contextMenuVisibleState,
-} from '@views/Main/state/modals/customContextMenu';
-import useClickDetect from '@hooks/useClickDetect';
+} from '@/views/Main/state/modals/customContextMenu';
+import useClickDetect from '@/hooks/useClickDetect';
 import { CustomContextMenuContainer } from './styles';
 
 interface ContextMenuProps {

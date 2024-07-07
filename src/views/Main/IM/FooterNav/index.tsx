@@ -1,15 +1,15 @@
 import React from 'react';
 
-import { BoxIconType } from '@components/BoxIcon';
+import { BoxIconType } from '@/components/BoxIcon';
 import { FooterNavContainer } from './styles';
 import NavApp from './NavApp';
 import {
   activeAppState,
   AppSidebarType,
   appSidebarVisibleState,
-} from '@views/Main/state/appSidebar';
+} from '@/views/Main/state/appSidebar';
 import { useSetRecoilState } from 'recoil';
-import { okrPathVisibleState } from '@views/Main/state/okrPath';
+import { okrPathVisibleState } from '@/views/Main/state/okrPath';
 
 const FooterNav = () => {
   const setAppSidebarVisible = useSetRecoilState(appSidebarVisibleState);

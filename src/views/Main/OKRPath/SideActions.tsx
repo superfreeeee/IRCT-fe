@@ -1,7 +1,7 @@
 import React, { FC, MutableRefObject } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
-import BoxIcon, { BoxIconType } from '@components/BoxIcon';
+import BoxIcon, { BoxIconType } from '@/components/BoxIcon';
 import {
   okrPathListVisibleState,
   viewPointStackState,

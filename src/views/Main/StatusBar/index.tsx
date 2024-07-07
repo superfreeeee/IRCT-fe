@@ -17,8 +17,8 @@ import {
   userVideoVoiceSwitchFamily,
 } from '../state/user';
 import { useExitRoom } from '../state/hooks';
-import Avatar from '@components/Avatar';
-import BoxIcon, { BoxIconType } from '@components/BoxIcon';
+import Avatar from '@/components/Avatar';
+import BoxIcon, { BoxIconType } from '@/components/BoxIcon';
 import {
   AvatarBlock,
   InMeetingIcon,

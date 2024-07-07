@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { CrafteamRoute } from '@views/Layout/type';
+import { CrafteamRoute } from '@/views/Layout/type';
 import RectPlaceholder from './RectPlaceholder';
 import { HomePageFrame } from './styles';
 

@@ -1,8 +1,8 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import { MeetingActionBtn } from '@views/Main/StatusBar/styles';
-import BoxIcon, { BoxIconType } from '@components/BoxIcon';
+import { MeetingActionBtn } from '@/views/Main/StatusBar/styles';
+import BoxIcon, { BoxIconType } from '@/components/BoxIcon';
 import { VideoRoomControllerContainer } from './styles';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import {
@@ -10,8 +10,8 @@ import {
   userVideoRoomSettingFamily,
   userVideoVisibleFamily,
   userVideoVoiceSwitchFamily,
-} from '@views/Main/state/user';
-import { useExitRoom } from '@views/Main/state/hooks';
+} from '@/views/Main/state/user';
+import { useExitRoom } from '@/views/Main/state/hooks';
 
 const VideoRoomController = () => {
   const id = useRecoilValue(currentUserIdState);

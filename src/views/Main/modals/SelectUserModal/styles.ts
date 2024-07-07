@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 
-import Avatar from '@components/Avatar';
-import { I } from '@components/BoxIcon/styles';
-import StatusPoint from '@components/StatusPoint';
+import Avatar from '@/components/Avatar';
+import { I } from '@/components/BoxIcon/styles';
+import StatusPoint from '@/components/StatusPoint';
 
 export const SELECT_USER_MODAL_WIDTH = 150;
 const OUTER_PADDING = 5;

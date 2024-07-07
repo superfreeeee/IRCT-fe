@@ -15,15 +15,7 @@ const config = {
   },
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, 'src/'),
-      '@store': path.resolve(__dirname, 'src/store'),
-      '@views': path.resolve(__dirname, 'src/views'),
-      '@layouts': path.resolve(__dirname, 'src/layouts'),
-      '@components': path.resolve(__dirname, 'src/components'),
-      '@hooks': path.resolve(__dirname, 'src/hooks'),
-      '@libs': path.resolve(__dirname, 'src/libs'),
-      '@utils': path.resolve(__dirname, 'src/utils'),
-      '@assets': path.resolve(__dirname, 'src/assets'),
+      '@': path.resolve(__dirname, 'src'),
     },
     extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
   },
@@ -105,7 +97,6 @@ const config = {
   },
   devServer: {
     port: 3000,
-    open: true,
     historyApiFallback: true,
     client: {
       overlay: true,

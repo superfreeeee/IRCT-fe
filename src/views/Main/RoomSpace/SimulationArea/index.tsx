@@ -2,11 +2,11 @@ import React, { FC, RefObject, useCallback, useEffect, useRef } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import classNames from 'classnames';
 
-import { selectedRoomIdState } from '@views/Main/state/im';
-import { userTalkingListState } from '@views/Main/state/user';
-import { roomSpaceUserFigureListFamily } from '@views/Main/state/roomSpace';
-import { RoomSpacePosition } from '@views/Main/state/type';
-import useClosestRef from '@hooks/useClosestRef';
+import { selectedRoomIdState } from '@/views/Main/state/im';
+import { userTalkingListState } from '@/views/Main/state/user';
+import { roomSpaceUserFigureListFamily } from '@/views/Main/state/roomSpace';
+import { RoomSpacePosition } from '@/views/Main/state/type';
+import useClosestRef from '@/hooks/useClosestRef';
 import Figure from './Figure';
 import { SimulationBoard } from './styles';
 import { resetTalkingState } from './utils';

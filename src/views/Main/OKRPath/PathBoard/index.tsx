@@ -16,7 +16,7 @@ import {
   ViewPointEntity,
   ViewPointRelation,
   ViewPointType,
-} from '@views/Main/state/okrDB/type';
+} from '@/views/Main/state/okrDB/type';
 import {
   activeNodeState,
   okrPathListVisibleState,
@@ -27,25 +27,25 @@ import {
   viewPointCenterUserIdState,
   viewPointStackUpdater,
   viewPointTypeState,
-} from '@views/Main/state/okrPath';
+} from '@/views/Main/state/okrPath';
 import {
   EditEntityModalActionType,
   EditEntityModalResponseStatus,
   EditEntityModalResultPayload,
   ViewPointStackActionType,
-} from '@views/Main/state/type';
+} from '@/views/Main/state/type';
 import {
   contextMenuPositionState,
   contextMenuTargetState,
   contextMenuVisibleState,
-} from '@views/Main/state/modals/customContextMenu';
+} from '@/views/Main/state/modals/customContextMenu';
 import {
   editEntityModalActionTypeState,
   editEntityModalResultState,
   editEntityModalSourceState,
   editEntityModalTargetTypeState,
   editEntityModalVisibleState,
-} from '@views/Main/state/modals/editEntityModal';
+} from '@/views/Main/state/modals/editEntityModal';
 import {
   addKR,
   addO,
@@ -56,16 +56,16 @@ import {
   editO,
   editProject,
   editTodo,
-} from '@views/Main/state/okrDB/crud';
+} from '@/views/Main/state/okrDB/crud';
 import {
   getAdditionalRelations,
   getRelativeUserSource,
   wrapId,
-} from '@views/Main/state/okrDB/api';
-import { useCloseEditEntityModal } from '@views/Main/state/modals/hooks';
-import useClosestRef from '@hooks/useClosestRef';
-import useWaitFor from '@hooks/useWaitFor';
-import { deepCopy, listToMapper } from '@utils';
+} from '@/views/Main/state/okrDB/api';
+import { useCloseEditEntityModal } from '@/views/Main/state/modals/hooks';
+import useClosestRef from '@/hooks/useClosestRef';
+import useWaitFor from '@/hooks/useWaitFor';
+import { deepCopy, listToMapper } from '@/utils';
 import { PathListRef } from '../PathList';
 import {
   BoundNodeAction,

@@ -1,8 +1,8 @@
 import { useCallback, useMemo } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { TabOption } from '@views/Main/state/type';
-import { selectedRoomIdState, selectedTeamIdState } from '@views/Main/state/im';
+import { TabOption } from '@/views/Main/state/type';
+import { selectedRoomIdState, selectedTeamIdState } from '@/views/Main/state/im';
 import { MenuData } from './Menu/type';
 import { currentTabState } from '../state/im';
 import { teamDataListState } from '../state/team';

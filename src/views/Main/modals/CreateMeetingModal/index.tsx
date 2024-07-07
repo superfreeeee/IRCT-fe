@@ -1,9 +1,9 @@
 import React from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
-import useCheckbox from '@hooks/useCheckBox';
-import useInput from '@hooks/useInput';
-import Modal from '@components/Modal';
+import useCheckbox from '@/hooks/useCheckBox';
+import useInput from '@/hooks/useInput';
+import Modal from '@/components/Modal';
 import {
   createMeetingModalInfoState,
   createMeetingModalVisibleState,
@@ -18,7 +18,7 @@ import {
 } from './styles';
 import { RoomType } from '../../state/type';
 
-import meetingAvatar from '@assets/img/meeting.png';
+import meetingAvatar from '@/assets/img/meeting.png';
 
 const CreateMeetingModal = () => {
   const [visible, setVisible] = useRecoilState(createMeetingModalVisibleState);

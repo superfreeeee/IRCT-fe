@@ -9,9 +9,9 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
 import classNames from 'classnames';
 
-import useClickDetect from '@hooks/useClickDetect';
-import BoxIcon, { BoxIconType } from '@components/BoxIcon';
-import { deepCopy } from '@utils';
+import useClickDetect from '@/hooks/useClickDetect';
+import BoxIcon, { BoxIconType } from '@/components/BoxIcon';
+import { deepCopy } from '@/utils';
 import { EntityType, ViewPointType } from '../state/okrDB/type';
 import {
   contextMenuPositionState,
@@ -30,7 +30,7 @@ import { useOpenEditEntityModal } from '../state/modals/hooks';
 import { getEntityChildNextSeq } from '../state/okrDB/api';
 import { ContextMenuOption } from './type';
 import { PathListRef } from './PathList';
-import ContextMenu from '@components/ContextMenu';
+import ContextMenu from '@/components/ContextMenu';
 
 const CustomContextMenuContainer = styled.div`
   position: fixed;

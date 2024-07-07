@@ -1,24 +1,24 @@
 import React, { useCallback, useMemo } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { currentTabState, selectedTeamIdState } from '@views/Main/state/im';
-import { currentSpaceIdState } from '@views/Main/state/roomSpace';
+import { currentTabState, selectedTeamIdState } from '@/views/Main/state/im';
+import { currentSpaceIdState } from '@/views/Main/state/roomSpace';
 import {
   okrPathVisibleState,
   viewPointStackUpdater,
-} from '@views/Main/state/okrPath';
-import { TabOption, ViewPointStackActionType } from '@views/Main/state/type';
-import { ViewPointType } from '@views/Main/state/okrDB/type';
+} from '@/views/Main/state/okrPath';
+import { TabOption, ViewPointStackActionType } from '@/views/Main/state/type';
+import { ViewPointType } from '@/views/Main/state/okrDB/type';
 import {
   contextMenuTargetUserIdState,
   contextMenuVisibleState,
-} from '@views/Main/state/modals/customContextMenu';
-import ContextMenu from '@components/ContextMenu';
+} from '@/views/Main/state/modals/customContextMenu';
+import ContextMenu from '@/components/ContextMenu';
 import {
   CustomContextMenuItem,
   CustomContextMenuWrapper,
-} from '@components/ContextMenu/styles';
-import BoxIcon, { BoxIconType } from '@components/BoxIcon';
+} from '@/components/ContextMenu/styles';
+import BoxIcon, { BoxIconType } from '@/components/BoxIcon';
 
 const CustomContextMenu = () => {
   const setVisible = useSetRecoilState(contextMenuVisibleState);

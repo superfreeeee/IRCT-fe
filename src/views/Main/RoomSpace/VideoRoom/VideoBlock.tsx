@@ -5,10 +5,10 @@ import classNames from 'classnames';
 import {
   userUsingAppFamily,
   userVideoRoomSettingFamily,
-} from '@views/Main/state/user';
-import { VideoRoomFigure, VideoVoiceRate } from '@views/Main/state/type';
-import Avatar from '@components/Avatar';
-import AppIcon from '@components/AppIcon';
+} from '@/views/Main/state/user';
+import { VideoRoomFigure, VideoVoiceRate } from '@/views/Main/state/type';
+import Avatar from '@/components/Avatar';
+import AppIcon from '@/components/AppIcon';
 import {
   VideoBlockContainer,
   VideoBlockContent,

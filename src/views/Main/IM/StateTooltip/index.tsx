@@ -1,15 +1,15 @@
 import React, { useEffect } from 'react';
 
-import StatusPoint from '@components/StatusPoint';
-import { UserState } from '@views/Main/state/type';
+import StatusPoint from '@/components/StatusPoint';
+import { UserState } from '@/views/Main/state/type';
 import { StateTooltipWrapper } from './styles';
 import {
   stateTooltipInfoState,
   stateTooltipVisibleState,
-} from '@views/Main/state/im';
+} from '@/views/Main/state/im';
 import { useRecoilValue } from 'recoil';
 import classNames from 'classnames';
-import AppIcon from '@components/AppIcon';
+import AppIcon from '@/components/AppIcon';
 
 const StateTooltip = () => {
   const visible = useRecoilValue(stateTooltipVisibleState);

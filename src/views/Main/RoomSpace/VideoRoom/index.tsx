@@ -1,9 +1,9 @@
 import React from 'react';
 import { useRecoilValue } from 'recoil';
 
-import { selectedRoomTypeState } from '@views/Main/state/im';
-import { RoomType } from '@views/Main/state/type';
-import { nearbyFiguresState } from '@views/Main/state/roomSpace';
+import { selectedRoomTypeState } from '@/views/Main/state/im';
+import { RoomType } from '@/views/Main/state/type';
+import { nearbyFiguresState } from '@/views/Main/state/roomSpace';
 import VideoBlock from './VideoBlock';
 import { VideoRoomContainer } from './styles';
 

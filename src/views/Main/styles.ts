@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import '@assets/img/cursor.png';
+import '@/assets/img/cursor.png';
 
 export const MainContainer = styled.div`
   display: flex;

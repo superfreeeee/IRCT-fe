@@ -1,4 +1,4 @@
-import { VideoRoomFigure, VideoVoiceRate } from '@views/Main/state/type';
+import { VideoRoomFigure, VideoVoiceRate } from '@/views/Main/state/type';
 import { SIMULATION_BOARD_HEIGHT, SIMULATION_BOARD_WIDTH } from './styles';
 import {
   FIGURE_DISTANCE_LEVEL1,
@@ -11,7 +11,7 @@ import {
   RoomSpacePosition,
   UserRoomSpaceFigure,
   UserRoomSpaceInfo,
-} from '@views/Main/state/type';
+} from '@/views/Main/state/type';
 
 /**
  * 计算初入房间位置

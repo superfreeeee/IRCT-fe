@@ -1,8 +1,8 @@
 import React, { FC } from 'react';
 
-import BoxIcon, { BoxIconType } from '@components/BoxIcon';
+import BoxIcon, { BoxIconType } from '@/components/BoxIcon';
 import { NavAppWrapper } from './styles';
-import { noop, openNewPage } from '@utils';
+import { noop, openNewPage } from '@/utils';
 
 interface NavAppProps {
   icon: BoxIconType;

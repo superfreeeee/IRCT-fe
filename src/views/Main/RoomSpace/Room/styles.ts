@@ -1,4 +1,4 @@
-import Avatar from '@components/Avatar';
+import Avatar from '@/components/Avatar';
 import styled from 'styled-components';
 
 import { ChatContainer } from '../Chat/styles';

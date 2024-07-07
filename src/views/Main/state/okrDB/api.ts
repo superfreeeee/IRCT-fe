@@ -32,7 +32,7 @@ import {
 } from './db';
 import { createEntityNode } from './utils';
 import { EditEntityModalActionType } from '../type';
-import { deepCopy } from '@utils';
+import { deepCopy } from '@/utils';
 
 // ========== public ==========
 /**

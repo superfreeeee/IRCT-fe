@@ -2,8 +2,8 @@ import React, { FC, useEffect, useMemo } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import classNames from 'classnames';
 
-import HidePage from '@components/HidePage';
-import { TabOption } from '@views/Main/state/type';
+import HidePage from '@/components/HidePage';
+import { TabOption } from '@/views/Main/state/type';
 import {
   currentSpaceTypeState,
   expandVideoRoomState,

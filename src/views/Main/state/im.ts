@@ -1,6 +1,6 @@
 import { atom, selector } from 'recoil';
 
-import { AppType } from '@components/AppIcon/type';
+import { AppType } from '@/components/AppIcon/type';
 import { UserState, TabOption, RoomType, StateNamespace } from './type';
 import {
   DEFAULT_IM_TAB,

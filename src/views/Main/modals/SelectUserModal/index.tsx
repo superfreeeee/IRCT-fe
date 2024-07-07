@@ -3,12 +3,12 @@ import { useRecoilState } from 'recoil';
 import { CandidatesList, SearchBar, SelectUserModalContainer } from './styles';
 import classNames from 'classnames';
 
-import { selectUserModalControllerInfoState } from '@views/Main/state/modals/selectUserModal';
-import { TeamData } from '@views/Main/state/team';
-import BoxIcon, { BoxIconType } from '@components/BoxIcon';
-import useInput from '@hooks/useInput';
-import useClickDetect from '@hooks/useClickDetect';
-import useKeyDetect from '@hooks/useKeyDetect';
+import { selectUserModalControllerInfoState } from '@/views/Main/state/modals/selectUserModal';
+import { TeamData } from '@/views/Main/state/team';
+import BoxIcon, { BoxIconType } from '@/components/BoxIcon';
+import useInput from '@/hooks/useInput';
+import useClickDetect from '@/hooks/useClickDetect';
+import useKeyDetect from '@/hooks/useKeyDetect';
 import Candidate from './Candidate';
 
 /**

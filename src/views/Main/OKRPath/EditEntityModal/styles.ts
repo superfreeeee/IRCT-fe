@@ -1,6 +1,6 @@
-import Avatar from '@components/Avatar';
-import { I } from '@components/BoxIcon/styles';
-import { EntityType } from '@views/Main/state/okrDB/type';
+import Avatar from '@/components/Avatar';
+import { I } from '@/components/BoxIcon/styles';
+import { EntityType } from '@/views/Main/state/okrDB/type';
 import styled from 'styled-components';
 
 const headerBgColorMap: { [type in EntityType]: string } = {

@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import classNames from 'classnames';
 
-import useClickDetect from '@hooks/useClickDetect';
+import useClickDetect from '@/hooks/useClickDetect';
 import {
   activeAppState,
   AppSidebarType,

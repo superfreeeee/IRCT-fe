@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
-import Avatar from '@components/Avatar';
-import { EntityType } from '@views/Main/state/okrDB/type';
+import Avatar from '@/components/Avatar';
+import { EntityType } from '@/views/Main/state/okrDB/type';
 
 // ========== config ==========
 const DETAIL_LINE_HEIGHT = 20;

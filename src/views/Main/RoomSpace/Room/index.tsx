@@ -7,9 +7,9 @@ import React, {
 } from 'react';
 import { useRecoilValue } from 'recoil';
 
-import { roundBy } from '@utils';
-import { RoomType } from '@views/Main/state/type';
-import { selectedRoomTypeState } from '@views/Main/state/im';
+import { roundBy } from '@/utils';
+import { RoomType } from '@/views/Main/state/type';
+import { selectedRoomTypeState } from '@/views/Main/state/im';
 import Chat from '../Chat';
 import SimulationArea from '../SimulationArea';
 import {

@@ -1,6 +1,6 @@
 import { atomFamily, selector, selectorFamily } from 'recoil';
 
-import { AppType } from '@components/AppIcon/type';
+import { AppType } from '@/components/AppIcon/type';
 import { roomBasicInfoFamily } from './room';
 import {
   RoomType,

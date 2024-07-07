@@ -1,4 +1,4 @@
-import { BoxIconType } from '@components/BoxIcon';
+import { BoxIconType } from '@/components/BoxIcon';
 import { EntityNode } from '../state/okrDB/type';
 
 export type PathListSource = EntityNode;

@@ -1,4 +1,4 @@
-import { PlainFn } from '@utils/type';
+import { PlainFn } from '@/utils/type';
 import { MouseEvent, useCallback } from 'react';
 import { useResetRecoilState, useSetRecoilState } from 'recoil';
 

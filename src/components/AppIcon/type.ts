@@ -1,6 +1,6 @@
-import figmaUrl from '@assets/img/app_figma.png';
-import notionUrl from '@assets/img/app_notion.png';
-import pycharmUrl from '@assets/img/app_pycharm.png';
+import figmaUrl from '@/assets/img/app_figma.png';
+import notionUrl from '@/assets/img/app_notion.png';
+import pycharmUrl from '@/assets/img/app_pycharm.png';
 
 export enum AppType {
   Figma = 'Figma',

@@ -21,8 +21,8 @@ import {
   userRoomSpacePositionFamily,
 } from './user';
 
-import meetingTempAvatar from '@assets/img/meeting_temp.png';
-import { PlainFn } from '@utils/type';
+import meetingTempAvatar from '@/assets/img/meeting_temp.png';
+import { PlainFn } from '@/utils/type';
 import {
   expandBtnIsOpenState,
   expandBtnPositionState,

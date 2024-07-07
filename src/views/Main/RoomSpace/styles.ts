@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { HidePageWrapper } from '@components/HidePage/styles';
+import { HidePageWrapper } from '@/components/HidePage/styles';
 
 export const ROOM_SPACE_WIDTH = 360;
 export const ROOM_SPACE_WIDTH_WIDE = 420;

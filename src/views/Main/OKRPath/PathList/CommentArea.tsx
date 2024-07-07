@@ -1,6 +1,6 @@
-import BoxIcon, { BoxIconType } from '@components/BoxIcon';
-import useInput from '@hooks/useInput';
-import { useEnterListener } from '@views/Main/RoomSpace/Chat/hooks';
+import BoxIcon, { BoxIconType } from '@/components/BoxIcon';
+import useInput from '@/hooks/useInput';
+import { useEnterListener } from '@/views/Main/RoomSpace/Chat/hooks';
 import React, {
   ForwardRefExoticComponent,
   RefAttributes,

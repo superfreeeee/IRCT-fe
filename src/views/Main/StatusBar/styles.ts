@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
-import { UserState } from '@views/Main/state/type';
-import Avatar from '@components/Avatar';
+import { UserState } from '@/views/Main/state/type';
+import Avatar from '@/components/Avatar';
 
 export const StatusBarContainer = styled.div`
   flex-shrink: 0;

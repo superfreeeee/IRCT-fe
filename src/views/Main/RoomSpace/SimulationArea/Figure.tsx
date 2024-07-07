@@ -5,28 +5,28 @@ import classNames from 'classnames';
 import {
   userRoomSpacePositionFamily,
   userVideoVoiceSwitchFamily,
-} from '@views/Main/state/user';
-import { RoomSpacePosition, UserRoomSpaceFigure } from '@views/Main/state/type';
-import Avatar from '@components/Avatar';
-import BoxIcon, { BoxIconType } from '@components/BoxIcon';
-import StatusPoint from '@components/StatusPoint';
-import { roundBy } from '@utils';
-import { stopPropagationHandler } from '@utils/dom';
-import useClosestRef from '@hooks/useClosestRef';
-import useDragPosition, { DragEventType } from '@hooks/useDragPosition';
+} from '@/views/Main/state/user';
+import { RoomSpacePosition, UserRoomSpaceFigure } from '@/views/Main/state/type';
+import Avatar from '@/components/Avatar';
+import BoxIcon, { BoxIconType } from '@/components/BoxIcon';
+import StatusPoint from '@/components/StatusPoint';
+import { roundBy } from '@/utils';
+import { stopPropagationHandler } from '@/utils/dom';
+import useClosestRef from '@/hooks/useClosestRef';
+import useDragPosition, { DragEventType } from '@/hooks/useDragPosition';
 import {
   FigureContainer,
   MicroOffWrapper,
   SIMULATION_BOARD_PADDING,
 } from './styles';
-import useShadowState from '@hooks/useShadowState';
-import usePreventContextMenu from '@hooks/usePreventContextMenu';
+import useShadowState from '@/hooks/useShadowState';
+import usePreventContextMenu from '@/hooks/usePreventContextMenu';
 import {
   contextMenuTargetUserIdState,
   contextMenuVisibleState,
-} from '@views/Main/state/modals/customContextMenu';
-import { useOpenContextMenu } from '@views/Main/state/modals/hooks';
-import { okrPathVisibleState } from '@views/Main/state/okrPath';
+} from '@/views/Main/state/modals/customContextMenu';
+import { useOpenContextMenu } from '@/views/Main/state/modals/hooks';
+import { okrPathVisibleState } from '@/views/Main/state/okrPath';
 
 const MicroOff = () => {
   return (

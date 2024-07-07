@@ -7,7 +7,7 @@ import {
   useRef,
 } from 'react';
 
-import { noop } from '@utils';
+import { noop } from '@/utils';
 import useClosestRef from './useClosestRef';
 
 // ========== 类型声明 ==========

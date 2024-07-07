@@ -1,6 +1,6 @@
 import { atom, selector } from 'recoil';
 
-import { PathNode } from '@views/Main/OKRPath/PathBoard/type';
+import { PathNode } from '@/views/Main/OKRPath/PathBoard/type';
 import {
   DEFAULT_CONTEXT_MENU_POSITION,
   DEFAULT_CONTEXT_MENU_VISIBLE,

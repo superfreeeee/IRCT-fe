@@ -13,11 +13,11 @@ import {
   EntityNode,
   EntityType,
   ViewPointEntity,
-} from '@views/Main/state/okrDB/type';
-import { useHideExpandBtn } from '@views/Main/state/hooks';
-import { AbsolutePosition } from '@views/Main/state/type';
-import { expandBtnIsOpenState } from '@views/Main/state/okrPath';
-import useShadowState from '@hooks/useShadowState';
+} from '@/views/Main/state/okrDB/type';
+import { useHideExpandBtn } from '@/views/Main/state/hooks';
+import { AbsolutePosition } from '@/views/Main/state/type';
+import { expandBtnIsOpenState } from '@/views/Main/state/okrPath';
+import useShadowState from '@/hooks/useShadowState';
 import { PathBoardRef } from '../PathBoard';
 import {
   DetailLayer,
@@ -26,7 +26,7 @@ import {
   RelativeUsers,
 } from './styles';
 import EnhanceItemTypePoint from './EnhanceItemTypePoint';
-import Avatar from '@components/Avatar';
+import Avatar from '@/components/Avatar';
 
 interface ItemDetailProps {
   node: EntityNode;

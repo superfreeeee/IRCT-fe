@@ -2,8 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import classNames from 'classnames';
 
-import usePreventContextMenu from '@hooks/usePreventContextMenu';
-import { listToMapper } from '@utils';
+import usePreventContextMenu from '@/hooks/usePreventContextMenu';
+import { listToMapper } from '@/utils';
 import {
   okrPathVisibleState,
   viewPointCenterUserIdState,

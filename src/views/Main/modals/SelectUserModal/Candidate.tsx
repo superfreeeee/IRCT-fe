@@ -1,10 +1,10 @@
 import React, { FC } from 'react';
 import { useRecoilValue } from 'recoil';
 
-import { TeamData, teamDataFamily } from '@views/Main/state/team';
+import { TeamData, teamDataFamily } from '@/views/Main/state/team';
 import { CandidateWrapper } from './styles';
-import StatusPoint from '@components/StatusPoint';
-import Avatar from '@components/Avatar';
+import StatusPoint from '@/components/StatusPoint';
+import Avatar from '@/components/Avatar';
 
 interface CandidateProps {
   userId: string;

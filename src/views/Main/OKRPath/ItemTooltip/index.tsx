@@ -6,11 +6,11 @@ import {
   tooltipDataState,
   tooltipPositionState,
   tooltipVisibleState,
-} from '@views/Main/state/okrPath';
-import { EntityType } from '@views/Main/state/okrDB/type';
-import { userStateFamily } from '@views/Main/state/user';
-import StatusPoint from '@components/StatusPoint';
-import BoxIcon, { BoxIconType } from '@components/BoxIcon';
+} from '@/views/Main/state/okrPath';
+import { EntityType } from '@/views/Main/state/okrDB/type';
+import { userStateFamily } from '@/views/Main/state/user';
+import StatusPoint from '@/components/StatusPoint';
+import BoxIcon, { BoxIconType } from '@/components/BoxIcon';
 import { ItemTooltipContainer, ItemTooltipWrapper } from './styles';
 import ItemTypePoint from './ItemTypePoint';
 

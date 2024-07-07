@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 
-import Avatar from '@components/Avatar';
-import { AppIconWrapper } from '@components/AppIcon';
-import StatusPoint from '@components/StatusPoint';
+import Avatar from '@/components/Avatar';
+import { AppIconWrapper } from '@/components/AppIcon';
+import StatusPoint from '@/components/StatusPoint';
 
 // ========== Menu Item ==========
 export const ItemContainer = styled.li`

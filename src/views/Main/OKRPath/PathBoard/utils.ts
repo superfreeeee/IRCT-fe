@@ -6,8 +6,8 @@ import {
   ViewPointEntity,
   ViewPointRelation,
   ViewPointType,
-} from '@views/Main/state/okrDB/type';
-import { PlainFn } from '@utils/type';
+} from '@/views/Main/state/okrDB/type';
+import { PlainFn } from '@/utils/type';
 import {
   ForceSimulation,
   InitItemsFn,

@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { useRecoilValue } from 'recoil';
 
-import { currentTabState } from '@views/Main/state/im';
+import { currentTabState } from '@/views/Main/state/im';
 import Item, { ItemProps } from './Item';
 import { MenuContainer, MenuSepContainer } from './styles';
 import { MenuData } from './type';

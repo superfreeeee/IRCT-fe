@@ -1,8 +1,8 @@
 import classNames from 'classnames';
 import React, { FC } from 'react';
 
-import { TabOption } from '@views/Main/state/type';
-import { currentTabState } from '@views/Main/state/im';
+import { TabOption } from '@/views/Main/state/type';
+import { currentTabState } from '@/views/Main/state/im';
 import { Tab, TabsContainer } from './styles';
 import { useRecoilValue } from 'recoil';
 

@@ -6,29 +6,29 @@ import {
   roomBasicInfoFamily,
   roomDataFamily,
   roomLockedFamily,
-} from '@views/Main/state/room';
+} from '@/views/Main/state/room';
 import {
   UserState,
   RoomType,
   ViewPointStackActionType,
-} from '@views/Main/state/type';
-import { currentSpaceIdState } from '@views/Main/state/roomSpace';
-import { teamDataFamily } from '@views/Main/state/team';
+} from '@/views/Main/state/type';
+import { currentSpaceIdState } from '@/views/Main/state/roomSpace';
+import { teamDataFamily } from '@/views/Main/state/team';
 import {
   createMeetingModalInfoState,
   createMeetingModalVisibleState,
-} from '@views/Main/state/modals/createMeetingModal';
-import { selectUserModalControllerInfoState } from '@views/Main/state/modals/selectUserModal';
-import { SELECT_USER_MODAL_WIDTH } from '@views/Main/modals/SelectUserModal/styles';
+} from '@/views/Main/state/modals/createMeetingModal';
+import { selectUserModalControllerInfoState } from '@/views/Main/state/modals/selectUserModal';
+import { SELECT_USER_MODAL_WIDTH } from '@/views/Main/modals/SelectUserModal/styles';
 import {
   okrPathVisibleState,
   viewPointStackUpdater,
-} from '@views/Main/state/okrPath';
-import { ViewPointType } from '@views/Main/state/okrDB/type';
-import Avatar from '@components/Avatar';
-import BoxIcon, { BoxIconType } from '@components/BoxIcon';
-import AppIcon from '@components/AppIcon';
-import StatusPoint from '@components/StatusPoint';
+} from '@/views/Main/state/okrPath';
+import { ViewPointType } from '@/views/Main/state/okrDB/type';
+import Avatar from '@/components/Avatar';
+import BoxIcon, { BoxIconType } from '@/components/BoxIcon';
+import AppIcon from '@/components/AppIcon';
+import StatusPoint from '@/components/StatusPoint';
 import {
   HeaderMain,
   HeaderSide,
@@ -36,10 +36,10 @@ import {
   RoomSpaceHeader,
 } from './styles';
 
-import defaultTeamAvatar from '@assets/img/graphic_2.png';
-import newMeetingUrl from '@assets/img/room_action_new_meeting.png';
-import lockedUrl from '@assets/img/room_action_lock.png';
-import unlockedUrl from '@assets/img/room_action_unlock.png';
+import defaultTeamAvatar from '@/assets/img/graphic_2.png';
+import newMeetingUrl from '@/assets/img/room_action_new_meeting.png';
+import lockedUrl from '@/assets/img/room_action_lock.png';
+import unlockedUrl from '@/assets/img/room_action_unlock.png';
 
 interface HeaderProps {
   isRoom: boolean;

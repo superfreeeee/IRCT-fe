@@ -1,5 +1,5 @@
-import { AppIconWrapper } from '@components/AppIcon';
-import StatusPoint from '@components/StatusPoint';
+import { AppIconWrapper } from '@/components/AppIcon';
+import StatusPoint from '@/components/StatusPoint';
 import styled from 'styled-components';
 
 export const StateTooltipWrapper = styled.div`

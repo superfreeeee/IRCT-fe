@@ -7,7 +7,7 @@ import {
   expandBtnIsOpenState,
   expandBtnPositionState,
   expandBtnVisibleState,
-} from '@views/Main/state/okrPath';
+} from '@/views/Main/state/okrPath';
 
 const ExpandBtnWrapper = styled.div`
   position: absolute;

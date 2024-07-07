@@ -1,6 +1,6 @@
 import React from 'react';
 
-import BoxIcon, { BoxIconType } from '@components/BoxIcon';
+import BoxIcon, { BoxIconType } from '@/components/BoxIcon';
 import Menu from './Menu';
 import FooterNav from './FooterNav';
 import Tabs from './Tabs';

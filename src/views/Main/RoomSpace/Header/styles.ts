@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 
-import Avatar from '@components/Avatar';
+import Avatar from '@/components/Avatar';
 import { ROOM_SPACE_WIDTH, ROOM_SPACE_WIDTH_WIDE } from '../styles';
-import StatusPoint from '@components/StatusPoint';
-import { AppIconWrapper } from '@components/AppIcon';
+import StatusPoint from '@/components/StatusPoint';
+import { AppIconWrapper } from '@/components/AppIcon';
 
 export const RoomSpaceHeader = styled.div`
   position: relative;

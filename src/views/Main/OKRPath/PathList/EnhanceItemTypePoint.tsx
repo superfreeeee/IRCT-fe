@@ -1,7 +1,7 @@
 import React, { FC, MouseEventHandler } from 'react';
 import styled from 'styled-components';
 
-import { EntityType } from '@views/Main/state/okrDB/type';
+import { EntityType } from '@/views/Main/state/okrDB/type';
 import ItemTypePoint from '../ItemTooltip/ItemTypePoint';
 import { typePointExpandColorMap } from './styles';
 import classNames from 'classnames';

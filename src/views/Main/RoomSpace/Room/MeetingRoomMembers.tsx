@@ -1,17 +1,17 @@
 import React, { useCallback, useEffect, useRef } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { selectedRoomIdState } from '@views/Main/state/im';
-import { userTalkingListState } from '@views/Main/state/user';
-import { roomSpaceUserBasicInfoListFamily } from '@views/Main/state/roomSpace';
-import { useInviteToRoom } from '@views/Main/state/hooks';
-import { selectUserModalControllerInfoState } from '@views/Main/state/modals/selectUserModal';
-import { useOpenContextMenu } from '@views/Main/state/modals/hooks';
-import { contextMenuTargetUserIdState } from '@views/Main/state/modals/customContextMenu';
-import usePreventContextMenu from '@hooks/usePreventContextMenu';
-import useWaitFor from '@hooks/useWaitFor';
-import Avatar from '@components/Avatar';
-import BoxIcon, { BoxIconType } from '@components/BoxIcon';
+import { selectedRoomIdState } from '@/views/Main/state/im';
+import { userTalkingListState } from '@/views/Main/state/user';
+import { roomSpaceUserBasicInfoListFamily } from '@/views/Main/state/roomSpace';
+import { useInviteToRoom } from '@/views/Main/state/hooks';
+import { selectUserModalControllerInfoState } from '@/views/Main/state/modals/selectUserModal';
+import { useOpenContextMenu } from '@/views/Main/state/modals/hooks';
+import { contextMenuTargetUserIdState } from '@/views/Main/state/modals/customContextMenu';
+import usePreventContextMenu from '@/hooks/usePreventContextMenu';
+import useWaitFor from '@/hooks/useWaitFor';
+import Avatar from '@/components/Avatar';
+import BoxIcon, { BoxIconType } from '@/components/BoxIcon';
 import { MeetingRoomAddBtn, MeetingRoomMembersWrapper } from './styles';
 
 const MeetingRoomMembers = () => {

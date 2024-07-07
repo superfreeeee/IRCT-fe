@@ -12,7 +12,7 @@ import { okrPathVisibleState } from '../state/okrPath';
 import { TabOption } from '../state/type';
 import { appSidebarVisibleState } from '../state/appSidebar';
 
-import backgroundLogoUrl from '@assets/img/background_logo.png';
+import backgroundLogoUrl from '@/assets/img/background_logo.png';
 
 const BackgroundContainer = styled.div`
   flex: 1;
